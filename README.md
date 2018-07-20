@@ -17,3 +17,12 @@ Unoffical Pocket Client for Windows (Modern with Fluent Design)
 
 
 ![Screenshot](./Screenshot.png)
+
+
+## Donate
+
+* [![Donate RIAL.IR](https://img.shields.io/badge/donate-IRAN-blue.svg)](https://www.payping.ir/yazdipour)
+
+* [![Donate Bitcoin](https://en.cryptobadges.io/badge/small/17BF1jES7ytyKsNHM3rmRZ5n63VSy28gLe)](https://en.cryptobadges.io/donate/17BF1jES7ytyKsNHM3rmRZ5n63VSy28gLe)
+
+* [![Donate ETHER](https://en.cryptobadges.io/badge/small/0x37C14DaF87ba7a680a5B4CfcB7ef52c71A5C7Be4)](https://en.cryptobadges.io/donate/0x37C14DaF87ba7a680a5B4CfcB7ef52c71A5C7Be4)
