@@ -20,6 +20,18 @@ Unoffical Pocket Client for Windows (Modern with Fluent Design)
 
 ![Screenshot](./Screenshot.png)
 
+##  Thanks to:
+* Appcenter
+* https://github.com/Microsoft/WindowsCommunityToolkit
+* https://github.com/reactiveui/Akavache
+* https://github.com/ceee/PocketSharp/
+* https://github.com/ceee/ReadSharp
+* https://www.nuget.org/packages/HtmlAgilityPack/
+* https://www.nuget.org/packages/BFound.HtmlToMarkdown/
+* https://github.com/deanchalk/UWPChipsControl
+* https://github.com/colinkiama/UWP-Circle-Button-Style-
+* Icon: https://www.flaticon.com/free-icon/pocket-sketched-social-symbol_39338#term=pocket&page=1&position=36
+
 
 ## Donate
 
@@ -28,3 +40,4 @@ Unoffical Pocket Client for Windows (Modern with Fluent Design)
 * [![Donate Bitcoin](https://en.cryptobadges.io/badge/small/17BF1jES7ytyKsNHM3rmRZ5n63VSy28gLe)](https://en.cryptobadges.io/donate/17BF1jES7ytyKsNHM3rmRZ5n63VSy28gLe)
 
 * [![Donate ETHER](https://en.cryptobadges.io/badge/small/0x37C14DaF87ba7a680a5B4CfcB7ef52c71A5C7Be4)](https://en.cryptobadges.io/donate/0x37C14DaF87ba7a680a5B4CfcB7ef52c71A5C7Be4)
+
