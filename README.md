@@ -6,7 +6,9 @@ Unoffical Pocket Client for Windows (Modern with Fluent Design)
 
 [🌐 Website](https://yazdipour.github.io/)
 
-[![Build status](https://build.appcenter.ms/v0.1/apps/5dc566ec-33b7-43a2-9f2f-a767502f3282/branches/master/badge)](https://appcenter.ms)
+<a href='//www.microsoft.com/store/apps/9NDT5N34SR2P?ocid=badge'><img src='https://assets.windowsphone.com/13484911-a6ab-4170-8b7e-795c1e8b4165/English_get_L_InvariantCulture_Default.png' alt='English badge' width="150"/></a>
+
+<!-- [![Build status](https://build.appcenter.ms/v0.1/apps/5dc566ec-33b7-43a2-9f2f-a767502f3282/branches/master/badge)](https://appcenter.ms) -->
 
 ## Features:
 * Read Articles (Even Offline)
