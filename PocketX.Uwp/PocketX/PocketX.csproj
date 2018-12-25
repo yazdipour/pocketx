@@ -239,7 +239,7 @@
   <ItemGroup>
     <PackageReference Include="SQLitePCLRaw.bundle_green" Version="1.1.11" ExcludeAssets="All" />
     <PackageReference Include="akavache">
-      <Version>6.0.31</Version>
+      <Version>6.1.3</Version>
     </PackageReference>
     <PackageReference Include="BFound.HtmlToMarkdown">
       <Version>0.0.5</Version>
