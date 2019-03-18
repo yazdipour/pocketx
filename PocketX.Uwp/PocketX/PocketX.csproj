@@ -237,7 +237,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="1.1.11" ExcludeAssets="All" />
+    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="1.1.13" ExcludeAssets="All" />
     <PackageReference Include="akavache">
       <Version>6.4.1</Version>
     </PackageReference>
