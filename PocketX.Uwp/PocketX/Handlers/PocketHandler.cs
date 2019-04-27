@@ -69,7 +69,7 @@ namespace PocketX.Handlers
         internal async static Task<(string, string)> AddFromShare(Uri url)
         {
             String SUCCESS = "Successfully Saved to Pocket";
-            String FAILED = "FAILED (Be Sure You Are Logged In";
+            String FAILED = "FAILED (Be Sure You Are Logged In)";
             if (false && client != null)
             {
                 await client.Add(url);

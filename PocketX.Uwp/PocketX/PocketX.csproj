@@ -239,31 +239,31 @@
   <ItemGroup>
     <PackageReference Include="SQLitePCLRaw.bundle_green" Version="1.1.11" ExcludeAssets="All" />
     <PackageReference Include="akavache">
-      <Version>5.0.0</Version>
+      <Version>6.0.30</Version>
     </PackageReference>
     <PackageReference Include="BFound.HtmlToMarkdown">
       <Version>0.0.5</Version>
     </PackageReference>
     <PackageReference Include="HtmlAgilityPack">
-      <Version>1.8.5</Version>
+      <Version>1.8.9</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter">
-      <Version>1.7.0</Version>
+      <Version>1.10.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
-      <Version>1.7.0</Version>
+      <Version>1.10.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Crashes">
-      <Version>1.7.0</Version>
+      <Version>1.10.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.1.5</Version>
+      <Version>6.1.9</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.Connectivity">
-      <Version>3.0.0</Version>
+      <Version>4.0.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
-      <Version>3.0.0</Version>
+      <Version>4.0.0</Version>
     </PackageReference>
     <PackageReference Include="PocketSharp">
       <Version>4.2.0</Version>

@@ -21,6 +21,7 @@ namespace PocketX.Views
 			this.InitializeComponent();
 			Loaded += (s, e) =>
 			{
+				Microsoft.AppCenter.AppCenter.Start(Keys.AppCenter, typeof(Microsoft.AppCenter.Analytics.Analytics));
 				var uIHandler = new UIHandler();
 				uIHandler.TitleBarVisiblity(false, Titlebar);
 				uIHandler.TitleBarButton_TranparentBackground(settings.app_theme == Windows.UI.Xaml.ElementTheme.Dark);
