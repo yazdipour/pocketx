@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.Toolkit.Uwp.UI.Extensions;
 using PocketX.Handlers;
 using PocketX.Models;
 using PocketX.Views.Dialog;
@@ -16,12 +15,13 @@ namespace PocketX.Views
 		public static Microsoft.Toolkit.Uwp.UI.Controls.InAppNotification Notifier { get; set; }
 		private Settings settings = SettingsHandler.Settings;
 
-		public MainPage()
+        public MainPage()
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 			Loaded += (s, e) =>
 			{
-				Microsoft.AppCenter.AppCenter.Start(Keys.AppCenter, typeof(Microsoft.AppCenter.Analytics.Analytics));
+                Logger.Logger.InitOnlineLogger(Keys.AppCenter);
+                Logger.Logger.SetDebugMode(App.DEBUGMODE);
 				var uIHandler = new UIHandler();
 				uIHandler.TitleBarVisiblity(false, Titlebar);
 				uIHandler.TitleBarButton_TranparentBackground(settings.app_theme == Windows.UI.Xaml.ElementTheme.Dark);

@@ -116,7 +116,7 @@
                     <ScrollViewer x:Name="markdownGrid" 
                                       HorizontalScrollBarVisibility="Disabled"
                                       VerticalScrollBarVisibility="Visible">
-                        <Grid>
+                        <Grid Background="{x:Bind settings.reader_bg,Mode=OneWay}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition/>

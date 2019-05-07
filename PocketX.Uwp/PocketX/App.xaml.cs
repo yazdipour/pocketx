@@ -11,11 +11,13 @@ namespace PocketX
 {
 	sealed partial class App : Application
 	{
-		public static string Protocol = "pocketx://auth";
-		public App()
+        internal static string Protocol = "pocketx://auth";
+        internal static readonly bool DEBUGMODE = System.Diagnostics.Debugger.IsAttached;
+
+        public App()
 		{
-			this.InitializeComponent();
-			this.Suspending += OnSuspending;
+			InitializeComponent();
+			Suspending += OnSuspending;
 			Akavache.BlobCache.ApplicationName = typeof(App).Namespace;
 			Models.SettingsHandler.Load();
 		}

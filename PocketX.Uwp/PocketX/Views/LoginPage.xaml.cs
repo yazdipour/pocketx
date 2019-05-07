@@ -10,10 +10,7 @@ namespace PocketX.Views
     public sealed partial class LoginPage : Page
     {
         PocketHandler pocketHandler = new PocketHandler();
-        public LoginPage()
-        {
-            this.InitializeComponent();
-        }
+        public LoginPage() => InitializeComponent();
 
         private async void Login_Clicked(object sender, RoutedEventArgs e)
         {
