@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reactive.Linq;
-using System.Threading.Tasks;
-
-using Akavache;
+﻿using Akavache;
 
 using Microsoft.Toolkit.Uwp;
 using Microsoft.Toolkit.Uwp.UI.Controls;
@@ -14,6 +8,11 @@ using PocketSharp.Models;
 using PocketX.Handlers;
 using PocketX.Models;
 using PocketX.Views.Dialog;
+
+using System;
+using System.Collections.Generic;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
 
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
@@ -96,10 +95,10 @@ namespace PocketX.Views
         {
             var item = pocketHandler.currentPocketItem;
             WebViewBtn.Tag = "webView";
-            WebViewBtn.Text = "Open in WebView";
+            WebViewBtn.Content = "Open in WebView";
             ArchiveBtn.Content = item.IsArchive ? "" : "";
             ArchiveBtn.Tag = item.IsArchive ? "Unarchive" : "Archive";
-            FavBtn.Tag = FavBtn.Text = item.IsFavorite ? "Unfavorite" : "Favorite";
+            FavBtn.Tag = FavBtn.Content = item.IsFavorite ? "Unfavorite" : "Favorite";
         }
 
         private void HandleViewVisibilies(string theOne)
@@ -148,7 +147,7 @@ namespace PocketX.Views
             }
             else
             {
-                string text = await BlobCache.LocalMachine.GetObject<string>('_' + pocketHandler.currentPocketItem.Uri.AbsoluteUri)
+                string text = await BlobCache.LocalMachine.GetObject<string>('_' + pocketHandler.currentPocketItem?.Uri?.AbsoluteUri)
                     .Catch(Observable.Return(markdownText?.Text));
                 if (!String.IsNullOrEmpty(text)) await audioHandler.Start(text);
                 else await new Windows.UI.Popups.MessageDialog("No Content to Read").ShowAsync();
@@ -313,7 +312,7 @@ namespace PocketX.Views
 
                     default:
 
-						IEnumerable<PocketItem> search_list = null;
+                        IEnumerable<PocketItem> search_list = null;
                         if (tag[0] == '#')
                         {
                             Utils.AppCenterLog($"Tag {tag}");
@@ -354,13 +353,13 @@ namespace PocketX.Views
             switch (tag)
             {
                 case "Unfavorite":
-                    FavBtn.Tag = FavBtn.Text = "Favorite";
+                    FavBtn.Tag = FavBtn.Content = "Favorite";
                     await pocketHandler.Client.Unfavorite(pocketHandler.currentPocketItem);
                     MainPage.Notifier.Show("Remove from Favorite", 2000);
                     break;
 
                 case "Favorite":
-                    FavBtn.Tag = FavBtn.Text = "Unfavorite";
+                    FavBtn.Tag = FavBtn.Content = "Unfavorite";
                     await pocketHandler.Client.Favorite(pocketHandler.currentPocketItem);
                     MainPage.Notifier.Show("Saved as Favorite", 2000);
                     break;
@@ -388,14 +387,14 @@ namespace PocketX.Views
 
                 case "webView":
                     WebViewBtn.Tag = "articleView";
-                    WebViewBtn.Text = "Open in ArticleView";
+                    WebViewBtn.Content = "Open in ArticleView";
                     HandleViewVisibilies(tag);
                     webView.Navigate(pocketHandler.currentPocketItem?.Uri);
                     break;
 
                 case "articleView":
                     WebViewBtn.Tag = "webView";
-                    WebViewBtn.Text = "Open in WebView";
+                    WebViewBtn.Content = "Open in WebView";
                     HandleViewVisibilies(tag);
                     OpenInArticleView(pocketHandler.currentPocketItem, true);
                     break;

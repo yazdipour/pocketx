@@ -23,7 +23,7 @@ namespace PocketX.Views
                 Logger.Logger.InitOnlineLogger(Keys.AppCenter);
                 Logger.Logger.SetDebugMode(App.DEBUGMODE);
 				var uIHandler = new UIHandler();
-				uIHandler.TitleBarVisiblity(false, Titlebar);
+				//uIHandler.TitleBarVisiblity(false, navView);
 				uIHandler.TitleBarButton_TranparentBackground(settings.app_theme == Windows.UI.Xaml.ElementTheme.Dark);
 				insideFrame.Navigate(typeof(MainContent));
 			};

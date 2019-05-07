@@ -6,49 +6,54 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:Windows10version1809="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 7)"
     mc:Ignorable="d" RequestedTheme="{x:Bind settings.app_theme,Mode=OneWay}"
     Background="{ThemeResource SystemControlAcrylicWindowBrush}">
     <Grid>
-        <NavigationView x:Name="navView" 
+        <Button HorizontalAlignment="Left" Height="24" Width="40" VerticalAlignment="Top"
+                Content="&#xE141;" FontFamily="Segoe MDL2 Assets" CornerRadius="0 0 0 20"
+                Click="Pin_Click" RenderTransformOrigin="0.5,0.5" Margin="-12,8,0,0">
+            <Button.RenderTransform>
+                <CompositeTransform Rotation="-90" />
+            </Button.RenderTransform>
+        </Button>
+        <NavigationView x:Name="navView"
 						IsPaneOpen="False"
-                        CompactModeThresholdWidth="620" 
-						ExpandedModeThresholdWidth="2000" 
-                        Margin="0 24 0 0" 
-						OpenPaneLength="220" 
-                        SelectionChanged="NavigationView_SelectionChanged" 
+                        Margin="0 -1 0 0"
+                        CompactModeThresholdWidth="620"
+						ExpandedModeThresholdWidth="2000"
+						OpenPaneLength="220"
+                        SelectionChanged="NavigationView_SelectionChanged"
 						PaneTitle="Pocket✘"
-                        Windows10version1809:PaneDisplayMode="Top"
+                        PaneDisplayMode="Top"
 						IsBackButtonVisible="Collapsed"
 						IsBackEnabled="False"
-                        IsSettingsVisible="True" 
-						IsTabStop="False" 
+                        IsSettingsVisible="False"
+						IsTabStop="False"
 						AlwaysShowHeader="False">
             <NavigationView.MenuItems>
-                <NavigationViewItem Icon="Home" Content="My List" Tag="{x:Bind _tags[0]}" />
+                <NavigationViewItem Margin="8 0 0 0" Icon="Home" Content="Home" Tag="{x:Bind _tags[0]}" />
                 <NavigationViewItem Icon="Favorite" Content="Favorites" Tag="{x:Bind _tags[1]}" />
                 <NavigationViewItem Icon="Accept" Content="Archives" Tag="{x:Bind _tags[2]}" />
-                <NavigationViewItemSeparator/>
+                <NavigationViewItemSeparator />
             </NavigationView.MenuItems>
-            <NavigationView.AutoSuggestBox>
-                <AutoSuggestBox QueryIcon="Find" QuerySubmitted="AutoSuggestBox_QuerySubmitted"/>
-            </NavigationView.AutoSuggestBox>
-            <NavigationView.PaneFooter>
+            <NavigationView.PaneCustomContent>
                 <StackPanel Orientation="Horizontal">
-                    <NavigationViewItem Icon="Refresh" Content="Reload" Tag="{x:Bind _tags2[3]}" 
-                                        Tapped="PaneFooter_Tapped" />
-                    <NavigationViewItem Icon="Tag" ToolTipService.ToolTip="Tags"
+                    <!--<NavigationViewItem Icon="Refresh" Content="Reload"
+                                        Tag="{x:Bind _tags2[3]}"
+                                        Tapped="PaneFooter_Tapped" />-->
+                    <NavigationViewItem Icon="Tag"
+                                        Content="Tags"
                                         Tag="{x:Bind _tags2[2]}"
-                                        Tapped="PaneFooter_Tapped"/>
-                    <NavigationViewItem Tapped="PaneFooter_Tapped" Icon="Font" 
-                                        ToolTipService.ToolTip="Reading Settings" Tag="{x:Bind _tags2[1]}" />
-                    <NavigationViewItem Tapped="PaneFooter_Tapped" 
-                                        Icon="Setting" 
-                                        ToolTipService.ToolTip="Setting" 
+                                        Tapped="PaneFooter_Tapped" />
+                    <!--<NavigationViewItem Tapped="PaneFooter_Tapped" Icon="Font"
+                                        ToolTipService.ToolTip="Reading Settings" Tag="{x:Bind _tags2[1]}" />-->
+                    <NavigationViewItem Tapped="PaneFooter_Tapped"
+                                        Icon="Setting"
+                                        Content="Setting"
                                         Tag="{x:Bind _tags2[0]}" />
                 </StackPanel>
-            </NavigationView.PaneFooter>
-            <Frame x:Name="insideFrame"/>
+            </NavigationView.PaneCustomContent>
+            <Frame x:Name="insideFrame" />
         </NavigationView>
         <controls:InAppNotification x:Name="_notifer" Content="Error!" RequestedTheme="Dark"
                                     AnimationDuration="00:00:00.1000000"
@@ -56,15 +61,10 @@
                                     HorizontalOffset="0">
             <controls:InAppNotification.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="#A1051D"/>
-                    <GradientStop Color="#F5515F" Offset="1"/>
+                    <GradientStop Color="#A1051D" />
+                    <GradientStop Color="#F5515F" Offset="1" />
                 </LinearGradientBrush>
             </controls:InAppNotification.Background>
         </controls:InAppNotification>
-        <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Top" 
-                   Height="32" Fill="Transparent" x:Name="Titlebar" />
-        <Button HorizontalAlignment="Left" Height="24" Width="48" VerticalAlignment="Top"
-                Content="&#xE141;" FontFamily="Segoe MDL2 Assets"
-                Click="Pin_Click"/>
     </Grid>
 </Page>
