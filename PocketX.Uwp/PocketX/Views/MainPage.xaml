@@ -6,16 +6,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:Windows10version1809="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 7)"
     mc:Ignorable="d" RequestedTheme="{x:Bind settings.app_theme,Mode=OneWay}"
-      xmlns:ex="using:Microsoft.Toolkit.Uwp.UI.Extensions"
     Background="{ThemeResource SystemControlAcrylicWindowBrush}">
-    <Page.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="ms-appx:///Microsoft.Toolkit.Uwp.UI/Extensions/NavigationView/Styles/VSCodeActivityBarStyle.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Page.Resources>
     <Grid>
         <NavigationView x:Name="navView" 
 						IsPaneOpen="False"
@@ -25,10 +18,10 @@
 						OpenPaneLength="220" 
                         SelectionChanged="NavigationView_SelectionChanged" 
 						PaneTitle="Pocket✘"
-                        ex:NavigationViewExtensions.SelectedIndex="0"
+                        Windows10version1809:PaneDisplayMode="Top"
 						IsBackButtonVisible="Collapsed"
 						IsBackEnabled="False"
-                        IsSettingsVisible="False" 
+                        IsSettingsVisible="True" 
 						IsTabStop="False" 
 						AlwaysShowHeader="False">
             <NavigationView.MenuItems>
@@ -38,19 +31,21 @@
                 <NavigationViewItemSeparator/>
             </NavigationView.MenuItems>
             <NavigationView.AutoSuggestBox>
-                <AutoSuggestBox QueryIcon="Find" PlaceholderText="Search" 
-                                QuerySubmitted="AutoSuggestBox_QuerySubmitted"/>
+                <AutoSuggestBox QueryIcon="Find" QuerySubmitted="AutoSuggestBox_QuerySubmitted"/>
             </NavigationView.AutoSuggestBox>
             <NavigationView.PaneFooter>
-                <StackPanel>
-                    <NavigationViewItem Icon="Refresh" Content="Reload List" Tag="{x:Bind _tags2[3]}" 
-                                        Tapped="PaneFooter_Tapped"/>
-                    <NavigationViewItem Icon="Tag" Content="Tags" Tag="{x:Bind _tags2[2]}"
+                <StackPanel Orientation="Horizontal">
+                    <NavigationViewItem Icon="Refresh" Content="Reload" Tag="{x:Bind _tags2[3]}" 
+                                        Tapped="PaneFooter_Tapped" />
+                    <NavigationViewItem Icon="Tag" ToolTipService.ToolTip="Tags"
+                                        Tag="{x:Bind _tags2[2]}"
                                         Tapped="PaneFooter_Tapped"/>
                     <NavigationViewItem Tapped="PaneFooter_Tapped" Icon="Font" 
-                                        Content="Reading Settings" Tag="{x:Bind _tags2[1]}" />
-                    <NavigationViewItem Tapped="PaneFooter_Tapped" Icon="Setting" 
-                                        Content="Settings" Tag="{x:Bind _tags2[0]}" />
+                                        ToolTipService.ToolTip="Reading Settings" Tag="{x:Bind _tags2[1]}" />
+                    <NavigationViewItem Tapped="PaneFooter_Tapped" 
+                                        Icon="Setting" 
+                                        ToolTipService.ToolTip="Setting" 
+                                        Tag="{x:Bind _tags2[0]}" />
                 </StackPanel>
             </NavigationView.PaneFooter>
             <Frame x:Name="insideFrame"/>

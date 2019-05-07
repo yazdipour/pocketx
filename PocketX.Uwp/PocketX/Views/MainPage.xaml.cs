@@ -48,7 +48,7 @@ namespace PocketX.Views
 				var dialog = new TagsDialog();
 				await dialog.ShowAsync();
 				navView.SelectedItem = -1;
-				NavigationViewExtensions.SetSelectedIndex(navView, -1);
+				//NavigationViewExtensions.SetSelectedIndex(navView, -1);
 				if (dialog.Tag != null) await (insideFrame.Content as MainContent).ParentCommandAsync(dialog.Tag.ToString());
 			}
 			else if (tag.Equals(_tags2[3]))
@@ -71,7 +71,7 @@ namespace PocketX.Views
 		private async void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
 		{
 			var tag = args?.QueryText;
-			NavigationViewExtensions.SetSelectedIndex(navView, -1);
+			//NavigationViewExtensions.SetSelectedIndex(navView, -1);
 			await (insideFrame.Content as MainContent).ParentCommandAsync(tag);
 		}
 

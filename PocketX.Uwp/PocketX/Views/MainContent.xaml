@@ -38,10 +38,13 @@
                         <FontIconSource x:Key="Add" Glyph=""/>
                         <FontIconSource x:Key="Archive" Glyph="&#xE15D;"/>
 
-                        <SwipeItems x:Key="right" Mode="Execute">
-                            <SwipeItem Text="Delete" IconSource="{StaticResource Delete}" BehaviorOnInvoked="Close"
-                                       Invoked="SwipeItem_Invoked" Background="#e74c3c" Foreground="White"/>
-                        </SwipeItems>
+                        <SwipeItems x:Key="right" Mode="Execute"/>
+                        <!--Text="Delete" 
+                                    IconSource="{StaticResource Add}"
+                                    BehaviorOnInvoked="Close"
+                                    Invoked="SwipeItem_Invoked" 
+                                    Background="#e74c3c" 
+                                    Foreground="White"/>-->
                         <SwipeItem x:Name="leftSwipeAdd" Text="Add" IconSource="{StaticResource Add}" BehaviorOnInvoked="Close"
                                        Invoked="SwipeItem_Invoked" Background="#1abc9c" Foreground="White"/>
                         <SwipeItem x:Name="leftSwipeArchive" Text="Archive" IconSource="{StaticResource Archive}" BehaviorOnInvoked="Close"
@@ -189,19 +192,19 @@
                         Orientation="Horizontal" Margin="0 -20 8 0" 
                         RequestedTheme="{x:Bind settings.app_theme,Mode=OneWay}">
                 <Button x:Name="ArchiveBtn" Tag="Archive" 
-                        Style="{ThemeResource CircleButtonStyle}"  
+                         
                         Click="Appbar_Click"  Foreground="White" 
                         FontFamily="Segoe MDL2 Assets" 
                         Margin="4 0" Background="{StaticResource AccentColorGradient}"
                         Content="&#xE15D;" />
-                <Button Style="{ThemeResource CircleButtonStyle}" x:Name="Text2Speech_Button" 
+                <Button x:Name="Text2Speech_Button" 
                         Click="Text2Speech_Click"  Foreground="White"
                         Content="" FontFamily="Segoe MDL2 Assets" 
                         Margin="4 0" Background="{StaticResource AccentColorGradient}"/>
-                <Button Tag="Share" Style="{ThemeResource CircleButtonStyle}"  Click="Appbar_Click" 
+                <Button Tag="Share"  Click="Appbar_Click" 
                             Content="" FontFamily="Segoe MDL2 Assets" Foreground="White"
                             Margin="4 0" Background="{StaticResource AccentColorGradient}"/>
-                <Button Style="{ThemeResource CircleButtonStyle}"  Foreground="White"
+                <Button  Foreground="White"
                             Content="" FontFamily="Segoe MDL2 Assets"
                             Margin="4 0" Background="{StaticResource AccentColorGradient}">
                     <Button.Flyout>
