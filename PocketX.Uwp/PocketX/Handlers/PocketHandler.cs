@@ -1,20 +1,25 @@
-﻿using System.Reactive.Linq;
+﻿using Akavache;
+
+using Microsoft.Toolkit.Collections;
+using Microsoft.Toolkit.Uwp.Helpers;
+
 using PocketSharp;
 using PocketSharp.Models;
+
+using ReadSharp;
+
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Toolkit.Uwp.Helpers;
-using ReadSharp;
 using System.Linq;
-using Akavache;
-using Windows.UI.Xaml.Controls;
-using Microsoft.Toolkit.Collections;
+using System.Reactive.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+
+using Windows.UI.Xaml.Controls;
 
 namespace PocketX.Handlers
 {
-    class PocketHandler : IIncrementalSource<PocketItem>
+    internal class PocketHandler : IIncrementalSource<PocketItem>
     {
         public PocketItem currentPocketItem;
 
@@ -64,12 +69,13 @@ namespace PocketX.Handlers
             string requestCode = await client.GetRequestCode();
             return client.GenerateAuthenticationUri();
         }
-        #endregion
+
+        #endregion Login\Logout
 
         internal async static Task<(string, string)> AddFromShare(Uri url)
         {
-            String SUCCESS = "Successfully Saved to Pocket";
-            String FAILED = "FAILED (Be Sure You Are Logged In)";
+            var SUCCESS = "Successfully Saved to Pocket";
+            var FAILED = "FAILED (Be Sure You Are Logged In)";
             if (false && client != null)
             {
                 await client.Add(url);
@@ -110,6 +116,7 @@ namespace PocketX.Handlers
         }
 
         #region Cache Items
+
         internal async Task<IEnumerable<PocketItem>> GetItemsCache()
         {
             var ls = await BlobCache.LocalMachine.GetObject<List<string[]>>(Keys.MainList).Catch(Observable.Return(new List<string[]>()));
@@ -151,7 +158,8 @@ namespace PocketX.Handlers
             ls.Insert(index, itemGen);
             await BlobCache.LocalMachine.InsertObject(Keys.MainList, ls);
         }
-        #endregion
+
+        #endregion Cache Items
 
         internal async Task<string> Read(Uri url, bool force)
         {
