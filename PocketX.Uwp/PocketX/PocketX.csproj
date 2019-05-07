@@ -11,8 +11,8 @@
     <AssemblyName>PocketX</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.17134.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.17134.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.17763.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -109,6 +109,8 @@
     <Compile Include="Handlers\Utils.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Handlers\SettingsHandler.cs" />
+    <Compile Include="ViewModels\MainContentViewModel.cs" />
+    <Compile Include="ViewModels\MainPageViewModel.cs" />
     <Compile Include="Views\Dialog\ImageDialog.xaml.cs">
       <DependentUpon>ImageDialog.xaml</DependentUpon>
     </Compile>
@@ -207,6 +209,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Themes\ColorPalette.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Themes\DefaultTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
     <Page Include="Views\Dialog\ImageDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -239,22 +251,22 @@
   <ItemGroup>
     <PackageReference Include="SQLitePCLRaw.bundle_green" Version="1.1.13" ExcludeAssets="All" />
     <PackageReference Include="akavache">
-      <Version>6.4.1</Version>
+      <Version>6.5.1</Version>
     </PackageReference>
     <PackageReference Include="BFound.HtmlToMarkdown">
       <Version>0.0.5</Version>
     </PackageReference>
     <PackageReference Include="HtmlAgilityPack">
-      <Version>1.10.0</Version>
+      <Version>1.11.4</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter">
-      <Version>1.13.2</Version>
+      <Version>1.14.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
-      <Version>1.13.2</Version>
+      <Version>1.14.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Crashes">
-      <Version>1.13.2</Version>
+      <Version>1.14.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.8</Version>
@@ -266,7 +278,7 @@
       <Version>5.1.1</Version>
     </PackageReference>
     <PackageReference Include="PocketSharp">
-      <Version>4.2.0</Version>
+      <Version>5.0.0</Version>
     </PackageReference>
     <PackageReference Include="ReadSharp">
       <Version>6.3.0</Version>
@@ -275,7 +287,9 @@
       <Version>1.0.3</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Assets\Fonts\" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
