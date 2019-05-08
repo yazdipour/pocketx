@@ -1,12 +1,12 @@
 ﻿using Microsoft.Toolkit.Uwp.Helpers;
+using PocketX.Models;
 
-namespace PocketX.Models
+namespace PocketX.Handlers
 {
-    class SettingsHandler
+    internal class SettingsHandler
     {
         public static Settings Settings = new Settings();
         
-
         public static void Load()
         {
             try

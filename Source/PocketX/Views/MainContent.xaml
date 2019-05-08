@@ -16,16 +16,17 @@
         <SplitView.Pane>
             <Grid>
                 <!--Articles List-->
-                <ListView x:Name="listViewInSplitView"
+                <ListView x:Name="ListViewInSplitView"
                           SelectionMode="Single" IsItemClickEnabled="True"
                           ItemClick="listViewInSplitView_ItemClick"
-                          ScrollViewer.VerticalScrollBarVisibility="{x:Bind settings.listview_scrollbar,Mode=OneWay}"
+                          ScrollViewer.VerticalScrollBarVisibility="{x:Bind _settings.listview_scrollbar,Mode=OneWay}"
                           VerticalAlignment="Stretch">
                     <ListView.Header>
                         <AutoSuggestBox Margin="12 4"
                                         QueryIcon="Find"
                                         IsEnabled="True"
                                         PlaceholderText="Search"
+                                        QuerySubmitted="AutoSuggestBox_QuerySubmitted"
                                         Opacity=".5" />
                     </ListView.Header>
                     <ListView.ItemContainerStyle>
@@ -112,7 +113,7 @@
             </Grid>
         </SplitView.Pane>
         <!--Main Body-->
-        <Grid x:Name="MainGrid" RequestedTheme="{x:Bind settings.reader_theme,Mode=OneWay}">
+        <Grid x:Name="MainGrid" RequestedTheme="{x:Bind _settings.reader_theme,Mode=OneWay}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
@@ -120,27 +121,27 @@
             <!--MainContent-->
             <controls:DropShadowPanel OffsetX="-4" ShadowOpacity="0.5" Grid.Row="1"
                                       BlurRadius="16" HorizontalContentAlignment="Stretch">
-                <Grid Background="{x:Bind settings.reader_bg,Mode=OneWay}">
+                <Grid Background="{x:Bind _settings.reader_bg,Mode=OneWay}">
                     <!--markdownScrollViewer-->
                     <ScrollViewer x:Name="markdownGrid"
                                       HorizontalScrollBarVisibility="Disabled"
                                       VerticalScrollBarVisibility="Visible">
-                        <Grid Background="{x:Bind settings.reader_bg,Mode=OneWay}">
+                        <Grid Background="{x:Bind _settings.reader_bg,Mode=OneWay}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto" />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
                             <StackPanel Grid.Row="0" x:Name="HeaderPanel"
                                     HorizontalAlignment="Stretch" Padding="16 16 16 4">
-                                <TextBlock x:Name="header_title" Text="{x:Bind pocketHandler.currentPocketItem.Title,Mode=OneWay}"
+                                <TextBlock x:Name="header_title" Text="{x:Bind _pocketHandler.CurrentPocketItem.Title,Mode=OneWay}"
                                        Style="{ThemeResource SubtitleTextBlockStyle}"
                                        HorizontalAlignment="Center" TextAlignment="Center"
                                        FontFamily="Calibri" />
                                 <HyperlinkButton HorizontalAlignment="Center"
-                                             Content="{x:Bind pocketHandler.currentPocketItem.Uri.Host,Mode=OneWay}"
+                                             Content="{x:Bind _pocketHandler.CurrentPocketItem.Uri.Host,Mode=OneWay}"
                                              Foreground="{x:Bind markdownText.LinkForeground,Mode=OneWay}"
-                                             NavigateUri="{x:Bind pocketHandler.currentPocketItem.Uri.AbsoluteUri,Mode=OneWay}" />
-                                <TextBlock Text="{x:Bind pocketHandler.currentPocketItem.UpdateTime,Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center" />
+                                             NavigateUri="{x:Bind _pocketHandler.CurrentPocketItem.Uri.AbsoluteUri,Mode=OneWay}" />
+                                <TextBlock Text="{x:Bind _pocketHandler.CurrentPocketItem.UpdateTime,Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center" />
                             </StackPanel>
                             <controls:MarkdownTextBlock x:Name="markdownText" Grid.Row="1"
                                                         Padding="32 0 32 32" BorderThickness="0"
@@ -151,8 +152,8 @@
                                                         ImageClicked="MarkdownText_ImageClicked"
                                                         LinkClicked="MarkdownText_LinkClicked"
                                                         UseSyntaxHighlighting="True"
-                                                        FontSize="{x:Bind settings.reader_font_size,Mode=OneWay}"
-                                                        FontFamily="{x:Bind settings.reader_font_family,Mode=OneWay}" />
+                                                        FontSize="{x:Bind _settings.reader_font_size,Mode=OneWay}"
+                                                        FontFamily="{x:Bind _settings.reader_font_family,Mode=OneWay}" />
                         </Grid>
                     </ScrollViewer>
                     <!--LoadingControl-->
@@ -198,7 +199,7 @@
 
             <!--AppBar-->
             <CommandBar x:Name="TopBar" Grid.Row="1" VerticalAlignment="Bottom"
-                        RequestedTheme="{x:Bind settings.app_theme,Mode=OneWay}"
+                        RequestedTheme="{x:Bind _settings.app_theme,Mode=OneWay}"
                         DefaultLabelPosition="Right" HorizontalAlignment="Right">
                 <AppBarButton Icon="Accept" x:Name="ArchiveBtn" Tag="Archive"
                         Click="Appbar_Click" Label="Archive" />
@@ -206,7 +207,7 @@
                 <AppBarButton Tag="Share" Icon="Font" Label="Font/Size" Click="Appbar_Click" />
                 <AppBarButton Icon="Volume"
                               Label="Read Aloud"
-                              x:Name="Text2Speech_Button"
+                              x:Name="Text2SpeechButton"
                         Click="Text2Speech_Click" />
                 <CommandBar.SecondaryCommands>
                     <AppBarButton x:Name="FavBtn" Tag="Favorite" Click="Appbar_Click"

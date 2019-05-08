@@ -105,7 +105,7 @@
     <Compile Include="Handlers\AudioHandler.cs" />
     <Compile Include="Handlers\Keys.cs" />
     <Compile Include="Handlers\PocketHandler.cs" />
-    <Compile Include="Handlers\UIHandler.cs" />
+    <Compile Include="Handlers\UiUtils.cs" />
     <Compile Include="Handlers\Utils.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Handlers\SettingsHandler.cs" />

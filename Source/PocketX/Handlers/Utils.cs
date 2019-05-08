@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AppCenter.Analytics;
-using PocketX.Models;
 using Windows.Data.Xml.Dom;
 using Windows.Networking.BackgroundTransfer;
 using Windows.Networking.Connectivity;
@@ -14,9 +12,9 @@ namespace PocketX.Handlers
 {
     class Utils
     {
-        internal static int UnixTimeStamp() => (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+        internal static int UnixTimeStamp() => (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
         
-        internal static bool CheckConnection => (NetworkInformation.GetInternetConnectionProfile() != null);
+        internal static bool CheckConnection => NetworkInformation.GetInternetConnectionProfile() != null;
 
         internal static async Task DownloadFile(string url, string name, StorageFolder folder)
         {
@@ -24,7 +22,6 @@ namespace PocketX.Handlers
             {
                 if (folder == null)
                 {
-
                     var picker = new FolderPicker
                     {
                         ViewMode = PickerViewMode.Thumbnail,
@@ -36,8 +33,7 @@ namespace PocketX.Handlers
                 CancellationToken token;
                 if (string.IsNullOrWhiteSpace(url) || !Uri.TryCreate(url, UriKind.Absolute, out Uri source))
                     throw new Exception("Invalid URI");
-                StorageFile destinationFile;
-                destinationFile = await folder.CreateFileAsync(name, CreationCollisionOption.GenerateUniqueName);
+                var destinationFile = await folder.CreateFileAsync(name, CreationCollisionOption.GenerateUniqueName);
                 var download = new BackgroundDownloader().CreateDownload(source, destinationFile);
                 download.Priority = BackgroundTransferPriority.High;
                 await download.StartAsync().AsTask(token);
@@ -47,8 +43,8 @@ namespace PocketX.Handlers
 
         internal static System.Collections.Generic.List<string> GetAllFonts()
         {
-            string[] fonts = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies();
-            System.Collections.Generic.List<string> fontList = new System.Collections.Generic.List<string>(fonts);
+            var fonts = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies();
+            var fontList = new System.Collections.Generic.List<string>(fonts);
             fontList.Insert(0, "Segoe UI");
             fontList.Insert(0, "Times New Roman");
             fontList.Insert(0, "Arial");
@@ -61,11 +57,6 @@ namespace PocketX.Handlers
             var pkg = new Windows.ApplicationModel.DataTransfer.DataPackage();
             pkg.SetText(text);
             Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(pkg);
-        }
-
-        internal static void AppCenterLog(string q)
-        {
-            if (Keys.AppCenter != null) Analytics.TrackEvent(q);
         }
 
         internal static void ToastIt(string str1, string str2)
@@ -84,7 +75,7 @@ namespace PocketX.Handlers
 
         internal static async Task<string> TextFromAssets(string path)
         {
-            StorageFile sFile = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync(path);
+            var sFile = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync(path);
             return FileIO.ReadTextAsync(sFile).AsTask().ConfigureAwait(false).GetAwaiter().GetResult();
         }
     }

@@ -10,9 +10,9 @@ namespace PocketX.Views.Dialog
 {
     public sealed partial class SettingsDialog : ContentDialog
     {
-        private Settings settings = SettingsHandler.Settings;
-        private PocketHandler pocketHandler = new PocketHandler();
-        private string versionString = $"Version {Package.Current.Id.Version.Major}.{Package.Current.Id.Version.Minor}.{Package.Current.Id.Version.Build}";
+        private Settings _settings = SettingsHandler.Settings;
+        private PocketHandler _pocketHandler = new PocketHandler();
+        private readonly string _versionString = $"Version {Package.Current.Id.Version.Major}.{Package.Current.Id.Version.Minor}.{Package.Current.Id.Version.Build}";
 
         public SettingsDialog()
         {
@@ -29,11 +29,11 @@ namespace PocketX.Views.Dialog
 
         private void Close_Click(object sender, RoutedEventArgs e)
         {
-            settings.reader_theme = tg_reader.IsOn ? ElementTheme.Dark : ElementTheme.Light;
-            settings.reader_bg = colorPicker.Color.ToString();
-            settings.reader_font_size = System.Int32.Parse(comboBox.SelectedValue?.ToString());
-            settings.app_theme = RequestedTheme = tg_app.IsOn ? ElementTheme.Light : ElementTheme.Dark;
-            settings.listview_scrollbar = tg_scrollbar.IsOn ? ScrollBarVisibility.Auto : ScrollBarVisibility.Hidden;
+            _settings.reader_theme = tg_reader.IsOn ? ElementTheme.Dark : ElementTheme.Light;
+            _settings.reader_bg = colorPicker.Color.ToString();
+            _settings.reader_font_size = int.Parse(comboBox.SelectedValue?.ToString());
+            _settings.app_theme = RequestedTheme = tg_app.IsOn ? ElementTheme.Light : ElementTheme.Dark;
+            _settings.listview_scrollbar = tg_scrollbar.IsOn ? ScrollBarVisibility.Auto : ScrollBarVisibility.Hidden;
             Hide();
         }
 
@@ -51,10 +51,10 @@ namespace PocketX.Views.Dialog
 
         private async void ContentDialog_Loaded(object sender, RoutedEventArgs e)
         {
-            tg_app.IsOn = settings.app_theme == ElementTheme.Light;
-            tg_reader.IsOn = settings.reader_theme != ElementTheme.Light;
-            tg_scrollbar.IsOn = settings.listview_scrollbar == ScrollBarVisibility.Auto;
-            MarkdownText.Text = (await Utils.TextFromAssets(@"Assets\Icons\ChangeLog.md")).Replace("[VERSION]", versionString);
+            tg_app.IsOn = _settings.app_theme == ElementTheme.Light;
+            tg_reader.IsOn = _settings.reader_theme != ElementTheme.Light;
+            tg_scrollbar.IsOn = _settings.listview_scrollbar == ScrollBarVisibility.Auto;
+            MarkdownText.Text = (await Utils.TextFromAssets(@"Assets\Icons\ChangeLog.md")).Replace("[VERSION]", _versionString);
         }
 
         private void ClearCache_Click(object sender, RoutedEventArgs e)

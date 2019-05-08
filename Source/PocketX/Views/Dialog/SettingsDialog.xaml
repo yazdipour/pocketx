@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    mc:Ignorable="d" Loaded="ContentDialog_Loaded" RequestedTheme="{x:Bind settings.app_theme}"
+    mc:Ignorable="d" Loaded="ContentDialog_Loaded" RequestedTheme="{x:Bind _settings.app_theme}"
     Title="SETTINGS">
     <ContentDialog.Resources>
         <Style TargetType="StackPanel">
@@ -58,8 +58,8 @@
                         </StackPanel>
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="Text Style" />
-                            <ComboBox x:Name="comboBox2" SelectedValue="{x:Bind settings.reader_font_family,Mode=TwoWay}"/>
-                            <ComboBox x:Name="comboBox" SelectedValue="{x:Bind settings.reader_font_size.ToString()}">
+                            <ComboBox x:Name="comboBox2" SelectedValue="{x:Bind _settings.reader_font_family,Mode=TwoWay}"/>
+                            <ComboBox x:Name="comboBox" SelectedValue="{x:Bind _settings.reader_font_size.ToString()}">
                                 <x:String>12</x:String>
                                 <x:String>14</x:String>
                                 <x:String>16</x:String>
@@ -77,7 +77,7 @@
                                      IsColorPreviewVisible="True"
                                      IsHexInputVisible="False"
                                      IsAlphaEnabled="False"  x:Name="colorPicker"
-                                     Color="{x:Bind settings.reader_bg}"/>
+                                     Color="{x:Bind _settings.reader_bg}"/>
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
@@ -112,7 +112,7 @@
                                 </Hyperlink>
                                 <LineBreak/>
                                 <LineBreak/>
-                                <Run Text="{x:Bind versionString}"/>
+                                <Run Text="{x:Bind _versionString}"/>
                                 <LineBreak/>
                             </Paragraph>
                         </RichTextBlock>

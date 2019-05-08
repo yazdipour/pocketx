@@ -10,10 +10,10 @@ namespace PocketX.Views
 {
 	public sealed partial class MainPage : Page
 	{
-		private string[] _tags = new[] { "MyList", "Favorites", "Archives" };
-		private string[] _tags2 = new[] { "Settings", "Reading", "Tags", "Refresh" };
+		private readonly string[] _tags = { "MyList", "Favorites", "Archives" };
+		private readonly string[] _tags2 = { "Settings", "Reading", "Tags", "Refresh" };
 		public static Microsoft.Toolkit.Uwp.UI.Controls.InAppNotification Notifier { get; set; }
-		private Settings settings = SettingsHandler.Settings;
+		private readonly Settings _settings = SettingsHandler.Settings;
 
         public MainPage()
 		{
@@ -22,9 +22,9 @@ namespace PocketX.Views
 			{
                 Logger.Logger.InitOnlineLogger(Keys.AppCenter);
                 Logger.Logger.SetDebugMode(App.DEBUGMODE);
-				var uIHandler = new UIHandler();
-				//uIHandler.TitleBarVisiblity(false, navView);
-				uIHandler.TitleBarButton_TranparentBackground(settings.app_theme == Windows.UI.Xaml.ElementTheme.Dark);
+				var uIHandler = new UiUtils();
+                uIHandler.TitleBarVisibility(false, WindowBorder);
+                uIHandler.TitleBarButtonTransparentBackground(_settings.app_theme == Windows.UI.Xaml.ElementTheme.Dark);
 				insideFrame.Navigate(typeof(MainContent));
 			};
 			Notifier = _notifer;
@@ -32,27 +32,27 @@ namespace PocketX.Views
 
 		private async void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
 		{
-			string tag = (args.SelectedItem as NavigationViewItem)?.Tag?.ToString();
+			var tag = (args.SelectedItem as NavigationViewItem)?.Tag?.ToString();
 			if (tag == null) return;
-			var mainContent = (insideFrame.Content as MainContent);
-			if (mainContent != null) await mainContent.ParentCommandAsync(tag);
+			if (insideFrame.Content is MainContent mainContent) await mainContent.ParentCommandAsync(tag);
 		}
 
 		private async void PaneFooter_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
 		{
-			var tag = (sender as NavigationViewItem).Tag?.ToString();
+			var tag = ((NavigationViewItem) sender).Tag?.ToString();
 			var index = Array.IndexOf(_tags2, tag);
-			if (index < 0) return;
-			if (tag.Equals(_tags2[2]))
+            var m = (MainContent) insideFrame.Content;
+            if (index < 0) return;
+			if (_tags2[2].Equals(tag))
 			{
 				var dialog = new TagsDialog();
 				await dialog.ShowAsync();
-				navView.SelectedItem = -1;
+				NavView.SelectedItem = -1;
 				//NavigationViewExtensions.SetSelectedIndex(navView, -1);
-				if (dialog.Tag != null) await (insideFrame.Content as MainContent).ParentCommandAsync(dialog.Tag.ToString());
+				if (dialog.Tag != null) await m.ParentCommandAsync(dialog.Tag.ToString());
 			}
-			else if (tag.Equals(_tags2[3]))
-				await (insideFrame.Content as MainContent).ParentCommandAsync((navView.SelectedItem as Control)?.Tag.ToString(), 0);
+			else if (_tags2[3].Equals(tag))
+				await m.ParentCommandAsync((NavView.SelectedItem as Control)?.Tag.ToString(), 0);
 			else
 			{
 				var dialog = new SettingsDialog(index);
@@ -62,17 +62,10 @@ namespace PocketX.Views
 					new PocketHandler().Logout(Frame);
 					return;
 				}
-				(insideFrame.Content as MainContent).BindingsUpdate();
+				m?.BindingsUpdate();
 				Bindings.Update();
 				SettingsHandler.Save();
 			}
-		}
-
-		private async void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
-		{
-			var tag = args?.QueryText;
-			//NavigationViewExtensions.SetSelectedIndex(navView, -1);
-			await (insideFrame.Content as MainContent).ParentCommandAsync(tag);
 		}
 
 		private async void Pin_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
@@ -83,7 +76,7 @@ namespace PocketX.Views
 			{
 				if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.Default)
 				{
-					ViewModePreferences compactOptions = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
+					var compactOptions = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
 					compactOptions.CustomSize = new Windows.Foundation.Size(520, 400);
 					await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, compactOptions);
 				}

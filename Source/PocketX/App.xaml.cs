@@ -6,6 +6,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Windows.ApplicationModel.DataTransfer;
+using PocketX.Handlers;
 
 namespace PocketX
 {
@@ -19,7 +20,7 @@ namespace PocketX
 			InitializeComponent();
 			Suspending += OnSuspending;
 			Akavache.BlobCache.ApplicationName = typeof(App).Namespace;
-			Models.SettingsHandler.Load();
+			SettingsHandler.Load();
 		}
 
 		protected override void OnLaunched(LaunchActivatedEventArgs e)

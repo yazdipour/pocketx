@@ -1,26 +1,25 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace PocketX.Handlers
 {
-    class AudioHandler
+    internal class AudioHandler
     {
-        private static MediaElement media;
+        private static MediaElement _media;
         public MediaElement Media
         {
-            get { return media; }
-            set { if (media == null) media = value; }
+            get => _media;
+            set { if (_media == null) _media = value; }
         }
 
         public async Task Start(string text)
         {
             // The object for controlling the speech synthesis engine (voice).
-            using (var synth = new Windows.Media.SpeechSynthesis.SpeechSynthesizer())
+            using (var synthesis = new Windows.Media.SpeechSynthesis.SpeechSynthesizer())
             {
                 // Generate the audio stream from plain text.
-                Windows.Media.SpeechSynthesis.SpeechSynthesisStream stream = await synth.SynthesizeTextToStreamAsync(text);
+                var stream = await synthesis.SynthesizeTextToStreamAsync(text);
                 // Send the stream to the media object.
                 Media.SetSource(stream, stream.ContentType);
                 Media.Play();
