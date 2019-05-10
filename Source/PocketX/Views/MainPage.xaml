@@ -9,7 +9,7 @@
     mc:Ignorable="d" RequestedTheme="{x:Bind _settings.app_theme,Mode=OneWay}"
     Background="{ThemeResource SystemControlAcrylicWindowBrush}">
     <Grid>
-        <Rectangle Height="32" x:Name="WindowBorder" VerticalAlignment="Top"/>
+        <Rectangle Height="12" x:Name="WindowBorder" VerticalAlignment="Top" Fill="{ThemeResource SystemControlChromeLowAcrylicElementBrush}"/>
         <NavigationView x:Name="NavView"
 						IsPaneOpen="False"
                         Margin="0 12 0 0"
@@ -51,7 +51,7 @@
         </NavigationView>
         <Button HorizontalAlignment="Left" Height="24" Width="40" VerticalAlignment="Top"
                 Content="&#xE141;" FontFamily="Segoe MDL2 Assets" CornerRadius="0 0 0 20"
-                Click="Pin_Click" RenderTransformOrigin="0.5,0.5" Margin="-12,8,0,0">
+                Click="Pin_Click" RenderTransformOrigin="0.5,0.5" Margin="-8,8,0,0">
             <Button.RenderTransform>
                 <CompositeTransform Rotation="-90" />
             </Button.RenderTransform>

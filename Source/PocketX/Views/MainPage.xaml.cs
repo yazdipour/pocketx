@@ -16,8 +16,8 @@ namespace PocketX.Views
 		private readonly Settings _settings = SettingsHandler.Settings;
 
         public MainPage()
-		{
-			InitializeComponent();
+        {
+            InitializeComponent();
 			Loaded += (s, e) =>
 			{
                 Logger.Logger.InitOnlineLogger(Keys.AppCenter);

@@ -29,7 +29,7 @@ namespace PocketX.Views
         private readonly IncrementalLoadingCollection<PocketHandler, PocketItem> _myList = new IncrementalLoadingCollection<PocketHandler, PocketItem>();
         private readonly Settings _settings = SettingsHandler.Settings;
 
-        private bool IsSmallWidth(double width) => width < 720;
+        private static bool IsSmallWidth(double width) => width < 720;
 
         #region On PageInit
 
@@ -37,6 +37,7 @@ namespace PocketX.Views
         {
             InitializeComponent();
             //pocketHandler.Client = pocketHandler.LoadCacheClient();
+            header_title.Text = "PocketX Tips";
             DataTransferManager.GetForCurrentView().DataRequested += (sender, args) =>
             {
                 var request = args.Request;
@@ -46,18 +47,9 @@ namespace PocketX.Views
             SizeChanged += (s, e) =>
             {
                 if (!splitView.IsPaneOpen && !IsSmallWidth(e.NewSize.Width))
-                {
-                    MainGrid.Margin = new Thickness(0, 52, 0, 0);
                     splitView.IsPaneOpen = true;
-                }
-                else if (splitView.IsPaneOpen && IsSmallWidth(e.NewSize.Width))
-                {
-                    if (ActualWidth < 620)
-                        MainGrid.Margin = new Thickness(0, 0, 0, 0);
-                    splitView.IsPaneOpen = false;
-                }
+                else if (splitView.IsPaneOpen && IsSmallWidth(e.NewSize.Width)) splitView.IsPaneOpen = false;
             };
-            header_title.Text = "PocketX Tips";
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -209,7 +201,7 @@ namespace PocketX.Views
             el = new MenuFlyoutItem { Text = "Delete", Icon = new SymbolIcon(Symbol.Delete) };
             el.Click += async (sen, ee) => await DeleteArticleAsync(item);
             flyout.Items.Add(el);
-            if (!splitView.Tag.ToString().Contains("Fav"))
+            if (!(splitView.Tag ?? "").ToString().Contains("Fav"))
             {
                 el = new MenuFlyoutItem
                 {

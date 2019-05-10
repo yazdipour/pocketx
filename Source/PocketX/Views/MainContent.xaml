@@ -57,15 +57,14 @@
                             <SwipeControl LeftItems="{StaticResource left}"
                                           RightItems="{StaticResource right}">
                                 <StackPanel Orientation="Horizontal"
-                                            Height="80"
-                                          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                          Margin="0 4"
-                                          CornerRadius="4"
-                                          Padding="4 2"
+                                            Height="64"
+                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                            Margin="0 2"
+                                            CornerRadius="12"
                                             HorizontalAlignment="Stretch"
                                       RightTapped="gridView_RightTapped">
-                                    <controls:ImageEx Margin="0 4 8 4" Grid.Column="0" Grid.RowSpan="2" BorderBrush="#eee" BorderThickness="1"
-                                                  Source="{x:Bind LeadImage.Uri}" Width="80" CornerRadius="4"
+                                    <controls:ImageEx Margin="0 0 8 0" BorderBrush="#eee" BorderThickness="1"
+                                                  Source="{x:Bind LeadImage.Uri}" Width="100" CornerRadius="4 0 0 4"
                                                   PlaceholderSource="ms-appx:///Assets/Square44x44Logo.png"
                                                   Stretch="UniformToFill" Background="White" x:Phase="10" />
                                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
@@ -113,14 +112,18 @@
             </Grid>
         </SplitView.Pane>
         <!--Main Body-->
-        <Grid x:Name="MainGrid" RequestedTheme="{x:Bind _settings.reader_theme,Mode=OneWay}">
+        <Grid x:Name="MainGrid" CornerRadius="12 0 0 0"
+              RequestedTheme="{x:Bind _settings.reader_theme,Mode=OneWay}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <!--MainContent-->
-            <controls:DropShadowPanel OffsetX="-4" ShadowOpacity="0.5" Grid.Row="1"
-                                      BlurRadius="16" HorizontalContentAlignment="Stretch">
+            <controls:DropShadowPanel OffsetX="-4" 
+                                      ShadowOpacity="0.5" 
+                                      Grid.Row="1"
+                                      BlurRadius="16" 
+                                      HorizontalContentAlignment="Stretch">
                 <Grid Background="{x:Bind _settings.reader_bg,Mode=OneWay}">
                     <!--markdownScrollViewer-->
                     <ScrollViewer x:Name="markdownGrid"
@@ -177,13 +180,17 @@
                         </StackPanel>
                     </StackPanel>
                     <!--Audio Player-->
-                    <MediaElement x:Name="media" Grid.RowSpan="2" Height="48" VerticalAlignment="Bottom"
-                                      RequestedTheme="Dark" AutoPlay="True" Stretch="None"
-                                      AreTransportControlsEnabled="False"
-                                      AudioCategory="Speech"
-                                      MediaOpened="Media_MediaOpened"
-                                      MediaEnded="Media_MediaEnded"
-                                      MediaFailed="Media_MediaFailed">
+                    <MediaElement x:Name="media" 
+                                  Grid.RowSpan="2" 
+                                  Height="40"
+                                  VerticalAlignment="Bottom"
+                                  AutoPlay="True" 
+                                  Stretch="None"
+                                  AreTransportControlsEnabled="False"
+                                  AudioCategory="Speech"
+                                  MediaOpened="Media_MediaOpened"
+                                  MediaEnded="Media_MediaEnded"
+                                  MediaFailed="Media_MediaFailed">
                         <MediaElement.TransportControls>
                             <MediaTransportControls
                                 IsFullWindowButtonVisible="False"
@@ -191,16 +198,20 @@
                                 IsSkipBackwardEnabled="True"
                                 IsSkipBackwardButtonVisible="True"
                                 IsSkipForwardEnabled="True"
-                                IsZoomButtonVisible="False" />
+                                IsZoomButtonVisible="False"
+                                IsCompact="True"/>
                         </MediaElement.TransportControls>
                     </MediaElement>
                 </Grid>
             </controls:DropShadowPanel>
 
             <!--AppBar-->
-            <CommandBar x:Name="TopBar" Grid.Row="1" VerticalAlignment="Bottom"
+            <CommandBar x:Name="TopBar" 
+                        Grid.Row="1" 
+                        VerticalAlignment="Bottom"
                         RequestedTheme="{x:Bind _settings.app_theme,Mode=OneWay}"
-                        DefaultLabelPosition="Right" HorizontalAlignment="Right">
+                        DefaultLabelPosition="Right"
+                        HorizontalAlignment="Right">
                 <AppBarButton Icon="Accept" x:Name="ArchiveBtn" Tag="Archive"
                         Click="Appbar_Click" Label="Archive" />
                 <AppBarButton Tag="Share" Icon="ReShare" Label="Share" Click="Appbar_Click" />
@@ -208,19 +219,24 @@
                 <AppBarButton Icon="Volume"
                               Label="Read Aloud"
                               x:Name="Text2SpeechButton"
-                        Click="Text2Speech_Click" />
+                              Click="Text2Speech_Click" />
                 <CommandBar.SecondaryCommands>
                     <AppBarButton x:Name="FavBtn" Tag="Favorite" Click="Appbar_Click"
-                                            Label="Favorite" Icon="Favorite" />
-                    <AppBarButton Tag="Copy" Click="Appbar_Click" Label="Copy Link" Icon="Paste" />
+                                  Label="Favorite" Icon="Favorite" />
+                    <AppBarButton Tag="Copy" Click="Appbar_Click" 
+                                  Label="Copy Link" Icon="Paste" />
                     <AppBarButton x:Name="WebViewBtn" Tag="webView" Click="Appbar_Click" Label="Open in WebView" Icon="View" />
                     <AppBarButton Tag="Delete" Click="Appbar_Click" Label="Delete Article" Icon="Delete" />
                 </CommandBar.SecondaryCommands>
             </CommandBar>
             <!--BackButton-->
-            <Button Height="66" Width="48" Margin="0 0 0 0"
-                    Grid.RowSpan="2" Click="Appbar_Click" Tag="Back" x:Name="BackBtn"
-                    VerticalAlignment="Top" Background="Transparent">
+            <Button Height="66" Width="48" 
+                    CornerRadius="{x:Bind MainGrid.CornerRadius}"
+                    Grid.Row="0" Grid.RowSpan="2"
+                    Click="Appbar_Click" Tag="Back"
+                    x:Name="BackBtn"
+                    VerticalAlignment="Top" 
+                    Background="Transparent">
                 <SymbolIcon Symbol="Back" />
             </Button>
         </Grid>
