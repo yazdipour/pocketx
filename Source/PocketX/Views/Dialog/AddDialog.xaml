@@ -6,7 +6,11 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:chipsControl="using:UWPChipsX"
-    mc:Ignorable="d" Loaded="ContentDialog_Loaded" Title="ADD">
+    CornerRadius="8"
+    mc:Ignorable="d" 
+    RequestedTheme="Default"
+    Loaded="ContentDialog_Loaded" 
+    Title="Add Link">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -24,13 +28,25 @@
 
         <TextBlock Text="Tags:" Grid.Column="0" Grid.Row="1"
                    VerticalAlignment="Center" Margin="0 0 8 0" />
+
         <chipsControl:Chips x:Name="chipsList" Grid.Row="1"  Grid.Column="1"
                             SelectedChips="{x:Bind _selectedOptions, Mode=TwoWay}"
                             Margin="0 20" />
 
-        <Button Content="Add" Background="#ED243B" Click="Add_Click"
-                Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" HorizontalAlignment="Stretch" />
-        <Button Content="Cancel" Margin="8,0,0,0" Grid.Column="2" Grid.Row="2"
-                HorizontalAlignment="Stretch" Click="Close_Click" />
+        <Button Content="Add" 
+                CornerRadius="4 0 0 4"
+                Background="{ThemeResource AccentColor}"
+                RequestedTheme="Dark"
+                Click="Add_Click"
+                Grid.Column="0" 
+                Grid.ColumnSpan="2" 
+                Grid.Row="2" 
+                HorizontalAlignment="Stretch" />
+        <Button Content="Cancel" 
+                CornerRadius="0 4 4 0"
+                Grid.Column="2" 
+                Grid.Row="2"
+                HorizontalAlignment="Stretch" 
+                Click="Close_Click" />
     </Grid>
 </ContentDialog>

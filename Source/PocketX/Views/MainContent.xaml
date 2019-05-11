@@ -19,7 +19,6 @@
                 <ListView x:Name="ListViewInSplitView"
                           SelectionMode="Single" IsItemClickEnabled="True"
                           ItemClick="listViewInSplitView_ItemClick"
-                          ScrollViewer.VerticalScrollBarVisibility="{x:Bind _settings.listview_scrollbar,Mode=OneWay}"
                           VerticalAlignment="Stretch">
                     <ListView.Header>
                         <AutoSuggestBox Margin="12 4"
@@ -40,8 +39,7 @@
                         <FontIconSource x:Key="Archive" Glyph="&#xE15D;" />
 
                         <SwipeItems x:Key="right" Mode="Execute" />
-                        <!--Text="Delete"
-                                    IconSource="{StaticResource Add}"
+                        <!--Text="Delete" IconSource="{StaticResource Add}"
                                     BehaviorOnInvoked="Close"
                                     Invoked="SwipeItem_Invoked"
                                     Background="#e74c3c"
@@ -60,13 +58,13 @@
                                             Height="64"
                                             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                             Margin="0 2"
-                                            CornerRadius="12"
+                                            CornerRadius="8"
                                             HorizontalAlignment="Stretch"
                                       RightTapped="gridView_RightTapped">
-                                    <controls:ImageEx Margin="0 0 8 0" BorderBrush="#eee" BorderThickness="1"
+                                    <controls:ImageEx Margin="0 0 8 0" BorderBrush="#eee"
                                                   Source="{x:Bind LeadImage.Uri}" Width="100" CornerRadius="4 0 0 4"
                                                   PlaceholderSource="ms-appx:///Assets/Square44x44Logo.png"
-                                                  Stretch="UniformToFill" Background="White" x:Phase="10" />
+                                                  Stretch="UniformToFill" x:Phase="10" BorderThickness="0 0 .5 0"/>
                                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                                         <TextBlock Text="{x:Bind Title}"
                                                    FontFamily="Calibri"
@@ -83,19 +81,20 @@
                     </ListView.ItemTemplate>
                 </ListView>
                 <!--AddLink Button-->
-                <controls:DropShadowPanel Margin="4" BlurRadius="35"
-                                          Color="#000000"
+                <controls:DropShadowPanel Margin="4" 
+                                          BlurRadius="35"
                                           HorizontalAlignment="Center"
                                           VerticalAlignment="Bottom">
                     <Button  CornerRadius="16"
                              Content="ADD LINK"
                              Foreground="White"
-                             Height="48"
+                             Height="42"
+                             Width="142"
                              Click="Add_Click"
                              FontFamily="Calibri"
                              FontWeight="Bold"
                              FontSize="18"
-                             Background="{StaticResource AccentColor}" />
+                             Background="{ThemeResource AccentColor}" />
                 </controls:DropShadowPanel>
                 <!--LoadingControl-->
                 <controls:Loading x:Name="LoadingControl" IsLoading="True"
@@ -112,24 +111,14 @@
             </Grid>
         </SplitView.Pane>
         <!--Main Body-->
-        <Grid x:Name="MainGrid" CornerRadius="12 0 0 0"
-              RequestedTheme="{x:Bind _settings.reader_theme,Mode=OneWay}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <!--MainContent-->
-            <controls:DropShadowPanel OffsetX="-4" 
-                                      ShadowOpacity="0.5" 
-                                      Grid.Row="1"
-                                      BlurRadius="16" 
-                                      HorizontalContentAlignment="Stretch">
-                <Grid Background="{x:Bind _settings.reader_bg,Mode=OneWay}">
+        <Grid x:Name="MainGrid" CornerRadius="12 0 0 0" Margin="0 2 0 0"
+              Background="{x:Bind _settings.ReaderBg,Mode=OneWay}"
+              RequestedTheme="{x:Bind _settings.ReaderTheme,Mode=OneWay}">
                     <!--markdownScrollViewer-->
                     <ScrollViewer x:Name="markdownGrid"
                                       HorizontalScrollBarVisibility="Disabled"
                                       VerticalScrollBarVisibility="Visible">
-                        <Grid Background="{x:Bind _settings.reader_bg,Mode=OneWay}">
+                        <Grid Background="{x:Bind _settings.ReaderBg,Mode=OneWay}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto" />
                                 <RowDefinition />
@@ -155,8 +144,8 @@
                                                         ImageClicked="MarkdownText_ImageClicked"
                                                         LinkClicked="MarkdownText_LinkClicked"
                                                         UseSyntaxHighlighting="True"
-                                                        FontSize="{x:Bind _settings.reader_font_size,Mode=OneWay}"
-                                                        FontFamily="{x:Bind _settings.reader_font_family,Mode=OneWay}" />
+                                                        FontSize="{x:Bind _settings.ReaderFontSize,Mode=OneWay}"
+                                                        FontFamily="{x:Bind _settings.ReaderFontFamily,Mode=OneWay}" />
                         </Grid>
                     </ScrollViewer>
                     <!--LoadingControl-->
@@ -167,7 +156,10 @@
                     <!--webView-->
                     <WebView ScrollViewer.HorizontalScrollMode="Disabled" x:Name="webView" x:Load="False" />
                     <!--errorView-->
-                    <StackPanel x:Name="errorView" x:Load="False" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <StackPanel x:Name="errorView" 
+                                x:Load="False"
+                                HorizontalAlignment="Center" 
+                                VerticalAlignment="Center">
                         <controls:HeaderedTextBlock FontFamily="Segoe UI Symbol"
                                 Header=" Could not get the article" Text="Try again or Open it in webview"
                                 HorizontalAlignment="Center" VerticalAlignment="Center" />
@@ -202,22 +194,27 @@
                                 IsCompact="True"/>
                         </MediaElement.TransportControls>
                     </MediaElement>
-                </Grid>
-            </controls:DropShadowPanel>
-
             <!--AppBar-->
-            <CommandBar x:Name="TopBar" 
-                        Grid.Row="1" 
+            <CommandBar x:Name="TopBar"
                         VerticalAlignment="Bottom"
-                        RequestedTheme="{x:Bind _settings.app_theme,Mode=OneWay}"
+                        RequestedTheme="{x:Bind _settings.AppTheme,Mode=OneWay}"
                         DefaultLabelPosition="Right"
                         HorizontalAlignment="Right">
-                <AppBarButton Icon="Accept" x:Name="ArchiveBtn" Tag="Archive"
-                        Click="Appbar_Click" Label="Archive" />
-                <AppBarButton Tag="Share" Icon="ReShare" Label="Share" Click="Appbar_Click" />
-                <AppBarButton Tag="Share" Icon="Font" Label="Font/Size" Click="Appbar_Click" />
+                <AppBarButton Icon="Accept" 
+                              x:Name="ArchiveBtn" 
+                              Tag="Archive"
+                              Click="Appbar_Click"
+                              Label="Archive" />
+                <AppBarButton Tag="Share" 
+                              Icon="Share" 
+                              Label="Share" 
+                              Click="Appbar_Click" />
+                <AppBarButton Tag="Settings" 
+                              Icon="Font" 
+                              Label="Theme" 
+                              Click="Appbar_Click" />
                 <AppBarButton Icon="Volume"
-                              Label="Read Aloud"
+                              Label="Read"
                               x:Name="Text2SpeechButton"
                               Click="Text2Speech_Click" />
                 <CommandBar.SecondaryCommands>
@@ -232,7 +229,6 @@
             <!--BackButton-->
             <Button Height="66" Width="48" 
                     CornerRadius="{x:Bind MainGrid.CornerRadius}"
-                    Grid.Row="0" Grid.RowSpan="2"
                     Click="Appbar_Click" Tag="Back"
                     x:Name="BackBtn"
                     VerticalAlignment="Top" 

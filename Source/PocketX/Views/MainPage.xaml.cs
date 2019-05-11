@@ -5,29 +5,32 @@ using PocketX.Views.Dialog;
 
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
+using PocketX.ViewModels;
 
 namespace PocketX.Views
 {
 	public sealed partial class MainPage : Page
 	{
-		private readonly string[] _tags = { "MyList", "Favorites", "Archives" };
-		private readonly string[] _tags2 = { "Settings", "Reading", "Tags", "Refresh" };
 		public static Microsoft.Toolkit.Uwp.UI.Controls.InAppNotification Notifier { get; set; }
-		private readonly Settings _settings = SettingsHandler.Settings;
+        private readonly MainPageViewModel _vm = new MainPageViewModel();
 
+        internal readonly string[] _tags = { "MyList", "Favorites", "Archives" };
+        internal readonly string[] _tags2 = { "Settings", "Reading", "Tags", "Refresh" };
+        internal readonly Settings _settings = SettingsHandler.Settings;
         public MainPage()
         {
             InitializeComponent();
+            //DataContext = _vm;
+			Notifier = _notifer;
 			Loaded += (s, e) =>
 			{
                 Logger.Logger.InitOnlineLogger(Keys.AppCenter);
                 Logger.Logger.SetDebugMode(App.DEBUGMODE);
 				var uIHandler = new UiUtils();
                 uIHandler.TitleBarVisibility(false, WindowBorder);
-                uIHandler.TitleBarButtonTransparentBackground(_settings.app_theme == Windows.UI.Xaml.ElementTheme.Dark);
+                uIHandler.TitleBarButtonTransparentBackground(_settings.AppTheme == Windows.UI.Xaml.ElementTheme.Dark);
 				insideFrame.Navigate(typeof(MainContent));
 			};
-			Notifier = _notifer;
 		}
 
 		private async void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
@@ -52,7 +55,7 @@ namespace PocketX.Views
 				if (dialog.Tag != null) await m.ParentCommandAsync(dialog.Tag.ToString());
 			}
 			else if (_tags2[3].Equals(tag))
-				await m.ParentCommandAsync((NavView.SelectedItem as Control)?.Tag.ToString(), 0);
+				await m?.ParentCommandAsync((NavView.SelectedItem as Control)?.Tag?.ToString(), 0);
 			else
 			{
 				var dialog = new SettingsDialog(index);

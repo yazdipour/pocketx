@@ -1,17 +1,21 @@
 ﻿using Windows.UI.Xaml;
+using Newtonsoft.Json;
 
 namespace PocketX.Models
 {
-    class Settings
+    internal class Settings
     {
-        //APP
-        public ElementTheme app_theme = ElementTheme.Light;
-        public Windows.UI.Xaml.Controls.ScrollBarVisibility listview_scrollbar = Windows.UI.Xaml.Controls.ScrollBarVisibility.Hidden;
+        [JsonProperty("app_theme")]
+        public ElementTheme AppTheme = ElementTheme.Light;
 
         //READER
-        public string reader_bg = "#ffffff";
-        public ElementTheme reader_theme = ElementTheme.Light;
-        public int reader_font_size = 16;
-        public string reader_font_family = "Calibri";
+        [JsonProperty("reader_bg")]
+        public string ReaderBg = "#ffffff";
+        [JsonProperty("reader_theme")]
+        public ElementTheme ReaderTheme = ElementTheme.Light;
+        [JsonProperty("reader_font_size")]
+        public int ReaderFontSize = 16;
+        [JsonProperty("reader_font_family")]
+        public string ReaderFontFamily = "Calibri";
     }
 }

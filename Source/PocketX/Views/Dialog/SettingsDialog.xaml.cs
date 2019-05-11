@@ -29,11 +29,10 @@ namespace PocketX.Views.Dialog
 
         private void Close_Click(object sender, RoutedEventArgs e)
         {
-            _settings.reader_theme = tg_reader.IsOn ? ElementTheme.Dark : ElementTheme.Light;
-            _settings.reader_bg = colorPicker.Color.ToString();
-            _settings.reader_font_size = int.Parse(comboBox.SelectedValue?.ToString());
-            _settings.app_theme = RequestedTheme = tg_app.IsOn ? ElementTheme.Light : ElementTheme.Dark;
-            _settings.listview_scrollbar = tg_scrollbar.IsOn ? ScrollBarVisibility.Auto : ScrollBarVisibility.Hidden;
+            //_settings.ReaderTheme = tg_reader.IsOn ? ElementTheme.Dark : ElementTheme.Light;
+            //_settings.ReaderBg = colorPicker.Color.ToString();
+            _settings.ReaderFontSize = int.Parse(comboBox.SelectedValue?.ToString());
+            //_settings.AppTheme = RequestedTheme = tg_app.IsOn ? ElementTheme.Light : ElementTheme.Dark;
             Hide();
         }
 
@@ -49,12 +48,10 @@ namespace PocketX.Views.Dialog
             await dialog.ShowAsync();
         }
 
-        private async void ContentDialog_Loaded(object sender, RoutedEventArgs e)
+        private void ContentDialog_Loaded(object sender, RoutedEventArgs e)
         {
-            tg_app.IsOn = _settings.app_theme == ElementTheme.Light;
-            tg_reader.IsOn = _settings.reader_theme != ElementTheme.Light;
-            tg_scrollbar.IsOn = _settings.listview_scrollbar == ScrollBarVisibility.Auto;
-            MarkdownText.Text = (await Utils.TextFromAssets(@"Assets\Icons\ChangeLog.md")).Replace("[VERSION]", _versionString);
+            //tg_app.IsOn = _settings.AppTheme == ElementTheme.Light;
+            //tg_reader.IsOn = _settings.ReaderTheme != ElementTheme.Light;
         }
 
         private void ClearCache_Click(object sender, RoutedEventArgs e)

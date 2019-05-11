@@ -6,129 +6,108 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    mc:Ignorable="d" Loaded="ContentDialog_Loaded" RequestedTheme="{x:Bind _settings.app_theme}"
-    Title="SETTINGS">
-    <ContentDialog.Resources>
-        <Style TargetType="StackPanel">
-            <Setter Property="Orientation" Value="Horizontal"/>
-        </Style>
-        <Style TargetType="TextBlock">
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="0 8 8 8"/>
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="FontWeight" Value="Light"/>
-        </Style>
-    </ContentDialog.Resources>
+    mc:Ignorable="d" 
+    Loaded="ContentDialog_Loaded" 
+    CornerRadius="4">
     <Grid>
         <Pivot x:Name="pivot">
             <!--Pivot Header-->
             <Pivot.HeaderTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding}" FontWeight="SemiBold" FontSize="16"/>
+                    <TextBlock Text="{Binding}" FontWeight="Light" FontSize="16"/>
                 </DataTemplate>
             </Pivot.HeaderTemplate>
             <!--Settings-->
-            <PivotItem Header="Settings">
-                <StackPanel Orientation="Vertical">
-                    <StackPanel>
-                        <TextBlock Text="Application Theme"/>
-                        <ToggleSwitch x:Name="tg_app" OffContent="Dark" OnContent="Light"/>
-                    </StackPanel>
-                    <StackPanel>
-                        <TextBlock Text="Articles List Scrollbar"/>
-                        <ToggleSwitch x:Name="tg_scrollbar" OffContent="Hidden" OnContent="Visible"/>
-                    </StackPanel>
-                    <StackPanel>
-                        <TextBlock Text="Pocket Account"/>
-                        <Button Content="Log Out" Click="Logout_Click" Background="Red"/>
-                    </StackPanel>
-                    <StackPanel Margin="0 4">
-                        <TextBlock Text="Pocket Cache"/>
-                        <Button Content="Click to Clear Cache" Click="ClearCache_Click" Margin="0 4"/>
-                    </StackPanel>
-                </StackPanel>
+            <PivotItem Header="Account" RequestedTheme="Light">
+                <Grid>
+                    <controls:DropShadowPanel Margin="42" HorizontalAlignment="Center" VerticalAlignment="Center" ShadowOpacity=".2" OffsetY="3">
+                        <StackPanel Background="White" CornerRadius="8" Padding="16 8 6 8" Orientation="Horizontal"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <PersonPicture ProfilePicture="https://docs.microsoft.com/en-us/windows/uwp/contacts-and-calendar/images/shoulder-tap-static-payload.png" 
+                                           DisplayName="Jane Doe" Height="62"/>
+                            <controls:HeaderedContentControl Header="TextBlock content" Margin="12 0"
+                                                             VerticalAlignment="Center">
+                                <TextBlock FontSize="12" Text="Jane Doe"/>
+                            </controls:HeaderedContentControl>
+                            <AppBarButton Icon="ContactPresence"  Label="Log Out" Click="Logout_Click" 
+                                          Height="48" VerticalAlignment="Center"
+                                          Style="{ThemeResource AppBarButtonRevealStyle}"/>
+                        </StackPanel>
+                    </controls:DropShadowPanel>
+                    <Button HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                            Content="Click to Clear Cache" Click="ClearCache_Click" 
+                            Style="{ThemeResource TextBlockButtonStyle}"/>
+                </Grid>
             </PivotItem>
             <!--Reading Settings-->
-            <PivotItem Header="Reading Settings">
-                <ScrollViewer>
-                    <StackPanel Orientation="Vertical">
-                        <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="Text Color"/>
-                            <ToggleSwitch x:Name="tg_reader" OffContent="Dark" OnContent="Light" />
-                        </StackPanel>
-                        <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="Text Style" />
-                            <ComboBox x:Name="comboBox2" SelectedValue="{x:Bind _settings.reader_font_family,Mode=TwoWay}"/>
-                            <ComboBox x:Name="comboBox" SelectedValue="{x:Bind _settings.reader_font_size.ToString()}">
-                                <x:String>12</x:String>
-                                <x:String>14</x:String>
-                                <x:String>16</x:String>
-                                <x:String>18</x:String>
-                                <x:String>20</x:String>
-                                <x:String>22</x:String>
-                                <x:String>24</x:String>
-                                <x:String>30</x:String>
-                            </ComboBox>
-                        </StackPanel>
-                        <StackPanel Orientation="Vertical">
-                            <TextBlock Text="Reader Background" />
-                            <ColorPicker IsColorSliderVisible="True"
-                                     IsColorChannelTextInputVisible="False"
-                                     IsColorPreviewVisible="True"
-                                     IsHexInputVisible="False"
-                                     IsAlphaEnabled="False"  x:Name="colorPicker"
-                                     Color="{x:Bind _settings.reader_bg}"/>
-                        </StackPanel>
+            <PivotItem Header="Themes">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Theme"/>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <StackPanel.Resources>
+                            <Style TargetType="controls:ImageEx">
+                                <Setter Property="Height" Value="92"/>
+                                <Setter Property="BorderBrush" Value="{ThemeResource AccentColor}"/>
+                            </Style>
+                        </StackPanel.Resources>
+                        <controls:ImageEx CornerRadius="8" Source="/Assets/ReadTheme/theme1.png"/>
+                        <controls:ImageEx CornerRadius="8" Source="/Assets/ReadTheme/theme4.png" BorderThickness="5"/>
+                        <controls:ImageEx CornerRadius="8" Source="/Assets/ReadTheme/theme5.png"/>
                     </StackPanel>
-                </ScrollViewer>
+                    <!--<ToggleSwitch x:Name="tg_app" OffContent="Dark" OnContent="Light"/>-->
+                    <TextBlock Text="Text Font"/>
+                    <ComboBox x:Name="comboBox2" SelectedValue="{x:Bind _settings.ReaderFontFamily,Mode=TwoWay}"/>
+                    <TextBlock Text="Text Size"/>
+                    <ComboBox x:Name="comboBox" SelectedValue="{x:Bind _settings.ReaderFontSize.ToString()}">
+                        <x:String>12</x:String>
+                        <x:String>14</x:String>
+                        <x:String>16</x:String>
+                        <x:String>18</x:String>
+                        <x:String>20</x:String>
+                        <x:String>22</x:String>
+                        <x:String>24</x:String>
+                        <x:String>30</x:String>
+                    </ComboBox>
+                </StackPanel>
             </PivotItem>
             <!--About-->
             <PivotItem Header="About">
-                <ScrollViewer>
-                    <StackPanel Orientation="Vertical">
-                        <Image Source="ms-appx:///Assets/Icons/Logo.png" Height="84" Margin="0 24 0 0"/>
-                        <RichTextBlock Margin="16" IsTextSelectionEnabled="False" TextAlignment="Center">
-                            <Paragraph>
-                                <Run FontWeight="Bold" Text="Pocket✘"/>
-                                <LineBreak/>
-                                <Run Text="Unofficial Pocket Client"/>
-                                <LineBreak/>
-                                <Run Text="Developed with ❤ by "/>
-                                <Hyperlink Foreground="#7baaf7" NavigateUri="https://yazdipour.github.io/">Shahriar Yazdipour👦🏻</Hyperlink>
-                                <LineBreak/>
-                                <Hyperlink Foreground="#7baaf7" NavigateUri="https://yazdipour.github.io/apps">❄ Other Apps ❄</Hyperlink>
-                                <LineBreak/>
-                                <LineBreak/>
-                                <Hyperlink NavigateUri="ms-windows-store:REVIEW?PFN=3783mindprojects.PocketX_6c8ydbw054cyy"
-                                       Foreground="#7baaf7" FontFamily="Segoe UI Emoji">⭐⭐RATE⭐⭐</Hyperlink>
-                                <LineBreak/>
-                                <LineBreak/>
-                                <Hyperlink Foreground="#7baaf7" NavigateUri="mailto:shahriar.yazdipour@outlook.com?subject=PocketX_FeedBack">
-                                    📜 Send a Feedback (Mail)
-                                </Hyperlink>
-                                <LineBreak/>
-                                <Hyperlink Foreground="#7baaf7" NavigateUri="https://github.com/yazdipour/pocketx/issues">
-                                    🐞 Report Bugs (Github)
-                                </Hyperlink>
-                                <LineBreak/>
-                                <LineBreak/>
-                                <Run Text="{x:Bind _versionString}"/>
-                                <LineBreak/>
-                            </Paragraph>
-                        </RichTextBlock>
-                        <HyperlinkButton NavigateUri="https://www.payping.ir/yazdipour" HorizontalAlignment="Center">
-                            <Image Source="ms-appx:///Assets/Icons/d_iran.png" Stretch="None"/>
-                        </HyperlinkButton>
-                    </StackPanel>
-                </ScrollViewer>
-            </PivotItem>
-            <!--ChangeLog-->
-            <PivotItem Header="ChangeLog">
-                <controls:MarkdownTextBlock x:Name="MarkdownText" LinkForeground="DodgerBlue"/>
+                <StackPanel>
+                    <Image Source="ms-appx:///Assets/Icons/Logo.png" Height="84" Margin="0 24 0 0"/>
+                    <RichTextBlock Margin="16" IsTextSelectionEnabled="False" TextAlignment="Center">
+                        <Paragraph>
+                            <Run FontWeight="Bold" Text="Pocket✘"/>
+                            <LineBreak/>
+                            <Run Text="{x:Bind _versionString}" FontSize="12"/>
+                            <LineBreak/>
+                            <Run Text="Unofficial Pocket Client"/>
+                            <LineBreak/>
+                            <Run Text="Developed by "/>
+                            <Hyperlink Foreground="#7baaf7" NavigateUri="https://yazdipour.github.io/">Shahriar 👦🏻</Hyperlink>
+                            <LineBreak/>
+                            <LineBreak/>
+                            <Hyperlink NavigateUri="mailto:shahriar.yazdipour@outlook.com?subject=PocketX_FeedBack">
+                                📜 Send a Feedback (Email)
+                            </Hyperlink>
+                            <LineBreak/>
+                            <Hyperlink NavigateUri="https://github.com/yazdipour/pocketx/issues">
+                                🐞 Report Bugs
+                            </Hyperlink>
+                            <LineBreak/>
+                            <LineBreak/>
+                            <Hyperlink NavigateUri="ms-windows-store:REVIEW?PFN=3783mindprojects.PocketX_6c8ydbw054cyy"
+                                           FontFamily="Segoe UI Emoji">⭐⭐RATE⭐⭐</Hyperlink>
+                            <LineBreak/>
+                        </Paragraph>
+                    </RichTextBlock>
+                    <HyperlinkButton NavigateUri="https://buymeacoff.ee/XrTW5YQDy" HorizontalAlignment="Center">
+                        <Image Source="https://camo.githubusercontent.com/031fc5a134cdca5ae3460822aba371e63f794233/68747470733a2f2f7777772e6275796d6561636f666665652e636f6d2f6173736574732f696d672f637573746f6d5f696d616765732f6f72616e67655f696d672e706e67" Stretch="None"/>
+                    </HyperlinkButton>
+                </StackPanel>
             </PivotItem>
         </Pivot>
         <!--Close Windows Control-->
         <Button Content="Close" Click="Close_Click" HorizontalAlignment="Right"
-                Margin="0 -32 0 0" VerticalAlignment="Top"/>
+                Margin="0 12 0 0" VerticalAlignment="Top" Style="{ThemeResource CommandBarFlyoutEllipsisButtonStyle}"/>
     </Grid>
 </ContentDialog>

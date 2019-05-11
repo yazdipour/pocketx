@@ -6,13 +6,19 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    mc:Ignorable="d" RequestedTheme="{x:Bind _settings.app_theme,Mode=OneWay}"
+    mc:Ignorable="d"
+    RequestedTheme="{x:Bind _settings.AppTheme,Mode=OneWay}"
     Background="{ThemeResource SystemControlAcrylicWindowBrush}">
     <Grid>
-        <Rectangle Height="12" x:Name="WindowBorder" VerticalAlignment="Top" Fill="{ThemeResource SystemControlChromeLowAcrylicElementBrush}"/>
+        <StackPanel Height="28" 
+                    x:Name="WindowBorder" 
+                   VerticalAlignment="Top"
+                   Background="{ThemeResource SystemControlAcrylicElementMediumHighBrush}">
+            <TextBlock Text="Pocket✘" HorizontalAlignment="Center" Margin="4"/>
+        </StackPanel>
         <NavigationView x:Name="NavView"
 						IsPaneOpen="False"
-                        Margin="0 12 0 0"
+                        Margin="0 24 0 0"
                         CompactModeThresholdWidth="620"
 						ExpandedModeThresholdWidth="2000"
 						OpenPaneLength="220"
@@ -32,31 +38,28 @@
             </NavigationView.MenuItems>
             <NavigationView.PaneCustomContent>
                 <StackPanel Orientation="Horizontal">
-                    <!--<NavigationViewItem Icon="Refresh" Content="Reload"
-                                        Tag="{x:Bind _tags2[3]}"
-                                        Tapped="PaneFooter_Tapped" />-->
                     <NavigationViewItem Icon="Tag"
-                                        Content="Tags"
+                                        Content="Tags&#x1CBB;&#x1CBB;"
                                         Tag="{x:Bind _tags2[2]}"
                                         Tapped="PaneFooter_Tapped" />
-                    <!--<NavigationViewItem Tapped="PaneFooter_Tapped" Icon="Font"
-                                        ToolTipService.ToolTip="Reading Settings" Tag="{x:Bind _tags2[1]}" />-->
                     <NavigationViewItem Tapped="PaneFooter_Tapped"
                                         Icon="Setting"
-                                        Content="Setting"
+                                        Content="Settings&#x1CBB;&#x1CBB;"
                                         Tag="{x:Bind _tags2[0]}" />
                 </StackPanel>
             </NavigationView.PaneCustomContent>
             <Frame x:Name="insideFrame" />
         </NavigationView>
-        <Button HorizontalAlignment="Left" Height="24" Width="40" VerticalAlignment="Top"
-                Content="&#xE141;" FontFamily="Segoe MDL2 Assets" CornerRadius="0 0 0 20"
-                Click="Pin_Click" RenderTransformOrigin="0.5,0.5" Margin="-8,8,0,0">
-            <Button.RenderTransform>
-                <CompositeTransform Rotation="-90" />
-            </Button.RenderTransform>
-        </Button>
-        <controls:InAppNotification x:Name="_notifer" Content="Error!" RequestedTheme="Dark"
+        <Button HorizontalAlignment="Left" 
+                Height="24" 
+                VerticalAlignment="Top"
+                Content="&#xE141;" 
+                FontFamily="Segoe MDL2 Assets" 
+                CornerRadius="0 0 4 0"
+                Click="Pin_Click" />
+        <controls:InAppNotification x:Name="_notifer" 
+                                    Content="Error!" 
+                                    RequestedTheme="Dark"
                                     AnimationDuration="00:00:00.1000000"
                                     VerticalOffset="100" BorderThickness="0"
                                     HorizontalOffset="0">

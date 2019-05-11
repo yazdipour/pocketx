@@ -55,7 +55,7 @@ namespace PocketX.Handlers
         internal static void CopyToClipboard(string text)
         {
             var pkg = new Windows.ApplicationModel.DataTransfer.DataPackage();
-            pkg.SetText(text);
+            pkg.SetText(text??"");
             Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(pkg);
         }
 

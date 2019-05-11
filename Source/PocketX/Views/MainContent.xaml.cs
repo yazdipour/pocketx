@@ -41,7 +41,7 @@ namespace PocketX.Views
             DataTransferManager.GetForCurrentView().DataRequested += (sender, args) =>
             {
                 var request = args.Request;
-                request.Data.SetText(_pocketHandler?.CurrentPocketItem?.Uri?.ToString()??"");
+                request.Data.SetText(_pocketHandler?.CurrentPocketItem?.Uri?.ToString() ?? "");
                 request.Data.Properties.Title = "Shared by PocketX";
             };
             SizeChanged += (s, e) =>
@@ -70,7 +70,7 @@ namespace PocketX.Views
         {
             if (Microsoft.Toolkit.Uwp.Connectivity.NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
             {
-                var dialog = new AddDialog(_settings.app_theme);
+                var dialog = new AddDialog(_settings.AppTheme);
                 await dialog.ShowAsync();
                 if (dialog.PocketItem == null) return;
                 _myList.Insert(0, dialog.PocketItem);
@@ -137,6 +137,7 @@ namespace PocketX.Views
             }
             else
             {
+                TopBar.MaxWidth = 48;
                 var text = await BlobCache.LocalMachine.GetObject<string>('_' + _pocketHandler.CurrentPocketItem?.Uri?.AbsoluteUri)
                     .Catch(Observable.Return(markdownText?.Text));
                 if (!string.IsNullOrEmpty(text)) await _audioHandler.Start(text);
@@ -157,6 +158,7 @@ namespace PocketX.Views
         {
             Text2SpeechButton.Content = "";
             media.AreTransportControlsEnabled = false;
+            TopBar.MaxWidth = 500;
         }
 
         #endregion MediaElement Events
@@ -186,7 +188,7 @@ namespace PocketX.Views
             var item = ((FrameworkElement)e.OriginalSource).DataContext as PocketItem;
             var flyout = new MenuFlyout();
             var style = new Style { TargetType = typeof(MenuFlyoutPresenter) };
-            style.Setters.Add(new Setter(RequestedThemeProperty, _settings.app_theme));
+            style.Setters.Add(new Setter(RequestedThemeProperty, _settings.AppTheme));
             flyout.MenuFlyoutPresenterStyle = style;
             var el = new MenuFlyoutItem { Text = "Copy Link", Icon = new SymbolIcon(Symbol.Copy) };
             el.Click += (sen, ee) =>
@@ -230,22 +232,20 @@ namespace PocketX.Views
 
         private async void MarkdownText_LinkClicked(object sender, LinkClickedEventArgs e)
         {
-            if (Uri.TryCreate(e.Link, UriKind.Absolute, out Uri link))
+            if (Uri.TryCreate(e.Link, UriKind.Absolute, out var link))
                 await Launcher.LaunchUriAsync(link);
         }
 
         private async void MarkdownText_ImageClicked(object sender, LinkClickedEventArgs e)
         {
-            if (Uri.TryCreate(e.Link, UriKind.Absolute, out Uri link))
+            if (Uri.TryCreate(e.Link, UriKind.Absolute, out var link))
                 await new ImageDialog(link).ShowAsync();
         }
 
         #endregion Markdown
 
         private async void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
-        {
-            await ParentCommandAsync(args?.QueryText);
-        }
+            => await ParentCommandAsync(args?.QueryText);
 
         public async Task ParentCommandAsync(string tag, int count = 40, int offset = 0)
         {
@@ -254,7 +254,7 @@ namespace PocketX.Views
             if (!splitView.IsPaneOpen) splitView.IsPaneOpen = true;
             splitView.Tag = tag;
 
-            leftSwipeItems.Clear();
+            //leftSwipeItems.Clear();
             try
             {
                 switch (tag)
@@ -329,64 +329,61 @@ namespace PocketX.Views
 
         private async void Appbar_Click(object sender, RoutedEventArgs e)
         {
-            var tag = "";
-            if (sender is Control c) tag = c?.Tag?.ToString();
-            else if (sender is string s) tag = s;
-            Logger.Logger.L($"Tap {tag}");
+            var tag = sender is Control c ? c?.Tag?.ToString()?.ToLower() : sender is string s ? s : "";
             switch (tag)
             {
-                case "Unfavorite":
+                case "unfavorite":
                     FavBtn.Tag = FavBtn.Content = "Favorite";
                     await _pocketHandler.Client.Unfavorite(_pocketHandler.CurrentPocketItem);
                     MainPage.Notifier.Show("Remove from Favorite", 2000);
                     break;
 
-                case "Favorite":
+                case "favorite":
                     FavBtn.Tag = FavBtn.Content = "Unfavorite";
                     await _pocketHandler.Client.Favorite(_pocketHandler.CurrentPocketItem);
                     MainPage.Notifier.Show("Saved as Favorite", 2000);
                     break;
 
-                case "Share":
+                case "share":
                     DataTransferManager.ShowShareUI();
                     break;
 
-                case "Unarchive":
+                case "unarchive":
                     ArchiveBtn.Tag = "Archive";
                     ArchiveBtn.Content = "";
                     await ArchiveArticleAsync(_pocketHandler.CurrentPocketItem, false, true);
                     break;
 
-                case "Archive":
+                case "archive":
                     ArchiveBtn.Tag = "Unarchive";
                     ArchiveBtn.Content = "";
                     await ArchiveArticleAsync(_pocketHandler.CurrentPocketItem, true, true);
                     break;
 
-                case "Copy":
+                case "copy":
                     Utils.CopyToClipboard(_pocketHandler.CurrentPocketItem?.Uri?.AbsoluteUri);
                     MainPage.Notifier.Show("Copied", 2000);
                     break;
 
-                case "webView":
+                case "webview":
                     WebViewBtn.Tag = "articleView";
                     WebViewBtn.Content = "Open in ArticleView";
                     HandleViewVisibilities(tag);
                     webView.Navigate(_pocketHandler.CurrentPocketItem?.Uri);
                     break;
 
-                case "articleView":
+                case "articleview":
                     WebViewBtn.Tag = "webView";
                     WebViewBtn.Content = "Open in WebView";
                     HandleViewVisibilities(tag);
                     OpenInArticleView(_pocketHandler.CurrentPocketItem, true);
                     break;
 
-                case "Delete":
+                case "delete":
                     await DeleteArticleAsync(_pocketHandler.CurrentPocketItem);
                     break;
 
-                case "Back":
+                case "back":
                     splitView.IsPaneOpen = !splitView.IsPaneOpen;
                     break;
             }
