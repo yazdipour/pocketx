@@ -29,23 +29,24 @@
 						IsBackEnabled="False"
                         IsSettingsVisible="False"
 						IsTabStop="False"
-						AlwaysShowHeader="False">
+                        SelectionFollowsFocus="Enabled" 
+						AlwaysShowHeader="True">
             <NavigationView.MenuItems>
-                <NavigationViewItem Margin="8 0 0 0" Icon="Home" Content="Home" Tag="{x:Bind _tags[0]}" />
-                <NavigationViewItem Icon="Favorite" Content="Favorites" Tag="{x:Bind _tags[1]}" />
-                <NavigationViewItem Icon="Accept" Content="Archives" Tag="{x:Bind _tags[2]}" />
+                <NavigationViewItem Icon="Home" Content="Home" IsSelected="True" />
+                <NavigationViewItem Icon="Favorite" Content="Favorites"/>
+                <NavigationViewItem Icon="Accept" Content="Archives"/>
                 <NavigationViewItemSeparator />
             </NavigationView.MenuItems>
             <NavigationView.PaneCustomContent>
                 <StackPanel Orientation="Horizontal">
                     <NavigationViewItem Icon="Tag"
                                         Content="Tags&#x1CBB;&#x1CBB;"
-                                        Tag="{x:Bind _tags2[2]}"
+                                        Tag="Tags"
                                         Tapped="PaneFooter_Tapped" />
                     <NavigationViewItem Tapped="PaneFooter_Tapped"
                                         Icon="Setting"
                                         Content="Settings&#x1CBB;&#x1CBB;"
-                                        Tag="{x:Bind _tags2[0]}" />
+                                        Tag="Settings" />
                 </StackPanel>
             </NavigationView.PaneCustomContent>
             <Frame x:Name="insideFrame" />

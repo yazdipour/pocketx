@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -59,6 +60,22 @@ namespace PocketX.Handlers
             var g = (byte)(Convert.ToUInt32(hex.Substring(4, 2), 16));
             var b = (byte)(Convert.ToUInt32(hex.Substring(6, 2), 16));
             return new SolidColorBrush(Color.FromArgb(a, r, g, b));
+        }
+
+        public async Task PinAppWindow(int width, int height)
+        {
+            if (ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
+            {
+                if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.Default)
+                {
+                    var compactOptions = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
+                    compactOptions.CustomSize = new Windows.Foundation.Size(width, height);
+                    await ApplicationView.GetForCurrentView()
+                        .TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, compactOptions);
+                }
+                else await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default);
+            }
+            else await new Windows.UI.Popups.MessageDialog("You System does not support Compact Mode").ShowAsync();
         }
     }
 }

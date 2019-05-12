@@ -17,7 +17,9 @@
             <Grid>
                 <!--Articles List-->
                 <ListView x:Name="ListViewInSplitView"
-                          SelectionMode="Single" IsItemClickEnabled="True"
+                          SelectionMode="Single" 
+                          IsItemClickEnabled="True"
+                          ScrollViewer.VerticalScrollBarVisibility="Hidden"
                           ItemClick="listViewInSplitView_ItemClick"
                           VerticalAlignment="Stretch">
                     <ListView.Header>
@@ -97,21 +99,22 @@
                              Background="{ThemeResource AccentColor}" />
                 </controls:DropShadowPanel>
                 <!--LoadingControl-->
-                <controls:Loading x:Name="LoadingControl" IsLoading="True"
+                <controls:Loading x:Name="LoadingControl" 
                                   Background="#7f111111"
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Center"
-                                  HorizontalContentAlignment="Center"
-                                  VerticalContentAlignment="Center">
+                                  VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal" Padding="42">
-                        <ProgressRing IsActive="True" Margin="0,0,12,0" Foreground="White" />
-                        <TextBlock Text="Loading your pocket" VerticalAlignment="Center" Foreground="White" />
+                        <ProgressRing IsActive="{x:Bind LoadingControl.IsLoading, Mode=OneWay}" 
+                                      Margin="0,0,12,0" 
+                                      Foreground="White" />
+                        <TextBlock Text="Loading your pocket" 
+                                   VerticalAlignment="Center" 
+                                   Foreground="White" />
                     </StackPanel>
                 </controls:Loading>
             </Grid>
         </SplitView.Pane>
         <!--Main Body-->
-        <Grid x:Name="MainGrid" CornerRadius="12 0 0 0" Margin="0 2 0 0"
+        <Grid x:Name="MainGrid"
               Background="{x:Bind _settings.ReaderBg,Mode=OneWay}"
               RequestedTheme="{x:Bind _settings.ReaderTheme,Mode=OneWay}">
                     <!--markdownScrollViewer-->
@@ -149,8 +152,10 @@
                         </Grid>
                     </ScrollViewer>
                     <!--LoadingControl-->
-                    <controls:Loading x:Name="MarkdownLoading" HorizontalContentAlignment="Center" IsLoading="False"
-                          VerticalContentAlignment="Center" Background="#5f111111">
+                    <controls:Loading x:Name="MarkdownLoading" 
+                                      HorizontalContentAlignment="Center" 
+                                      VerticalContentAlignment="Center"
+                                      Background="#5f111111">
                         <ProgressBar Width="130" IsIndeterminate="True" Foreground="White" />
                     </controls:Loading>
                     <!--webView-->
@@ -197,7 +202,6 @@
             <!--AppBar-->
             <CommandBar x:Name="TopBar"
                         VerticalAlignment="Bottom"
-                        RequestedTheme="{x:Bind _settings.AppTheme,Mode=OneWay}"
                         DefaultLabelPosition="Right"
                         HorizontalAlignment="Right">
                 <AppBarButton Icon="Accept" 
@@ -227,13 +231,14 @@
                 </CommandBar.SecondaryCommands>
             </CommandBar>
             <!--BackButton-->
-            <Button Height="66" Width="48" 
-                    CornerRadius="{x:Bind MainGrid.CornerRadius}"
-                    Click="Appbar_Click" Tag="Back"
-                    x:Name="BackBtn"
-                    VerticalAlignment="Top" 
-                    Background="Transparent">
-                <SymbolIcon Symbol="Back" />
+            <Button Height="66" 
+                    Width="14"
+                    Margin="-4 0 0 0"
+                    Click="Appbar_Click" 
+                    Tag="Back"
+                    Padding="0"
+                    VerticalAlignment="Center" >
+                <FontIcon x:Name="BackBtn" FontFamily="Segoe MDL2 Assets" Glyph="&#xF743;" FontSize="12" />
             </Button>
         </Grid>
     </SplitView>

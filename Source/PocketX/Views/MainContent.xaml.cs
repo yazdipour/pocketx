@@ -57,7 +57,7 @@ namespace PocketX.Views
             markdownText.Text = await Utils.TextFromAssets(@"Assets\Icons\Home.md");
             if (!Microsoft.Toolkit.Uwp.Connectivity.NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
                 ListViewInSplitView.ItemsSource = await _pocketHandler.GetItemsCache();
-            else await ParentCommandAsync("MyList");
+            else await ParentCommandAsync("Home");
             try { await _pocketHandler.GetTagsAsync(false); }
             catch { }
         }
@@ -168,7 +168,7 @@ namespace PocketX.Views
         private void splitView_PaneOpened(SplitView sender, object args)
         {
             if (BackBtn == null) return;
-            BackBtn.Content = splitView.IsPaneOpen ? new SymbolIcon(Symbol.Back) : new SymbolIcon(Symbol.Forward);
+            BackBtn.Glyph = splitView.IsPaneOpen ? "" : "";
             if (!splitView.IsPaneOpen && _pocketHandler.CurrentPocketItem != null)
                 TopBar.Visibility = Visibility.Visible;
             else if (splitView.IsPaneOpen && IsSmallWidth(ActualWidth))
@@ -249,7 +249,7 @@ namespace PocketX.Views
 
         public async Task ParentCommandAsync(string tag, int count = 40, int offset = 0)
         {
-            if (tag?.Length < 2) return;
+            if ((tag??"").Length < 2) return;
             LoadingControl.IsLoading = true;
             if (!splitView.IsPaneOpen) splitView.IsPaneOpen = true;
             splitView.Tag = tag;
@@ -259,7 +259,7 @@ namespace PocketX.Views
             {
                 switch (tag)
                 {
-                    case "MyList":
+                    case "Home":
                         leftSwipeItems.Add(leftSwipeArchive);
                         if (count == 0)
                         {
