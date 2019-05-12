@@ -19,16 +19,16 @@ using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using PocketX.ViewModels;
 
 namespace PocketX.Views
 {
     public sealed partial class MainContent : Page
     {
-        private readonly PocketHandler _pocketHandler = new PocketHandler();
-        private readonly AudioHandler _audioHandler = new AudioHandler();
+        private readonly PocketHandler _pocketHandler = PocketHandler.GetInstance();
         private readonly IncrementalLoadingCollection<PocketHandler, PocketItem> _myList = new IncrementalLoadingCollection<PocketHandler, PocketItem>();
         private readonly Settings _settings = SettingsHandler.Settings;
-
+        private MainContentViewModel _vm = new MainContentViewModel();
         private static bool IsSmallWidth(double width) => width < 720;
 
         #region On PageInit
@@ -129,35 +129,29 @@ namespace PocketX.Views
 
         private async void Text2Speech_Click(object sender, RoutedEventArgs e)
         {
-            if (_audioHandler.Media == null) _audioHandler.Media = media;
-            if (_audioHandler.Media.CurrentState == MediaElementState.Playing)
+            if (media.CurrentState == MediaElementState.Playing)
             {
-                _audioHandler.Media.Stop();
+                media.Stop();
                 Media_MediaEnded(null, null);
             }
             else
             {
                 TopBar.MaxWidth = 48;
-                var text = await BlobCache.LocalMachine.GetObject<string>('_' + _pocketHandler.CurrentPocketItem?.Uri?.AbsoluteUri)
+                var text = await BlobCache.LocalMachine.GetObject<string>("plain_" + _pocketHandler.CurrentPocketItem?.Uri?.AbsoluteUri)
                     .Catch(Observable.Return(markdownText?.Text));
-                if (!string.IsNullOrEmpty(text)) await _audioHandler.Start(text);
-                else await new Windows.UI.Popups.MessageDialog("No Content to Read").ShowAsync();
+                if (!string.IsNullOrEmpty(text)) await AudioHandler.Start(media, text);
+                else await UiUtils.ShowDialogAsync("No Content to Read");
             }
         }
 
         private async void Media_MediaFailed(object sender, ExceptionRoutedEventArgs e)
-           => await new Windows.UI.Popups.MessageDialog(e.ErrorMessage).ShowAsync();
+            => await UiUtils.ShowDialogAsync(e.ErrorMessage);
 
-        private void Media_MediaOpened(object sender, RoutedEventArgs e)
-        {
-            Text2SpeechButton.Content = "";
-            media.AreTransportControlsEnabled = true;
-        }
+        private void Media_MediaOpened(object sender, RoutedEventArgs e) => ((MediaElement) sender).AreTransportControlsEnabled = true;
 
         private void Media_MediaEnded(object sender, RoutedEventArgs e)
         {
-            Text2SpeechButton.Content = "";
-            media.AreTransportControlsEnabled = false;
+            ((MediaElement)sender).AreTransportControlsEnabled = false;
             TopBar.MaxWidth = 500;
         }
 

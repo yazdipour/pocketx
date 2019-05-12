@@ -11,7 +11,6 @@ namespace PocketX.Views.Dialog
     public sealed partial class SettingsDialog : ContentDialog
     {
         private Settings _settings = SettingsHandler.Settings;
-        private PocketHandler _pocketHandler = new PocketHandler();
         private readonly string _versionString = $"Version {Package.Current.Id.Version.Major}.{Package.Current.Id.Version.Minor}.{Package.Current.Id.Version.Build}";
 
         public SettingsDialog()

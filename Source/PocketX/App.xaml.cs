@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using PocketX.Views;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -10,95 +11,92 @@ using PocketX.Handlers;
 
 namespace PocketX
 {
-	sealed partial class App : Application
-	{
+    sealed partial class App : Application
+    {
         internal static string Protocol = "pocketx://auth";
         internal static readonly bool DEBUGMODE = System.Diagnostics.Debugger.IsAttached;
 
         public App()
-		{
-			InitializeComponent();
-			Suspending += OnSuspending;
-			Akavache.BlobCache.ApplicationName = typeof(App).Namespace;
-			SettingsHandler.Load();
-		}
+        {
+            InitializeComponent();
+            Suspending += OnSuspending;
+            Akavache.BlobCache.ApplicationName = typeof(App).Namespace;
+            SettingsHandler.Load();
+        }
 
-		protected override void OnLaunched(LaunchActivatedEventArgs e)
-		{
-			Frame rootFrame = Window.Current.Content as Frame;
-			if (rootFrame == null)
-			{
-				rootFrame = new Frame();
-				rootFrame.NavigationFailed += OnNavigationFailed;
-				Window.Current.Content = rootFrame;
-			}
+        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        {
+            if (!(Window.Current.Content is Frame rootFrame))
+            {
+                rootFrame = new Frame();
+                rootFrame.NavigationFailed += OnNavigationFailed;
+                Window.Current.Content = rootFrame;
+            }
 
-			if (e == null || e?.PrelaunchActivated == false)
-			{
-				if (rootFrame.Content == null)
-				{
-					if (new Handlers.PocketHandler().LoadCacheClient() == null)
-						rootFrame.Navigate(typeof(LoginPage), e?.Arguments);
-					else
-					{
-						var pocketHandler = new Handlers.PocketHandler();
-						pocketHandler.Client = pocketHandler.LoadCacheClient();
-						rootFrame.Navigate(typeof(MainPage), e?.Arguments);
-					}
-				}
-				Window.Current.Activate();
-			}
-		}
+            if (e != null && e?.PrelaunchActivated != false) return;
+            if (rootFrame.Content == null)
+            {
+                var client = PocketHandler.GetInstance().LoadCacheClient();
+                if (client == null)
+                    rootFrame.Navigate(typeof(LoginPage), e?.Arguments);
+                else
+                {
+                    PocketHandler.GetInstance().Client = client;
+                    rootFrame.Navigate(typeof(MainPage), e?.Arguments);
+                }
+            }
+            Window.Current.Activate();
+        }
 
-		void OnNavigationFailed(object sender, NavigationFailedEventArgs e) =>
-			throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
+        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+            => throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
 
-		private void OnSuspending(object sender, SuspendingEventArgs e) =>
-			e.SuspendingOperation.GetDeferral().Complete();
+        private void OnSuspending(object sender, SuspendingEventArgs e)
+            => e.SuspendingOperation.GetDeferral().Complete();
 
-		//OnShare
-		protected async override void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
-		{
-			var shareOperation = args.ShareOperation;
-			await System.Threading.Tasks.Task.Factory.StartNew(async () =>
-			{
-				if (shareOperation.Data.Contains(StandardDataFormats.WebLink))
-				{
-					var url = await shareOperation?.Data.GetWebLinkAsync();
-					await addToPocketAsync(url.AbsoluteUri, false);
-					shareOperation.ReportCompleted();
-				}
-			});
-		}
+        //OnShare
+        protected override async void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
+        {
+            var shareOperation = args.ShareOperation;
+            await Task.Factory.StartNew(async () =>
+            {
+                if (!shareOperation.Data.Contains(StandardDataFormats.WebLink)) return;
+                await AddToPocketAsync((await shareOperation?.Data.GetWebLinkAsync()).AbsoluteUri, false);
+                shareOperation.ReportCompleted();
+            });
+        }
 
-		// Protocol & CMD
-		protected async override void OnActivated(IActivatedEventArgs args)
-		{
-			if (args.Kind == ActivationKind.Protocol)
-			{
-				ProtocolActivatedEventArgs protocolArgs = (ProtocolActivatedEventArgs)args;
-				string arg = protocolArgs.Uri.ToString().Replace("pocketx://", "", StringComparison.InvariantCultureIgnoreCase);
-				await addToPocketAsync(arg);
-			}
-			//From CommandLine
-			else if (args.Kind == ActivationKind.CommandLineLaunch)
-			{
-				var arg = (args as CommandLineActivatedEventArgs)?.Operation?.Arguments ?? "";
-				if (arg.Length > 3 && Uri.IsWellFormedUriString(arg, UriKind.Absolute))
-					await addToPocketAsync(arg);
-				else OnLaunched(null);
-			}
-		}
+        // Protocol & CMD
+        protected override async void OnActivated(IActivatedEventArgs args)
+        {
+            switch (args.Kind)
+            {
+                case ActivationKind.Protocol://From CommandLine
+                    {
+                        var arg = ((ProtocolActivatedEventArgs)args).Uri.ToString().Replace("pocketx://", "", StringComparison.InvariantCultureIgnoreCase);
+                        await AddToPocketAsync(arg);
+                        break;
+                    }
+                case ActivationKind.CommandLineLaunch:
+                    {
+                        var arg = (args as CommandLineActivatedEventArgs)?.Operation?.Arguments ?? "";
+                        if (arg.Length > 3 && Uri.IsWellFormedUriString(arg, UriKind.Absolute))
+                            await AddToPocketAsync(arg);
+                        else OnLaunched(null);
+                        break;
+                    }
+            }
+        }
 
-		private async System.Threading.Tasks.Task addToPocketAsync(string arg, bool exit = true)
-		{
-			try
-			{
-				var messages = await Handlers.PocketHandler.AddFromShare(new Uri(arg));
-				Handlers.Utils.ToastIt(messages.Item1, messages.Item2);
-				if (exit) Current.Exit();
-			}
-			catch { }
-		}
-	}
+        private static async Task AddToPocketAsync(string arg, bool exit = true)
+        {
+            try
+            {
+                var (item1, item2) = await PocketHandler.GetInstance().AddFromShare(new Uri(arg));
+                Utils.ToastIt(item1, item2);
+                if (exit) Current.Exit();
+            }
+            catch { }
+        }
+    }
 }

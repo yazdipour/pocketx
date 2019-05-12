@@ -5,9 +5,18 @@
     xmlns:local="using:PocketX.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource BlackAcrylicBackgroundBrush60}">
-    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+
+    <controls:DropShadowPanel BlurRadius="35"
+                              VerticalAlignment="Center"
+                              HorizontalAlignment="Center">
+        <StackPanel HorizontalAlignment="Center" 
+                VerticalAlignment="Center"
+                Padding="36"
+                CornerRadius="36"
+                Background="#111">
         <Image Source="ms-appx:///Assets/Icons/Logo.png" Height="84" Width="84"/>
         <RichTextBlock Margin="16" IsTextSelectionEnabled="False"
                        TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}">
@@ -15,15 +24,20 @@
                 Pocket✘
             </Paragraph>
             <Paragraph>
-                Unofficial Pocket Client
-            </Paragraph>
-            <Paragraph>
-                <Run Text="Developed with ❤ by "/>
-                <Hyperlink NavigateUri="https://yazdipour.github.io" Foreground="#7baaf7">Shahriar</Hyperlink>
+                Unofficial UWP Pocket Client
             </Paragraph>
         </RichTextBlock>
-        <Button Content="Login" Background="#ED243B"
-                Style="{ThemeResource ButtonRevealStyle}"
-                Click="Login_Clicked" HorizontalAlignment="Center"/>
-    </StackPanel>
+            <Button  CornerRadius="16"
+                     Content="LOGIN"
+                     HorizontalAlignment="Center"
+                     Foreground="White"
+                     Height="42"
+                     Width="142"
+                     Click="Login_Clicked"
+                     FontFamily="Calibri"
+                     FontWeight="Bold"
+                     FontSize="18"
+                     Background="{ThemeResource AccentColor}" />
+        </StackPanel>
+        </controls:DropShadowPanel>
 </Page>

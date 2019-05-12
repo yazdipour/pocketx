@@ -61,7 +61,7 @@ namespace PocketX.Views
                     await dialog.ShowAsync();
                     if (dialog.Tag?.ToString() == Keys.Logout)
                     {
-                        new PocketHandler().Logout(Frame);
+                        PocketHandler.GetInstance().Logout(Frame);
                         return;
                     }
                     m?.BindingsUpdate();

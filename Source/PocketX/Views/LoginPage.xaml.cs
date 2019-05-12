@@ -9,18 +9,17 @@ namespace PocketX.Views
 {
     public sealed partial class LoginPage : Page
     {
-        private readonly PocketHandler _pocketHandler = new PocketHandler();
         public LoginPage() => InitializeComponent();
 
         private async void Login_Clicked(object sender, RoutedEventArgs e)
         {
             try
             {
-                var uri = await _pocketHandler.LoginUriAsync();
+                var uri = await PocketHandler.GetInstance().LoginUriAsync();
                 var auth = await WebAuthenticationBroker.
                     AuthenticateAsync(WebAuthenticationOptions.None, uri, new Uri(App.Protocol));
                 if (auth.ResponseStatus != WebAuthenticationStatus.Success) return;
-                if (await _pocketHandler.LoginAsync()) Frame.Navigate(typeof(MainPage));
+                if (await PocketHandler.GetInstance().LoginAsync()) Frame.Navigate(typeof(MainPage));
                 else throw new Exception();
             }
             catch

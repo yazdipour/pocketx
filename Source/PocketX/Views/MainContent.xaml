@@ -182,7 +182,6 @@
                                   Height="40"
                                   VerticalAlignment="Bottom"
                                   AutoPlay="True" 
-                                  Stretch="None"
                                   AreTransportControlsEnabled="False"
                                   AudioCategory="Speech"
                                   MediaOpened="Media_MediaOpened"

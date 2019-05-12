@@ -11,7 +11,6 @@ namespace PocketX.Views.Dialog
 {
     public sealed partial class AddDialog : ContentDialog
     {
-        private readonly PocketHandler _pocketHandler = new PocketHandler();
         private IEnumerable<string> _selectedOptions = new string[0];
         public PocketSharp.Models.PocketItem PocketItem { get; set; }
 
@@ -27,7 +26,7 @@ namespace PocketX.Views.Dialog
         {
             try
             {
-                var foo = _pocketHandler.Client.Add(new Uri(urlTextBox.Text.Trim()), _selectedOptions.Cast<string>().ToArray());
+                var foo = PocketHandler.GetInstance().Client.Add(new Uri(urlTextBox.Text.Trim()), _selectedOptions.Cast<string>().ToArray());
                 PocketItem = await foo;
                 foo.Wait();
                 Hide();
@@ -36,6 +35,6 @@ namespace PocketX.Views.Dialog
         }
 
         private async void ContentDialog_Loaded(object sender, RoutedEventArgs e)
-            => chipsList.AvailableChips = await _pocketHandler.GetTagsAsync();
+            => chipsList.AvailableChips = await PocketHandler.GetInstance().GetTagsAsync();
     }
 }

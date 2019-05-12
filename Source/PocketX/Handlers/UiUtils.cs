@@ -75,7 +75,9 @@ namespace PocketX.Handlers
                 }
                 else await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default);
             }
-            else await new Windows.UI.Popups.MessageDialog("You System does not support Compact Mode").ShowAsync();
+            else await ShowDialogAsync("You System does not support Compact Mode");
         }
+
+        public static async Task ShowDialogAsync(string errorMessage) => await new Windows.UI.Popups.MessageDialog(errorMessage).ShowAsync();
     }
 }

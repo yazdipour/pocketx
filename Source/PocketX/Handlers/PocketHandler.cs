@@ -10,6 +10,7 @@ using ReadSharp;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
@@ -21,18 +22,15 @@ namespace PocketX.Handlers
 {
     internal class PocketHandler : IIncrementalSource<PocketItem>
     {
+        public PocketClient Client { get; set; }
         public PocketItem CurrentPocketItem;
-
-        private static PocketClient _client;
-        private static List<string> _tags;
-
-        public PocketClient Client
-        {
-            get => _client;
-            set => _client = value;
-        }
+        private static PocketHandler _pocketHandler;
+        private ObservableCollection<string> _tags = new ObservableCollection<string>();
 
         #region Login\Logout
+
+        public static PocketHandler GetInstance() => _pocketHandler ?? (_pocketHandler = new PocketHandler());
+
 
         public PocketClient LoadCacheClient()
         {
@@ -47,6 +45,7 @@ namespace PocketX.Handlers
         internal void Logout(Frame frame)
         {
             Logger.Logger.L("Logout");
+            Client = null;
             SettingsHandler.Clear();
             BlobCache.LocalMachine.InvalidateAll();
             BlobCache.LocalMachine.Vacuum();
@@ -57,7 +56,7 @@ namespace PocketX.Handlers
 
         internal async Task<bool> LoginAsync()
         {
-            var user = await _client.GetUser();
+            var user = await Client.GetUser();
             if (user == null) return false;
             SaveCacheUser(user);
             return true;
@@ -65,25 +64,25 @@ namespace PocketX.Handlers
 
         internal async Task<Uri> LoginUriAsync()
         {
-            _client = new PocketClient(Keys.Pocket, callbackUri: App.Protocol);
-            string requestCode = await _client.GetRequestCode();
-            return _client.GenerateAuthenticationUri();
+            Client = new PocketClient(Keys.Pocket, callbackUri: App.Protocol);
+            string requestCode = await Client.GetRequestCode();
+            return Client.GenerateAuthenticationUri();
         }
 
         #endregion Login\Logout
 
-        internal static async Task<(string, string)> AddFromShare(Uri url)
+        internal async Task<(string, string)> AddFromShare(Uri url)
         {
             var SUCCESS = "Successfully Saved to Pocket";
             var FAILED = "FAILED (Be Sure You Are Logged In)";
-            if (_client != null)
+            if (Client != null)
             {
-                await _client.Add(url);
+                await Client.Add(url);
                 return (SUCCESS, url.AbsoluteUri);
             }
             try
             {
-                await (new PocketHandler()).LoadCacheClient().Add(url);
+                await _pocketHandler.LoadCacheClient().Add(url);
                 return (SUCCESS, url.AbsoluteUri);
             }
             catch (Exception e) { return (FAILED, e.Message); }
@@ -96,7 +95,7 @@ namespace PocketX.Handlers
             {
                 if (!Microsoft.Toolkit.Uwp.Connectivity.NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
                     throw new Exception();
-                var pocketItems = await _client.Get(
+                var pocketItems = await Client.Get(
                        state: state, favorite: favorite,
                        tag: tag, contentType: null,
                        sort: Sort.newest, search: search,
@@ -169,22 +168,24 @@ namespace PocketX.Handlers
             content = content.Replace(".medium.com/freeze/max/60/", ".medium.com/freeze/max/360/");
             if (!(r?.Content?.Length > 0)) return content;
             await BlobCache.LocalMachine.InsertObject(url?.AbsoluteUri, content);
-            await BlobCache.LocalMachine.InsertObject('_' + url?.AbsoluteUri, r?.PlainContent);
+            await BlobCache.LocalMachine.InsertObject("plain_" + url?.AbsoluteUri, r?.PlainContent);
             return content;
         }
 
-        internal async Task<List<string>> GetTagsAsync(bool cache = true)
+        internal async Task<ObservableCollection<string>> GetTagsAsync(bool cache = true)
         {
-            if (PocketHandler._tags?.Count > 0) return PocketHandler._tags;
+            if (_tags?.Count > 0) return _tags;
             if (cache)
             {
-                PocketHandler._tags = await BlobCache.LocalMachine.GetObject<List<string>>("tags").Catch(Observable.Return(new List<string>()));
-                if (PocketHandler._tags?.Count > 0) return PocketHandler._tags;
+                _tags = await BlobCache.LocalMachine.GetObject<ObservableCollection<string>>("tags");
+                    //.Catch(Observable.Return(new List<string>()));
+                if (_tags?.Count > 0) return _tags;
             }
-            var _tags = await Client.GetTags();
-            PocketHandler._tags = _tags.Select(o => o.Name).ToList();
-            await BlobCache.LocalMachine.InsertObject("tags", PocketHandler._tags);
-            return PocketHandler._tags;
+            var tags = (await Client.GetTags()).ToList().Select(o => o.Name);
+            await BlobCache.LocalMachine.InsertObject("tags", _tags);
+            _tags?.Clear();
+            foreach (var t in tags) _tags?.Add(t);
+            return _tags;
         }
 
         public async Task<IEnumerable<PocketItem>> GetPagedItemsAsync(int pageIndex, int pageSize, CancellationToken cancellationToken = default(CancellationToken))
@@ -192,9 +193,9 @@ namespace PocketX.Handlers
 
         internal async Task Delete(PocketItem pocketItem)
         {
-            await _client.Delete(pocketItem);
+            await Client.Delete(pocketItem);
             await BlobCache.LocalMachine.Invalidate(pocketItem.Uri.AbsoluteUri);
-            await BlobCache.LocalMachine.Invalidate('_' + pocketItem.Uri.AbsoluteUri);
+            await BlobCache.LocalMachine.Invalidate("plain_" + pocketItem.Uri.AbsoluteUri);
         }
     }
 }
