@@ -7,8 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:pocket="using:PocketSharp.Models"
-    mc:Ignorable="d" Loaded="Page_Loaded">
-    <SplitView x:Name="splitView"
+    mc:Ignorable="d">
+    <SplitView x:Name="SplitView"
                PaneOpened="splitView_PaneOpened"
                PaneClosed="splitView_PaneOpened"
                PaneBackground="Transparent" IsPaneOpen="True"
@@ -39,7 +39,6 @@
                         <FontIconSource x:Key="Delete" Glyph="&#xE107;" />
                         <FontIconSource x:Key="Add" Glyph="" />
                         <FontIconSource x:Key="Archive" Glyph="&#xE15D;" />
-
                         <SwipeItems x:Key="right" Mode="Execute" />
                         <!--Text="Delete" IconSource="{StaticResource Add}"
                                     BehaviorOnInvoked="Close"
@@ -62,17 +61,25 @@
                                             Margin="0 2"
                                             CornerRadius="8"
                                             HorizontalAlignment="Stretch"
-                                      RightTapped="gridView_RightTapped">
-                                    <controls:ImageEx Margin="0 0 8 0" BorderBrush="#eee"
-                                                  Source="{x:Bind LeadImage.Uri}" Width="100" CornerRadius="4 0 0 4"
-                                                  PlaceholderSource="ms-appx:///Assets/Square44x44Logo.png"
-                                                  Stretch="UniformToFill" x:Phase="10" BorderThickness="0 0 .5 0"/>
-                                    <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                                            RightTapped="gridView_RightTapped">
+                                    <controls:ImageEx Margin="0 0 8 0" 
+                                                      BorderBrush="#eee"
+                                                      Source="{x:Bind LeadImage.Uri}" 
+                                                      Width="100" 
+                                                      CornerRadius="4 0 0 4"
+                                                      PlaceholderSource="ms-appx:///Assets/Square44x44Logo.png"
+                                                      Stretch="UniformToFill" 
+                                                      x:Phase="10"
+                                                      BorderThickness="0 0 .5 0"/>
+                                    <StackPanel Orientation="Vertical" 
+                                                VerticalAlignment="Center">
                                         <TextBlock Text="{x:Bind Title}"
                                                    FontFamily="Calibri"
-                                                   CharacterSpacing="12" Width="200"
-                                           VerticalAlignment="Center"  MaxLines="2"
-                                           Style="{ThemeResource BaseTextBlockStyle}" />
+                                                   CharacterSpacing="12" 
+                                                   Width="200"
+                                                   VerticalAlignment="Center"  
+                                                   MaxLines="2"
+                                                   Style="{ThemeResource BaseTextBlockStyle}" />
                                         <TextBlock Text="{x:Bind Uri.Host}"
                                            VerticalAlignment="Center"
                                            Style="{ThemeResource CaptionTextBlockStyle}" />
@@ -92,10 +99,10 @@
                              Foreground="White"
                              Height="42"
                              Width="142"
-                             Click="Add_Click"
                              FontFamily="Calibri"
                              FontWeight="Bold"
                              FontSize="18"
+                             Command="{x:Bind _vm.AddArticle}"
                              Background="{ThemeResource AccentColor}" />
                 </controls:DropShadowPanel>
                 <!--LoadingControl-->
@@ -115,41 +122,43 @@
         </SplitView.Pane>
         <!--Main Body-->
         <Grid x:Name="MainGrid"
-              Background="{x:Bind _settings.ReaderBg,Mode=OneWay}"
-              RequestedTheme="{x:Bind _settings.ReaderTheme,Mode=OneWay}">
+              Background="{x:Bind _vm.Settings.ReaderBg,Mode=OneWay}"
+              RequestedTheme="{x:Bind _vm.Settings.ReaderTheme,Mode=OneWay}">
             <!--markdownScrollViewer-->
             <ScrollViewer 
-                x:Name="markdownGrid" 
+                x:Name="MarkdownGrid" 
                 HorizontalScrollBarVisibility="Disabled"
                 VerticalScrollBarVisibility="Visible">
-                <Grid Background="{x:Bind _settings.ReaderBg,Mode=OneWay}">
+                <Grid Background="{x:Bind _vm.Settings.ReaderBg,Mode=OneWay}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0" x:Name="HeaderPanel"
-                                    HorizontalAlignment="Stretch" Padding="16 16 16 4">
-                        <TextBlock x:Name="header_title" Text="{x:Bind _pocketHandler.CurrentPocketItem.Title,Mode=OneWay}"
-                                       Style="{ThemeResource SubtitleTextBlockStyle}"
-                                       HorizontalAlignment="Center" TextAlignment="Center"
-                                       FontFamily="Calibri" />
+                    <StackPanel Grid.Row="0"
+                                HorizontalAlignment="Stretch"
+                                Padding="16 16 16 4">
+                        <TextBlock x:Name="HeaderTitle" 
+                                   Text="{x:Bind _vm.PocketHandler.CurrentPocketItem.Title,Mode=OneWay}"
+                                   Style="{ThemeResource SubtitleTextBlockStyle}"
+                                   HorizontalAlignment="Center" TextAlignment="Center"
+                                   FontFamily="Calibri" />
                         <HyperlinkButton HorizontalAlignment="Center"
-                                             Content="{x:Bind _pocketHandler.CurrentPocketItem.Uri.Host,Mode=OneWay}"
-                                             Foreground="{x:Bind markdownText.LinkForeground,Mode=OneWay}"
-                                             NavigateUri="{x:Bind _pocketHandler.CurrentPocketItem.Uri.AbsoluteUri,Mode=OneWay}" />
-                        <TextBlock Text="{x:Bind _pocketHandler.CurrentPocketItem.UpdateTime,Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center" />
+                                             Content="{x:Bind _vm.PocketHandler.CurrentPocketItem.Uri.Host,Mode=OneWay}"
+                                             Foreground="{x:Bind MarkdownText.LinkForeground,Mode=OneWay}"
+                                             NavigateUri="{x:Bind _vm.PocketHandler.CurrentPocketItem.Uri.AbsoluteUri,Mode=OneWay}" />
+                        <TextBlock Text="{x:Bind _vm.PocketHandler.CurrentPocketItem.UpdateTime,Mode=OneWay}" 
+                                   Style="{ThemeResource CaptionTextBlockStyle}" 
+                                   HorizontalAlignment="Center" />
                     </StackPanel>
-                    <controls:MarkdownTextBlock x:Name="markdownText" Grid.Row="1"
+                    <controls:MarkdownTextBlock x:Name="MarkdownText" Grid.Row="1"
                                                         Padding="32 0 32 32" BorderThickness="0"
                                                         LinkForeground="#00cec9"
                                                         WrapCodeBlock="True"
                                                         Background="Transparent"
                                                         TextWrapping="WrapWholeWords"
-                                                        ImageClicked="MarkdownText_ImageClicked"
-                                                        LinkClicked="MarkdownText_LinkClicked"
                                                         UseSyntaxHighlighting="True"
-                                                        FontSize="{x:Bind _settings.ReaderFontSize,Mode=OneWay}"
-                                                        FontFamily="{x:Bind _settings.ReaderFontFamily,Mode=OneWay}" />
+                                                        FontSize="{x:Bind _vm.Settings.ReaderFontSize,Mode=OneWay}"
+                                                        FontFamily="{x:Bind _vm.Settings.ReaderFontFamily,Mode=OneWay}" />
                 </Grid>
             </ScrollViewer>
             <!--LoadingControl-->
@@ -157,10 +166,14 @@
                                       HorizontalContentAlignment="Center" 
                                       VerticalContentAlignment="Center"
                                       Background="#5f111111">
-                <ProgressBar Width="130" IsIndeterminate="True" Foreground="White" />
+                <ProgressBar Width="130" 
+                             IsIndeterminate="True" 
+                             Foreground="White" />
             </controls:Loading>
             <!--webView-->
-            <WebView ScrollViewer.HorizontalScrollMode="Disabled" x:Name="webView" x:Load="False" />
+            <WebView ScrollViewer.HorizontalScrollMode="Disabled" 
+                     x:Name="WebView" 
+                     x:Load="False" />
             <!--errorView-->
             <StackPanel x:Name="errorView" 
                                 x:Load="False"
@@ -174,7 +187,7 @@
                                         HorizontalAlignment="Center">
                     <Button Content="Reload ArticleView" Click="Reload_ArticleView" />
                     <Button Margin="8 0" Content="Open WebView" Tag="webView"
-                                    Click="Appbar_Click" />
+                                    Click="AppBar_Click" />
                 </StackPanel>
             </StackPanel>
             <!--Audio Player-->
@@ -184,10 +197,7 @@
                                   VerticalAlignment="Bottom"
                                   AutoPlay="True" 
                                   AreTransportControlsEnabled="False"
-                                  AudioCategory="Speech"
-                                  MediaOpened="Media_MediaOpened"
-                                  MediaEnded="Media_MediaEnded"
-                                  MediaFailed="Media_MediaFailed">
+                                  AudioCategory="Speech">
                 <MediaElement.TransportControls>
                     <MediaTransportControls
                                 IsFullWindowButtonVisible="False"
@@ -207,38 +217,52 @@
                 <AppBarButton Icon="Accept" 
                               x:Name="ArchiveBtn" 
                               Tag="Archive"
-                              Click="Appbar_Click"
+                              Click="AppBar_Click"
                               Label="Archive" />
                 <AppBarButton Tag="Share" 
                               Icon="Share" 
                               Label="Share" 
-                              Click="Appbar_Click" />
+                              Click="AppBar_Click" />
                 <AppBarButton Tag="Settings" 
                               Icon="Font" 
                               Label="Theme" 
-                              Click="Appbar_Click" />
+                              Click="AppBar_Click" />
                 <AppBarButton Icon="Volume"
                               Label="Read"
-                              x:Name="Text2SpeechButton"
-                              Click="Text2Speech_Click" />
+                              Command="{x:Bind _vm.TextToSpeech}"/>
                 <CommandBar.SecondaryCommands>
-                    <AppBarButton x:Name="FavBtn" Tag="Favorite" Click="Appbar_Click"
-                                  Label="Favorite" Icon="Favorite" />
-                    <AppBarButton Tag="Copy" Click="Appbar_Click" 
-                                  Label="Copy Link" Icon="Paste" />
-                    <AppBarButton x:Name="WebViewBtn" Tag="webView" Click="Appbar_Click" Label="Open in WebView" Icon="View" />
-                    <AppBarButton Tag="Delete" Click="Appbar_Click" Label="Delete Article" Icon="Delete" />
+                    <AppBarButton x:Name="FavBtn" 
+                                  Tag="Favorite"
+                                  Click="AppBar_Click"
+                                  Label="Favorite" 
+                                  Icon="Favorite" />
+                    <AppBarButton Tag="Copy" 
+                                  Click="AppBar_Click" 
+                                  Label="Copy Link"
+                                  Icon="Paste" />
+                    <AppBarButton x:Name="WebViewBtn"
+                                  Tag="webView" 
+                                  Click="AppBar_Click"
+                                  Label="Open in WebView" 
+                                  Icon="View" />
+                    <AppBarButton Tag="Delete" 
+                                  Click="AppBar_Click" 
+                                  Label="Delete Article" 
+                                  Icon="Delete" />
                 </CommandBar.SecondaryCommands>
             </CommandBar>
             <!--BackButton-->
             <Button Height="66" 
                     Width="14"
                     Margin="-4 0 0 0"
-                    Click="Appbar_Click" 
+                    Click="AppBar_Click" 
                     Tag="Back"
                     Padding="0"
                     VerticalAlignment="Center" >
-                <FontIcon x:Name="BackBtn" FontFamily="Segoe MDL2 Assets" Glyph="&#xF743;" FontSize="12" />
+                <FontIcon x:Name="BackBtn" 
+                          FontFamily="Segoe MDL2 Assets"
+                          Glyph="&#xF743;" 
+                          FontSize="12" />
             </Button>
         </Grid>
     </SplitView>

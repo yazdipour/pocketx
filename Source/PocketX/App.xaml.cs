@@ -22,6 +22,7 @@ namespace PocketX
             Suspending += OnSuspending;
             Akavache.BlobCache.ApplicationName = typeof(App).Namespace;
             SettingsHandler.Load();
+            RequestedTheme = SettingsHandler.Settings.AppTheme == ElementTheme.Dark ? ApplicationTheme.Dark : ApplicationTheme.Light;
         }
 
         protected override void OnLaunched(LaunchActivatedEventArgs e)

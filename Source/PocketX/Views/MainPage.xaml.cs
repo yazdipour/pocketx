@@ -32,17 +32,14 @@ namespace PocketX.Views
 
         private void PaneFooter_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
-            if (sender is NavigationViewItem item && item.Content != null)
-            {
-                if (item.Content.ToString().Contains("Tags"))
-                    _vm.TagsBtnClicked(NavView);
-                else
-                {
-                    _vm.SettingsBtnClicked(Frame);
-                    ((MainContent)InsideFrame.Content)?.BindingsUpdate();
-                    //Bindings?.Update();
-                }
-            }
+            if (!(sender is NavigationViewItem item) || item.Content == null) return;
+            if (item.Content.ToString().Contains("Tags"))
+                _vm.TagsBtnClicked(NavView);
+            else
+                _vm.SettingsBtnClicked(Frame);
+            //((MainContent)InsideFrame.Content)?.BindingsUpdate();
+            //Bindings?.Update();
+
         }
     }
 }

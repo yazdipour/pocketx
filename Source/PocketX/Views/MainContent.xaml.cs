@@ -25,66 +25,47 @@ namespace PocketX.Views
 {
     public sealed partial class MainContent : Page
     {
-        private readonly PocketHandler _pocketHandler = PocketHandler.GetInstance();
-        private readonly IncrementalLoadingCollection<PocketHandler, PocketItem> _myList = new IncrementalLoadingCollection<PocketHandler, PocketItem>();
-        private readonly Settings _settings = SettingsHandler.Settings;
-        private MainContentViewModel _vm;
+        private readonly MainContentViewModel _vm;
         private static bool IsSmallWidth(double width) => width < 720;
 
         #region On PageInit
-
         public MainContent()
         {
             InitializeComponent();
-            _vm = new MainContentViewModel();
-            //pocketHandler.Client = pocketHandler.LoadCacheClient();
-            header_title.Text = "PocketX Tips";
-            DataTransferManager.GetForCurrentView().DataRequested += (sender, args) =>
+            _vm = new MainContentViewModel {MarkdownHandler = new MarkdownHandler(MarkdownText)};
+            _vm.AudioHandler = new AudioHandler(media, _vm.TextProviderForAudioPlayer)
             {
-                var request = args.Request;
-                request.Data.SetText(_pocketHandler?.CurrentPocketItem?.Uri?.ToString() ?? "");
-                request.Data.Properties.Title = "Shared by PocketX";
+                MediaStartAction = () => { TopBar.MaxWidth = 48; },
+                MediaEndAction = () => { TopBar.MaxWidth = 500; }
             };
+            HeaderTitle.Text = "PocketX";
+            DataTransferManager.GetForCurrentView().DataRequested += _vm.ShareArticle;
             SizeChanged += (s, e) =>
             {
-                if (!splitView.IsPaneOpen && !IsSmallWidth(e.NewSize.Width))
-                    splitView.IsPaneOpen = true;
-                else if (splitView.IsPaneOpen && IsSmallWidth(e.NewSize.Width)) splitView.IsPaneOpen = false;
+                if (!SplitView.IsPaneOpen && !IsSmallWidth(e.NewSize.Width)) SplitView.IsPaneOpen = true;
+                else if (SplitView.IsPaneOpen && IsSmallWidth(e.NewSize.Width)) SplitView.IsPaneOpen = false;
             };
-        }
-
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            markdownText.Text = await Utils.TextFromAssets(@"Assets\Icons\Home.md");
-            if (!Microsoft.Toolkit.Uwp.Connectivity.NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
-                ListViewInSplitView.ItemsSource = await _pocketHandler.GetItemsCache();
-            else await ParentCommandAsync("Home");
-            try { await _pocketHandler.GetTagsAsync(false); }
-            catch { }
+            Loaded += async (s, e) =>
+            {
+                MarkdownText.Text = await Utils.TextFromAssets(@"Assets\Icons\Home.md");
+                if (!Microsoft.Toolkit.Uwp.Connectivity.NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
+                    ListViewInSplitView.ItemsSource = await _vm.PocketHandler.GetItemsCache();
+                else await ParentCommandAsync("Home");
+                try { await _vm.PocketHandler.GetTagsAsync(false); }
+                catch { }
+            };
         }
 
         #endregion On PageInit
 
         #region Miscellaneous
 
-        private async void Add_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
-        {
-            if (Microsoft.Toolkit.Uwp.Connectivity.NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
-            {
-                var dialog = new AddDialog(_settings.AppTheme);
-                await dialog.ShowAsync();
-                if (dialog.PocketItem == null) return;
-                _myList.Insert(0, dialog.PocketItem);
-                await _pocketHandler.SetItemCache(0, dialog.PocketItem);
-            }
-            else await new Windows.UI.Popups.MessageDialog("You need to connect to the internet first").ShowAsync();
-        }
 
-        private void Reload_ArticleView(object sender, RoutedEventArgs e) => OpenInArticleView(_pocketHandler.CurrentPocketItem, true);
+        private void Reload_ArticleView(object sender, RoutedEventArgs e) => OpenInArticleView(_vm.PocketHandler.CurrentPocketItem, true);
 
         private void HandleAppBarStatus()
         {
-            var item = _pocketHandler.CurrentPocketItem;
+            var item = _vm.PocketHandler.CurrentPocketItem;
             WebViewBtn.Tag = "webView";
             WebViewBtn.Content = "Open in WebView";
             ArchiveBtn.Content = item.IsArchive ? "" : "";
@@ -98,83 +79,49 @@ namespace PocketX.Views
             switch (theOne)
             {
                 case "webView":
-                    webView.Visibility = Visibility.Visible;
-                    markdownGrid.Visibility = Visibility.Collapsed;
+                    WebView.Visibility = Visibility.Visible;
+                    MarkdownGrid.Visibility = Visibility.Collapsed;
                     try { errorView.Visibility = Visibility.Collapsed; }
                     catch { }
                     break;
 
                 case "markdownGrid":
                     FindName("markdownText");
-                    markdownGrid.Visibility = Visibility.Visible;
+                    MarkdownGrid.Visibility = Visibility.Visible;
                     try { errorView.Visibility = Visibility.Collapsed; }
                     catch { }
-                    try { webView.Visibility = Visibility.Collapsed; }
+                    try { WebView.Visibility = Visibility.Collapsed; }
                     catch { }
                     break;
 
                 case "errorView":
                     errorView.Visibility = Visibility.Visible;
-                    markdownGrid.Visibility = Visibility.Collapsed;
-                    try { webView.Visibility = Visibility.Collapsed; }
+                    MarkdownGrid.Visibility = Visibility.Collapsed;
+                    try { WebView.Visibility = Visibility.Collapsed; }
                     catch { }
                     break;
             }
         }
 
-        internal void BindingsUpdate() => Bindings.Update();
-
         #endregion Miscellaneous
-
-        #region MediaElement Events
-
-        private async void Text2Speech_Click(object sender, RoutedEventArgs e)
-        {
-            if (media.CurrentState == MediaElementState.Playing)
-            {
-                media.Stop();
-                Media_MediaEnded(null, null);
-            }
-            else
-            {
-                TopBar.MaxWidth = 48;
-                var text = await BlobCache.LocalMachine.GetObject<string>("plain_" + _pocketHandler.CurrentPocketItem?.Uri?.AbsoluteUri)
-                    .Catch(Observable.Return(markdownText?.Text));
-                if (!string.IsNullOrEmpty(text)) await AudioHandler.Start(media, text);
-                else await UiUtils.ShowDialogAsync("No Content to Read");
-            }
-        }
-
-        private async void Media_MediaFailed(object sender, ExceptionRoutedEventArgs e)
-            => await UiUtils.ShowDialogAsync(e.ErrorMessage);
-
-        private void Media_MediaOpened(object sender, RoutedEventArgs e) => ((MediaElement)sender).AreTransportControlsEnabled = true;
-
-        private void Media_MediaEnded(object sender, RoutedEventArgs e)
-        {
-            ((MediaElement)sender).AreTransportControlsEnabled = false;
-            TopBar.MaxWidth = 500;
-        }
-
-        #endregion MediaElement Events
 
         #region Controls Events
 
         private void splitView_PaneOpened(SplitView sender, object args)
         {
             if (BackBtn == null) return;
-            BackBtn.Glyph = splitView.IsPaneOpen ? "" : "";
-            if (!splitView.IsPaneOpen && _pocketHandler.CurrentPocketItem != null)
+            BackBtn.Glyph = SplitView.IsPaneOpen ? "" : "";
+            if (!SplitView.IsPaneOpen && _vm.PocketHandler.CurrentPocketItem != null)
                 TopBar.Visibility = Visibility.Visible;
-            else if (splitView.IsPaneOpen && IsSmallWidth(ActualWidth))
+            else if (SplitView.IsPaneOpen && IsSmallWidth(ActualWidth))
                 TopBar.Visibility = Visibility.Collapsed;
         }
 
         private void listViewInSplitView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (splitView.IsPaneOpen && IsSmallWidth(ActualWidth)) splitView.IsPaneOpen = false;
-            _pocketHandler.CurrentPocketItem = e.ClickedItem as PocketItem;
-            OpenInArticleView(_pocketHandler.CurrentPocketItem);
+            if (SplitView.IsPaneOpen && IsSmallWidth(ActualWidth)) SplitView.IsPaneOpen = false;
+            _vm.PocketHandler.CurrentPocketItem = e.ClickedItem as PocketItem;
+            OpenInArticleView(_vm.PocketHandler.CurrentPocketItem);
             FindName("TopBar");
         }
 
@@ -183,7 +130,7 @@ namespace PocketX.Views
             var item = ((FrameworkElement)e.OriginalSource).DataContext as PocketItem;
             var flyout = new MenuFlyout();
             var style = new Style { TargetType = typeof(MenuFlyoutPresenter) };
-            style.Setters.Add(new Setter(RequestedThemeProperty, _settings.AppTheme));
+            style.Setters.Add(new Setter(RequestedThemeProperty, _vm.Settings.AppTheme));
             flyout.MenuFlyoutPresenterStyle = style;
             var el = new MenuFlyoutItem { Text = "Copy Link", Icon = new SymbolIcon(Symbol.Copy) };
             el.Click += (sen, ee) =>
@@ -198,7 +145,7 @@ namespace PocketX.Views
             el = new MenuFlyoutItem { Text = "Delete", Icon = new SymbolIcon(Symbol.Delete) };
             el.Click += async (sen, ee) => await DeleteArticleAsync(item);
             flyout.Items.Add(el);
-            if (!(splitView.Tag ?? "").ToString().Contains("Fav"))
+            if (!(SplitView.Tag ?? "").ToString().Contains("Fav"))
             {
                 el = new MenuFlyoutItem
                 {
@@ -223,22 +170,6 @@ namespace PocketX.Views
 
         #endregion Controls Events
 
-        #region Markdown
-
-        private async void MarkdownText_LinkClicked(object sender, LinkClickedEventArgs e)
-        {
-            if (Uri.TryCreate(e.Link, UriKind.Absolute, out var link))
-                await Launcher.LaunchUriAsync(link);
-        }
-
-        private async void MarkdownText_ImageClicked(object sender, LinkClickedEventArgs e)
-        {
-            if (Uri.TryCreate(e.Link, UriKind.Absolute, out var link))
-                await new ImageDialog(link).ShowAsync();
-        }
-
-        #endregion Markdown
-
         private async void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
             => await ParentCommandAsync(args?.QueryText);
 
@@ -247,8 +178,8 @@ namespace PocketX.Views
         {
             if ((tag ?? "").Length < 2) return;
             LoadingControl.IsLoading = true;
-            if (!splitView.IsPaneOpen) splitView.IsPaneOpen = true;
-            splitView.Tag = tag;
+            if (!SplitView.IsPaneOpen) SplitView.IsPaneOpen = true;
+            SplitView.Tag = tag;
 
             //leftSwipeItems.Clear();
             try
@@ -256,20 +187,20 @@ namespace PocketX.Views
                 switch (tag)
                 {
                     case "Home":
-                        leftSwipeItems.Add(leftSwipeArchive);
+                        //leftSwipeItems.Add(leftSwipeArchive);
                         if (count == 0)
                         {
-                            await _myList.RefreshAsync();
+                            await _vm.ArticlesList.RefreshAsync();
                             break;
                         }
                         Logger.Logger.L($"Tap {tag}");
-                        ListViewInSplitView.ItemsSource = _myList;
-                        BindingsUpdate();
+                        ListViewInSplitView.ItemsSource = _vm.ArticlesList;
+                        //BindingsUpdate();
                         break;
 
                     case "Favorites":
                         Logger.Logger.L($"Tap {tag}");
-                        ListViewInSplitView.ItemsSource = await _pocketHandler.GetListAsync(
+                        ListViewInSplitView.ItemsSource = await _vm.PocketHandler.GetListAsync(
                             state: State.all,
                             favorite: true,
                             tag: null,
@@ -280,7 +211,7 @@ namespace PocketX.Views
 
                     case "Archives":
                         Logger.Logger.L($"Tap {tag}");
-                        ListViewInSplitView.ItemsSource = await _pocketHandler.GetListAsync(
+                        ListViewInSplitView.ItemsSource = await _vm.PocketHandler.GetListAsync(
                             state: State.archive,
                             favorite: null,
                             tag: null,
@@ -295,7 +226,7 @@ namespace PocketX.Views
                         if ('#'.Equals(tag[0]))
                         {
                             Logger.Logger.L($"Tag {tag}");
-                            searchList = await _pocketHandler.GetListAsync(
+                            searchList = await _vm.PocketHandler.GetListAsync(
                                 state: State.all,
                                 favorite: null,
                                 tag: tag.Substring(1),
@@ -306,7 +237,7 @@ namespace PocketX.Views
                         else
                         {
                             Logger.Logger.L("Search");
-                            searchList = await _pocketHandler.GetListAsync(
+                            searchList = await _vm.PocketHandler.GetListAsync(
                                 state: State.all,
                                 favorite: null,
                                 tag: null,
@@ -323,66 +254,58 @@ namespace PocketX.Views
             LoadingControl.IsLoading = false;
         }
 
-        private async void Appbar_Click(object sender, RoutedEventArgs e)
+        private async void AppBar_Click(object sender, RoutedEventArgs e)
         {
             var tag = sender is Control c ? c?.Tag?.ToString()?.ToLower() : sender is string s ? s : "";
-            switch (tag)
+            if (tag == "unfavorite")
             {
-                case "unfavorite":
-                    FavBtn.Tag = FavBtn.Content = "Favorite";
-                    await _pocketHandler.Client.Unfavorite(_pocketHandler.CurrentPocketItem);
-                    MainPage.Notifier.Show("Remove from Favorite", 2000);
-                    break;
-
-                case "favorite":
-                    FavBtn.Tag = FavBtn.Content = "Unfavorite";
-                    await _pocketHandler.Client.Favorite(_pocketHandler.CurrentPocketItem);
-                    MainPage.Notifier.Show("Saved as Favorite", 2000);
-                    break;
-
-                case "share":
-                    DataTransferManager.ShowShareUI();
-                    break;
-
-                case "unarchive":
-                    ArchiveBtn.Tag = "Archive";
-                    ArchiveBtn.Content = "";
-                    await ArchiveArticleAsync(_pocketHandler.CurrentPocketItem, false, true);
-                    break;
-
-                case "archive":
-                    ArchiveBtn.Tag = "Unarchive";
-                    ArchiveBtn.Content = "";
-                    await ArchiveArticleAsync(_pocketHandler.CurrentPocketItem, true, true);
-                    break;
-
-                case "copy":
-                    Utils.CopyToClipboard(_pocketHandler.CurrentPocketItem?.Uri?.AbsoluteUri);
-                    MainPage.Notifier.Show("Copied", 2000);
-                    break;
-
-                case "webview":
-                    WebViewBtn.Tag = "articleView";
-                    WebViewBtn.Content = "Open in ArticleView";
-                    HandleViewVisibilities(tag);
-                    webView.Navigate(_pocketHandler.CurrentPocketItem?.Uri);
-                    break;
-
-                case "articleview":
-                    WebViewBtn.Tag = "webView";
-                    WebViewBtn.Content = "Open in WebView";
-                    HandleViewVisibilities(tag);
-                    OpenInArticleView(_pocketHandler.CurrentPocketItem, true);
-                    break;
-
-                case "delete":
-                    await DeleteArticleAsync(_pocketHandler.CurrentPocketItem);
-                    break;
-
-                case "back":
-                    splitView.IsPaneOpen = !splitView.IsPaneOpen;
-                    break;
+                FavBtn.Tag = FavBtn.Content = "Favorite";
+                await _vm.PocketHandler.Client.Unfavorite(_vm.PocketHandler.CurrentPocketItem);
+                MainPage.Notifier.Show("Remove from Favorite", 2000);
             }
+            else if (tag == "favorite")
+            {
+                FavBtn.Tag = FavBtn.Content = "Unfavorite";
+                await _vm.PocketHandler.Client.Favorite(_vm.PocketHandler.CurrentPocketItem);
+                MainPage.Notifier.Show("Saved as Favorite", 2000);
+            }
+            else if (tag == "share")
+            {
+                DataTransferManager.ShowShareUI();
+            }
+            else if (tag == "unarchive")
+            {
+                ArchiveBtn.Tag = "Archive";
+                ArchiveBtn.Content = "";
+                await ArchiveArticleAsync(_vm.PocketHandler.CurrentPocketItem, false, true);
+            }
+            else if (tag == "archive")
+            {
+                ArchiveBtn.Tag = "Unarchive";
+                ArchiveBtn.Content = "";
+                await ArchiveArticleAsync(_vm.PocketHandler.CurrentPocketItem, true, true);
+            }
+            else if (tag == "copy")
+            {
+                Utils.CopyToClipboard(_vm.PocketHandler.CurrentPocketItem?.Uri?.AbsoluteUri);
+                MainPage.Notifier.Show("Copied", 2000);
+            }
+            else if (tag == "webview")
+            {
+                WebViewBtn.Tag = "articleView";
+                WebViewBtn.Content = "Open in ArticleView";
+                HandleViewVisibilities(tag);
+                WebView.Navigate(_vm.PocketHandler.CurrentPocketItem?.Uri);
+            }
+            else if (tag == "articleview")
+            {
+                WebViewBtn.Tag = "webView";
+                WebViewBtn.Content = "Open in WebView";
+                HandleViewVisibilities(tag);
+                OpenInArticleView(_vm.PocketHandler.CurrentPocketItem, true);
+            }
+            else if (tag == "delete") await DeleteArticleAsync(_vm.PocketHandler.CurrentPocketItem);
+            else if (tag == "back") SplitView.IsPaneOpen = !SplitView.IsPaneOpen;
         }
 
         private async Task ArchiveArticleAsync(PocketItem item, bool archiveIt, bool notify = true)
@@ -390,13 +313,13 @@ namespace PocketX.Views
             if (notify) MainPage.Notifier.Show(archiveIt ? "Archived" : "Added", 2000);
             if (archiveIt)
             {
-                await _pocketHandler.Client.Archive(item);
-                _myList.Remove(item);
+                await _vm.PocketHandler.Client.Archive(item);
+                _vm.ArticlesList.Remove(item);
             }
             else
             {
-                await _pocketHandler.Client.Unarchive(item);
-                _myList.Insert(0, item);
+                await _vm.PocketHandler.Client.Unarchive(item);
+                _vm.ArticlesList.Insert(0, item);
             }
         }
 
@@ -405,9 +328,9 @@ namespace PocketX.Views
             try
             {
                 if (pocketItem == null) return;
-                await _pocketHandler.Delete(pocketItem);
-                _myList.Remove(pocketItem);
-                if (notify) MainPage.Notifier.Show("Deleted", 2000);
+                await _vm.PocketHandler.Delete(pocketItem);
+                _vm.ArticlesList.Remove(pocketItem);
+                if (notify) MainPage.Notifier?.Show("Deleted", 2000);
             }
             catch { }
         }
@@ -419,19 +342,19 @@ namespace PocketX.Views
             TopBar.Visibility = Visibility.Collapsed;
             try
             {
-                markdownText.Text = "";
+                MarkdownText.Text = "";
                 HandleViewVisibilities("markdownGrid");
-                var content = await _pocketHandler.Read(item?.Uri, force);
-                if (item.ID != _pocketHandler.CurrentPocketItem.ID) return;
-                markdownText.Text = content;
-                markdownText.UriPrefix = item?.Uri?.AbsoluteUri;
+                var content = await _vm.PocketHandler.Read(item?.Uri, force);
+                if (item.ID != _vm.PocketHandler.CurrentPocketItem.ID) return;
+                MarkdownText.Text = content;
+                MarkdownText.UriPrefix = item?.Uri?.AbsoluteUri;
                 HandleAppBarStatus();
-                BindingsUpdate();
+                //BindingsUpdate();
                 TopBar.Visibility = Visibility.Visible;
             }
             catch
             {
-                if (item.ID == _pocketHandler.CurrentPocketItem.ID) HandleViewVisibilities("errorView");
+                if (item.ID == _vm.PocketHandler.CurrentPocketItem.ID) HandleViewVisibilities("errorView");
             }
             MarkdownLoading.IsLoading = false;
         }
