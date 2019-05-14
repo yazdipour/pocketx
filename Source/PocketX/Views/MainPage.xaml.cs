@@ -13,8 +13,8 @@ namespace PocketX.Views
         {
             InitializeComponent();
             Notifier = InAppNotifier;
-                InsideFrame.Navigate(typeof(MainContent));
-            if(InsideFrame.Content is MainContent main)
+            InsideFrame.Navigate(typeof(MainContent));
+            if (InsideFrame.Content is MainContent main)
                 DataContext = _vm = new MainPageViewModel(main.ParentCommandAsync);
             Loaded += (s, e) =>
             {
@@ -32,13 +32,16 @@ namespace PocketX.Views
 
         private void PaneFooter_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
-            if (((NavigationViewItem)sender).Tag?.ToString() == "Tags")
-                _vm.TagsBtnClicked(NavView);
-            else
+            if (sender is NavigationViewItem item && item.Content != null)
             {
-                _vm.SettingsBtnClicked(Frame);
-                ((MainContent)InsideFrame.Content)?.BindingsUpdate();
-                //Bindings?.Update();
+                if (item.Content.ToString().Contains("Tags"))
+                    _vm.TagsBtnClicked(NavView);
+                else
+                {
+                    _vm.SettingsBtnClicked(Frame);
+                    ((MainContent)InsideFrame.Content)?.BindingsUpdate();
+                    //Bindings?.Update();
+                }
             }
         }
     }

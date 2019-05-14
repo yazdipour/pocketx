@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using PocketX.Handlers;
 using PocketX.Models;
@@ -6,8 +8,13 @@ using PocketX.Views.Dialog;
 
 namespace PocketX.ViewModels
 {
-    internal class MainPageViewModel
+    internal class MainPageViewModel : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public void UpdateSettings() => OnPropertyChanged(nameof(Settings));
+
         public MainPageViewModel(Func<string, Task> navFunc) => NavigationFunction = navFunc;
         private Func<string, Task> NavigationFunction { get; }
         internal Settings Settings => SettingsHandler.Settings;
@@ -33,6 +40,7 @@ namespace PocketX.ViewModels
                 return;
             }
             SettingsHandler.Save();
+            UpdateSettings();
         }
     }
 }

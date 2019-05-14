@@ -41,11 +41,9 @@
                 <StackPanel Orientation="Horizontal">
                     <NavigationViewItem Icon="Tag"
                                         Content="Tags&#x1CBB;&#x1CBB;"
-                                        Tag="Tags"
                                         Tapped="PaneFooter_Tapped"/>
                     <NavigationViewItem Icon="Setting"
                                         Content="Settings&#x1CBB;&#x1CBB;"
-                                        Tag="Settings" 
                                         Tapped="PaneFooter_Tapped"/>
                 </StackPanel>
             </NavigationView.PaneCustomContent>
