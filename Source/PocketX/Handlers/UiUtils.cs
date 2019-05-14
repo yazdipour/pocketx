@@ -10,11 +10,10 @@ namespace PocketX.Handlers
 {
     internal class UiUtils
     {
-        public void TitleBarVisibility(bool visible, Windows.UI.Xaml.UIElement control)
+        public void TitleBarVisibility(bool visible, UIElement control)
         {
-            var coreTitleBar = Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar;
-            coreTitleBar.ExtendViewIntoTitleBar = !visible;
-            Windows.UI.Xaml.Window.Current.SetTitleBar(control);
+            Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = !visible;
+            Window.Current.SetTitleBar(control);
         }
 
         public void TitleBarButtonTransparentBackground(bool isDark)
@@ -23,17 +22,15 @@ namespace PocketX.Handlers
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveBackgroundColor = Colors.Black;
             titleBar.BackgroundColor = Colors.Transparent;
-            if (isDark)
-                titleBar.ButtonForegroundColor = titleBar.ForegroundColor = titleBar.ButtonHoverForegroundColor = titleBar.ButtonHoverForegroundColor = Colors.WhiteSmoke;
-            else
-                titleBar.ButtonForegroundColor = titleBar.ForegroundColor = titleBar.ButtonHoverForegroundColor = titleBar.ButtonHoverForegroundColor = Colors.Black;
+            titleBar.ButtonForegroundColor
+                = titleBar.ForegroundColor
+                    = titleBar.ButtonHoverForegroundColor
+                        = titleBar.ButtonHoverForegroundColor
+                            = isDark ? Colors.WhiteSmoke : Colors.Black;
         }
 
-        public void ChangeHeaderTheme(string resourceKey, string HexColor)
-        {
-            var cl = (AcrylicBrush)Application.Current.Resources[resourceKey];
-            cl.TintColor = cl.FallbackColor = HexColorToSolidColor(HexColor).Color;
-        }
+        public void ChangeHeaderTheme(string resourceKey, string hexColor)
+            => ChangeHeaderTheme(resourceKey, HexColorToSolidColor(hexColor).Color);
 
         public void ChangeHeaderTheme(string resourceKey, Color color)
         {
