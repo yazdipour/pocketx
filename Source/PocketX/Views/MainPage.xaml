@@ -7,13 +7,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
-    RequestedTheme="{x:Bind _settings.AppTheme,Mode=OneWay}"
+    RequestedTheme="{x:Bind _vm.Settings.AppTheme,Mode=OneWay}"
     Background="{ThemeResource SystemControlAcrylicWindowBrush}">
     <Grid>
         <StackPanel Height="28" 
                     x:Name="WindowBorder" 
-                   VerticalAlignment="Top"
-                   Background="{ThemeResource SystemControlAcrylicElementMediumHighBrush}">
+                    VerticalAlignment="Top"
+                    Background="{ThemeResource SystemControlAcrylicElementMediumHighBrush}">
             <TextBlock Text="Pocket✘" HorizontalAlignment="Center" Margin="4"/>
         </StackPanel>
         <NavigationView x:Name="NavView"
@@ -42,14 +42,14 @@
                     <NavigationViewItem Icon="Tag"
                                         Content="Tags&#x1CBB;&#x1CBB;"
                                         Tag="Tags"
-                                        Tapped="PaneFooter_Tapped" />
-                    <NavigationViewItem Tapped="PaneFooter_Tapped"
-                                        Icon="Setting"
+                                        Tapped="PaneFooter_Tapped"/>
+                    <NavigationViewItem Icon="Setting"
                                         Content="Settings&#x1CBB;&#x1CBB;"
-                                        Tag="Settings" />
+                                        Tag="Settings" 
+                                        Tapped="PaneFooter_Tapped"/>
                 </StackPanel>
             </NavigationView.PaneCustomContent>
-            <Frame x:Name="insideFrame" />
+            <Frame x:Name="InsideFrame" />
         </NavigationView>
         <Button HorizontalAlignment="Left" 
                 Height="24" 
@@ -57,8 +57,8 @@
                 Content="&#xE141;" 
                 FontFamily="Segoe MDL2 Assets" 
                 CornerRadius="0 0 4 0"
-                Click="Pin_Click" />
-        <controls:InAppNotification x:Name="_notifer" 
+                Click="{x:Bind _vm.PinBtnClicked}"/>
+        <controls:InAppNotification x:Name="InAppNotifier" 
                                     Content="Error!" 
                                     RequestedTheme="Dark"
                                     AnimationDuration="00:00:00.1000000"

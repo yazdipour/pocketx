@@ -5,8 +5,8 @@ namespace PocketX.Handlers
 {
     internal class SettingsHandler
     {
-        public static Settings Settings = new Settings();
-        
+        public static Settings Settings { get; set; } = new Settings();
+
         public static void Load()
         {
             try

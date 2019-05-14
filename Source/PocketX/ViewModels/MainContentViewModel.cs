@@ -8,5 +8,16 @@ namespace PocketX.ViewModels
 {
     class MainContentViewModel
     {
+        //public event PropertyChangedEventHandler PropertyChanged;
+
+        //public string cettings
+        //{
+        //    get { return this.nextButtonText; }
+        //    set
+        //    {
+        //        this.nextButtonText = value;
+        //        this.OnPropertyChanged();
+        //    }
+        //}
     }
 }

@@ -117,28 +117,29 @@
         <Grid x:Name="MainGrid"
               Background="{x:Bind _settings.ReaderBg,Mode=OneWay}"
               RequestedTheme="{x:Bind _settings.ReaderTheme,Mode=OneWay}">
-                    <!--markdownScrollViewer-->
-                    <ScrollViewer x:Name="markdownGrid"
-                                      HorizontalScrollBarVisibility="Disabled"
-                                      VerticalScrollBarVisibility="Visible">
-                        <Grid Background="{x:Bind _settings.ReaderBg,Mode=OneWay}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto" />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <StackPanel Grid.Row="0" x:Name="HeaderPanel"
+            <!--markdownScrollViewer-->
+            <ScrollViewer 
+                x:Name="markdownGrid" 
+                HorizontalScrollBarVisibility="Disabled"
+                VerticalScrollBarVisibility="Visible">
+                <Grid Background="{x:Bind _settings.ReaderBg,Mode=OneWay}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" x:Name="HeaderPanel"
                                     HorizontalAlignment="Stretch" Padding="16 16 16 4">
-                                <TextBlock x:Name="header_title" Text="{x:Bind _pocketHandler.CurrentPocketItem.Title,Mode=OneWay}"
+                        <TextBlock x:Name="header_title" Text="{x:Bind _pocketHandler.CurrentPocketItem.Title,Mode=OneWay}"
                                        Style="{ThemeResource SubtitleTextBlockStyle}"
                                        HorizontalAlignment="Center" TextAlignment="Center"
                                        FontFamily="Calibri" />
-                                <HyperlinkButton HorizontalAlignment="Center"
+                        <HyperlinkButton HorizontalAlignment="Center"
                                              Content="{x:Bind _pocketHandler.CurrentPocketItem.Uri.Host,Mode=OneWay}"
                                              Foreground="{x:Bind markdownText.LinkForeground,Mode=OneWay}"
                                              NavigateUri="{x:Bind _pocketHandler.CurrentPocketItem.Uri.AbsoluteUri,Mode=OneWay}" />
-                                <TextBlock Text="{x:Bind _pocketHandler.CurrentPocketItem.UpdateTime,Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center" />
-                            </StackPanel>
-                            <controls:MarkdownTextBlock x:Name="markdownText" Grid.Row="1"
+                        <TextBlock Text="{x:Bind _pocketHandler.CurrentPocketItem.UpdateTime,Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center" />
+                    </StackPanel>
+                    <controls:MarkdownTextBlock x:Name="markdownText" Grid.Row="1"
                                                         Padding="32 0 32 32" BorderThickness="0"
                                                         LinkForeground="#00cec9"
                                                         WrapCodeBlock="True"
@@ -149,35 +150,35 @@
                                                         UseSyntaxHighlighting="True"
                                                         FontSize="{x:Bind _settings.ReaderFontSize,Mode=OneWay}"
                                                         FontFamily="{x:Bind _settings.ReaderFontFamily,Mode=OneWay}" />
-                        </Grid>
-                    </ScrollViewer>
-                    <!--LoadingControl-->
-                    <controls:Loading x:Name="MarkdownLoading" 
+                </Grid>
+            </ScrollViewer>
+            <!--LoadingControl-->
+            <controls:Loading x:Name="MarkdownLoading" 
                                       HorizontalContentAlignment="Center" 
                                       VerticalContentAlignment="Center"
                                       Background="#5f111111">
-                        <ProgressBar Width="130" IsIndeterminate="True" Foreground="White" />
-                    </controls:Loading>
-                    <!--webView-->
-                    <WebView ScrollViewer.HorizontalScrollMode="Disabled" x:Name="webView" x:Load="False" />
-                    <!--errorView-->
-                    <StackPanel x:Name="errorView" 
+                <ProgressBar Width="130" IsIndeterminate="True" Foreground="White" />
+            </controls:Loading>
+            <!--webView-->
+            <WebView ScrollViewer.HorizontalScrollMode="Disabled" x:Name="webView" x:Load="False" />
+            <!--errorView-->
+            <StackPanel x:Name="errorView" 
                                 x:Load="False"
                                 HorizontalAlignment="Center" 
                                 VerticalAlignment="Center">
-                        <controls:HeaderedTextBlock FontFamily="Segoe UI Symbol"
+                <controls:HeaderedTextBlock FontFamily="Segoe UI Symbol"
                                 Header=" Could not get the article" Text="Try again or Open it in webview"
                                 HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        <StackPanel Orientation="Horizontal"
+                <StackPanel Orientation="Horizontal"
                                         Margin="0 8"
                                         HorizontalAlignment="Center">
-                            <Button Content="Reload ArticleView" Click="Reload_ArticleView" />
-                            <Button Margin="8 0" Content="Open WebView" Tag="webView"
+                    <Button Content="Reload ArticleView" Click="Reload_ArticleView" />
+                    <Button Margin="8 0" Content="Open WebView" Tag="webView"
                                     Click="Appbar_Click" />
-                        </StackPanel>
-                    </StackPanel>
-                    <!--Audio Player-->
-                    <MediaElement x:Name="media" 
+                </StackPanel>
+            </StackPanel>
+            <!--Audio Player-->
+            <MediaElement x:Name="media" 
                                   Grid.RowSpan="2" 
                                   Height="40"
                                   VerticalAlignment="Bottom"
@@ -187,8 +188,8 @@
                                   MediaOpened="Media_MediaOpened"
                                   MediaEnded="Media_MediaEnded"
                                   MediaFailed="Media_MediaFailed">
-                        <MediaElement.TransportControls>
-                            <MediaTransportControls
+                <MediaElement.TransportControls>
+                    <MediaTransportControls
                                 IsFullWindowButtonVisible="False"
                                 IsSkipForwardButtonVisible="True"
                                 IsSkipBackwardEnabled="True"
@@ -196,8 +197,8 @@
                                 IsSkipForwardEnabled="True"
                                 IsZoomButtonVisible="False"
                                 IsCompact="True"/>
-                        </MediaElement.TransportControls>
-                    </MediaElement>
+                </MediaElement.TransportControls>
+            </MediaElement>
             <!--AppBar-->
             <CommandBar x:Name="TopBar"
                         VerticalAlignment="Bottom"

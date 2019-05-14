@@ -34,15 +34,14 @@ namespace PocketX.Handlers
 
         public PocketClient LoadCacheClient()
         {
-            string cache = new LocalObjectStorageHelper().Read(Keys.PocketClientCache, "");
-            if (cache == "") return null;
-            return new PocketClient(Keys.Pocket, cache);
+            var cache = new LocalObjectStorageHelper().Read(Keys.PocketClientCache, "");
+            return cache == "" ? null : new PocketClient(Keys.Pocket, cache);
         }
 
         private void SaveCacheUser(PocketUser user)
             => new LocalObjectStorageHelper().Save(Keys.PocketClientCache, user.Code);
 
-        internal void Logout(Frame frame)
+        internal void Logout()
         {
             Logger.Logger.L("Logout");
             Client = null;
@@ -50,8 +49,6 @@ namespace PocketX.Handlers
             BlobCache.LocalMachine.InvalidateAll();
             BlobCache.LocalMachine.Vacuum();
             new LocalObjectStorageHelper().Save(Keys.PocketClientCache, "");
-            frame.Navigate(typeof(Views.LoginPage));
-            frame.BackStack.Clear();
         }
 
         internal async Task<bool> LoginAsync()
@@ -65,7 +62,7 @@ namespace PocketX.Handlers
         internal async Task<Uri> LoginUriAsync()
         {
             Client = new PocketClient(Keys.Pocket, callbackUri: App.Protocol);
-            string requestCode = await Client.GetRequestCode();
+            await Client.GetRequestCode();
             return Client.GenerateAuthenticationUri();
         }
 

@@ -28,7 +28,7 @@ namespace PocketX.Views
         private readonly PocketHandler _pocketHandler = PocketHandler.GetInstance();
         private readonly IncrementalLoadingCollection<PocketHandler, PocketItem> _myList = new IncrementalLoadingCollection<PocketHandler, PocketItem>();
         private readonly Settings _settings = SettingsHandler.Settings;
-        private MainContentViewModel _vm = new MainContentViewModel();
+        private MainContentViewModel _vm;
         private static bool IsSmallWidth(double width) => width < 720;
 
         #region On PageInit
@@ -36,6 +36,7 @@ namespace PocketX.Views
         public MainContent()
         {
             InitializeComponent();
+            _vm = new MainContentViewModel();
             //pocketHandler.Client = pocketHandler.LoadCacheClient();
             header_title.Text = "PocketX Tips";
             DataTransferManager.GetForCurrentView().DataRequested += (sender, args) =>
@@ -147,7 +148,7 @@ namespace PocketX.Views
         private async void Media_MediaFailed(object sender, ExceptionRoutedEventArgs e)
             => await UiUtils.ShowDialogAsync(e.ErrorMessage);
 
-        private void Media_MediaOpened(object sender, RoutedEventArgs e) => ((MediaElement) sender).AreTransportControlsEnabled = true;
+        private void Media_MediaOpened(object sender, RoutedEventArgs e) => ((MediaElement)sender).AreTransportControlsEnabled = true;
 
         private void Media_MediaEnded(object sender, RoutedEventArgs e)
         {
@@ -241,9 +242,10 @@ namespace PocketX.Views
         private async void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
             => await ParentCommandAsync(args?.QueryText);
 
-        public async Task ParentCommandAsync(string tag, int count = 40, int offset = 0)
+        public async Task ParentCommandAsync(string tag) => await ParentCommandAsync(tag, 40, 0);
+        public async Task ParentCommandAsync(string tag, int count, int offset)
         {
-            if ((tag??"").Length < 2) return;
+            if ((tag ?? "").Length < 2) return;
             LoadingControl.IsLoading = true;
             if (!splitView.IsPaneOpen) splitView.IsPaneOpen = true;
             splitView.Tag = tag;
