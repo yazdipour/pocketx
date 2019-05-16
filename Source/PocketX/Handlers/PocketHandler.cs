@@ -7,24 +7,40 @@ using ReadSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using MarkdownLog;
+using PocketX.Annotations;
 
 namespace PocketX.Handlers
 {
-    internal class PocketHandler : IIncrementalSource<PocketItem>
+    internal class PocketHandler : IIncrementalSource<PocketItem>, INotifyPropertyChanged
     {
-        public PocketClient Client { get; set; }
-        public PocketItem CurrentPocketItem;
+        public PocketClient Client;
         private static PocketHandler _pocketHandler;
-        private ObservableCollection<string> _tags = new ObservableCollection<string>();
+        private PocketItem _currentPocketItem;
+        public ObservableCollection<string> Tags { set; get; } = new ObservableCollection<string>();
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public PocketItem CurrentPocketItem
+        {
+            get => _currentPocketItem;
+            set
+            {
+                _currentPocketItem = value;
+                OnPropertyChanged(nameof(CurrentPocketItem));
+            }
+        }
 
         #region Login\Logout
 
         public static PocketHandler GetInstance() => _pocketHandler ?? (_pocketHandler = new PocketHandler());
-
 
         public PocketClient LoadCacheClient()
         {
@@ -163,20 +179,27 @@ namespace PocketX.Handlers
             return content;
         }
 
-        internal async Task<ObservableCollection<string>> GetTagsAsync(bool cache = true)
+        internal async Task FetchTagsAsync()
         {
-            if (_tags?.Count > 0) return _tags;
-            if (cache)
+            try
             {
-                _tags = await BlobCache.LocalMachine.GetObject<ObservableCollection<string>>("tags");
-                //.Catch(Observable.Return(new List<string>()));
-                if (_tags?.Count > 0) return _tags;
+                if (Tags?.Count > 0) return;
+                var offlineTags = await BlobCache.LocalMachine.GetObject<ObservableCollection<string>>("tags");
+                if (offlineTags != null)
+                    foreach (var t in offlineTags)
+                        Tags?.Add(t);
+                var tags = (await Client.GetTags()).ToList().Select(o => o.Name);
+                var enumerable = tags as string[] ?? tags.ToArray();
+                if (enumerable.Length < 1) return;
+                Tags.Clear();
+                foreach (var t in enumerable) Tags?.Add(t);
+                await BlobCache.LocalMachine.InsertObject("tags", Tags);
             }
-            var tags = (await Client.GetTags()).ToList().Select(o => o.Name);
-            await BlobCache.LocalMachine.InsertObject("tags", _tags);
-            _tags?.Clear();
-            foreach (var t in tags) _tags?.Add(t);
-            return _tags;
+            catch { }
+            finally
+            {
+                OnPropertyChanged(nameof(Tags));
+            }
         }
 
         public async Task<IEnumerable<PocketItem>> GetPagedItemsAsync(int pageIndex, int pageSize, CancellationToken cancellationToken = default(CancellationToken))
@@ -194,5 +217,6 @@ namespace PocketX.Handlers
             return await BlobCache.LocalMachine.GetObject<string>
                     ("plain_" + CurrentPocketItem?.Uri?.AbsoluteUri).Catch(Observable.Return(""));
         }
+
     }
 }

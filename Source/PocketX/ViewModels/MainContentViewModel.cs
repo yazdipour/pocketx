@@ -41,10 +41,10 @@ namespace PocketX.ViewModels
         private ICommand _addArticle;
         private ICommand _topAppBarClick;
         //internal async void PinBtnClicked() => await new UiUtils().PinAppWindow(520, 400);
-        public async void SearchCommand(string q)
+        public async Task SearchCommand(string q)
         {
             Logger.Logger.L("Search");
-            SearchList = (ObservableCollection<PocketItem>)await PocketHandler.GetListAsync(state: State.all, favorite: null, tag: null, search: q, count: 40, offset: 0);
+            foreach (var pocketItem in await PocketHandler.GetListAsync(state: State.all, favorite: null, tag: null, search: q, count: 40, offset: 0)) SearchList.Add(pocketItem);
         }
 
         public async void LoadTagCommand(string tag)

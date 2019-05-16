@@ -1,7 +1,6 @@
 ﻿using PocketSharp.Models;
 
 using PocketX.Handlers;
-using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -29,14 +28,18 @@ namespace PocketX.Views
                     foreach (var pocketItem in await _vm.PocketHandler.GetItemsCache())
                         _vm.ArticlesList.Add(pocketItem);
                 else _vm.LoadHomeCommand();
-                try { await _vm.PocketHandler.GetTagsAsync(false); }
-                catch { }
-
+                await _vm.PocketHandler.FetchTagsAsync();
                 Logger.Logger.InitOnlineLogger(Keys.AppCenter);
                 Logger.Logger.SetDebugMode(App.DEBUGMODE);
-                MarkdownCtrl.ToggleArchiveArticleAsync = _vm.ToggleArchiveAsync;
-                MarkdownCtrl.DeleteArticleAsync = _vm.DeleteArticleAsync;
-                MarkdownCtrl.ToggleFavoriteArticleAsync = _vm.ToggleFavoriteArticleAsync;
+            };
+            MarkdownCtrl.ToggleArchiveArticleAsync = _vm.ToggleArchiveAsync;
+            MarkdownCtrl.DeleteArticleAsync = _vm.DeleteArticleAsync;
+            MarkdownCtrl.ToggleFavoriteArticleAsync = _vm.ToggleFavoriteArticleAsync;
+            TagsListCtrl.SearchAsync = async (tag) =>
+            {
+                Pivot.SelectedIndex = 3;
+                SearchBox.Text = tag;
+                await _vm.SearchCommand(tag);
             };
         }
         private void AutoSuggestBox_OnQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) => _vm.SearchCommand(sender?.Text);

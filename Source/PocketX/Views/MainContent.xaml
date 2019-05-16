@@ -69,17 +69,18 @@
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <AutoSuggestBox Grid.Row="0"
-                                                QueryIcon="Find"
-                                                IsEnabled="True"
-                                                PlaceholderText="Search"
-                                                QuerySubmitted="AutoSuggestBox_OnQuerySubmitted"
-                                                Opacity=".5" />
+                                <AutoSuggestBox
+                                    x:Name="SearchBox"
+                                    Grid.Row="0"
+                                    QueryIcon="Find"
+                                    IsEnabled="True"
+                                    PlaceholderText="Search"
+                                    QuerySubmitted="AutoSuggestBox_OnQuerySubmitted" />
                                 <ctrl:ArticlesListControl Grid.Row="1" ItemsSource="{x:Bind _vm.SearchList,Mode=OneWay}"/>
                             </Grid>
                         </PivotItem>
                         <PivotItem Header="Tags">
-                            <ctrl:TagsListControl/>
+                            <ctrl:TagsListControl x:Name="TagsListCtrl"/>
                         </PivotItem>
                     </Pivot>
                     <!--AddLink Button-->

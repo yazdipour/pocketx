@@ -34,7 +34,7 @@ namespace PocketX.Views.Dialog
             catch { urlTextBox.Background = UiUtils.HexColorToSolidColor("#5fED243B"); }
         }
 
-        private async void ContentDialog_Loaded(object sender, RoutedEventArgs e)
-            => chipsList.AvailableChips = await PocketHandler.GetInstance().GetTagsAsync();
+        private void ContentDialog_Loaded(object sender, RoutedEventArgs e)
+            => chipsList.AvailableChips = PocketHandler.GetInstance().Tags;
     }
 }

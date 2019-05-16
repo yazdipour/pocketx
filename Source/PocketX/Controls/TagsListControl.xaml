@@ -5,24 +5,20 @@
     xmlns:local="using:PocketX.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    d:DesignHeight="300"
-    d:DesignWidth="400">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <AutoSuggestBox x:Name="searchBox" PlaceholderText="Search Tag" QuerySubmitted="searchBox_QuerySubmitted"/>
-        <ListView x:Name="listView" Grid.Row="1" IsItemClickEnabled="True" ItemClick="listView_ItemClick">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <FontIcon Glyph="&#xE1CB;" FontFamily="Segoe UI Symbol" Margin="12"/>
-                        <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-    </Grid>
+    xmlns:uwpChipsX="using:UWPChipsX"
+    mc:Ignorable="d">
+    <GridView ItemsSource="{x:Bind Tags, Mode=OneWay}" 
+              IsItemClickEnabled="True" 
+              SelectionMode="None"
+              ItemClick="ItemClick">
+        <GridView.ItemTemplate>
+            <DataTemplate>
+                <!-- ReSharper disable once Xaml.InvalidResourceType -->
+                <Border Background="{ThemeResource AccentColor}" Padding="12 4"
+                        CornerRadius="8" RequestedTheme="Dark" Margin="4">
+                    <TextBlock Text="{Binding}"/>
+                </Border>
+            </DataTemplate>
+        </GridView.ItemTemplate>
+    </GridView>
 </UserControl>

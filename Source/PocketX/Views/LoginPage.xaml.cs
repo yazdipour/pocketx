@@ -19,7 +19,7 @@ namespace PocketX.Views
                 var auth = await WebAuthenticationBroker.
                     AuthenticateAsync(WebAuthenticationOptions.None, uri, new Uri(App.Protocol));
                 if (auth.ResponseStatus != WebAuthenticationStatus.Success) return;
-                if (await PocketHandler.GetInstance().LoginAsync()) Frame.Navigate(typeof(MainPage));
+                if (await PocketHandler.GetInstance().LoginAsync()) Frame.Navigate(typeof(MainContent));
                 else throw new Exception();
             }
             catch
