@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.System;
-using Windows.UI.Xaml.Controls;
-using Akavache;
 using Microsoft.Toolkit.Uwp;
-using Microsoft.Toolkit.Uwp.UI.Controls;
 using PocketSharp.Models;
 using PocketX.Annotations;
 using PocketX.Handlers;
@@ -23,20 +17,52 @@ namespace PocketX.ViewModels
 {
     internal class MainContentViewModel : INotifyPropertyChanged
     {
+        public readonly IncrementalLoadingCollection<PocketIncrementalSource.Articles, PocketItem> ArticlesList
+            = new IncrementalLoadingCollection<PocketIncrementalSource.Articles, PocketItem>();
+        public readonly IncrementalLoadingCollection<PocketIncrementalSource.Archives, PocketItem> ArchivesList
+            = new IncrementalLoadingCollection<PocketIncrementalSource.Archives, PocketItem>();
+        public readonly IncrementalLoadingCollection<PocketIncrementalSource.Favorites, PocketItem> FavoritesList
+            = new IncrementalLoadingCollection<PocketIncrementalSource.Favorites, PocketItem>();
+        public ObservableCollection<PocketItem> SearchList { get; set; } = new ObservableCollection<PocketItem>();
+        public int PivotListSelectedIndex { get; set; }
+        public ObservableCollection<PocketItem> CurrentList()
+        {
+            switch (PivotListSelectedIndex)
+            {
+                case 1:
+                    return FavoritesList;
+                case 2:
+                    return ArchivesList;
+                case 3:
+                    return SearchList;
+                default:
+                    return ArticlesList;
+            }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
-        public ObservableCollection<PocketItem> HomeList = new ObservableCollection<PocketItem>();
-        public ObservableCollection<PocketItem> SearchList = new ObservableCollection<PocketItem>();
-        public ObservableCollection<PocketItem> ArchivesList = new ObservableCollection<PocketItem>();
-        public ObservableCollection<PocketItem> FavoritesList = new ObservableCollection<PocketItem>();
-        public ObservableCollection<PocketItem> CurrentList => HomeList;
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
+        event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
+        {
+            add
+            {
+                ((INotifyPropertyChanged)ArticlesList).PropertyChanged += value;
+                ((INotifyPropertyChanged)ArchivesList).PropertyChanged += value;
+                ((INotifyPropertyChanged)FavoritesList).PropertyChanged += value;
+                ((INotifyPropertyChanged)SearchList).PropertyChanged += value;
+            }
+            remove
+            {
+                ((INotifyPropertyChanged)ArticlesList).PropertyChanged -= value;
+                ((INotifyPropertyChanged)ArchivesList).PropertyChanged -= value;
+                ((INotifyPropertyChanged)FavoritesList).PropertyChanged -= value;
+                ((INotifyPropertyChanged)SearchList).PropertyChanged -= value;
+            }
+        }
+
         internal Settings Settings => SettingsHandler.Settings;
         internal PocketHandler PocketHandler => PocketHandler.GetInstance();
-
-        internal readonly IncrementalLoadingCollection<PocketHandler, PocketItem> ArticlesList
-            = new IncrementalLoadingCollection<PocketHandler, PocketItem>();
 
         private ICommand _addArticle;
         private ICommand _topAppBarClick;
@@ -59,29 +85,29 @@ namespace PocketX.ViewModels
                 offset: 0);
         }
 
-        public async void LoadArchiveCommand()
-        {
-            Logger.Logger.L("Tap LoadArchiveCommand");
-            ArchivesList = (ObservableCollection<PocketItem>)await PocketHandler.GetListAsync(
-                state: State.archive,
-                favorite: null,
-                tag: null,
-                search: null,
-                count: 40,
-                offset: 0);
-        }
+        //public async void LoadArchiveCommand()
+        //{
+        //    Logger.Logger.L("Tap LoadArchiveCommand");
+        //    ArchivesList = await PocketHandler.GetListAsync(
+        //        state: State.archive,
+        //        favorite: null,
+        //        tag: null,
+        //        search: null,
+        //        count: 40,
+        //        offset: 0);
+        //}
 
-        public async void LoadFavCommand()
-        {
-            Logger.Logger.L($"Tap Fav");
-            FavoritesList = (ObservableCollection<PocketItem>)await PocketHandler.GetListAsync(
-                state: State.all,
-                favorite: true,
-                tag: null,
-                search: null,
-                count: 40,
-                offset: 0);
-        }
+        //public async void LoadFavCommand()
+        //{
+        //    Logger.Logger.L($"Tap Fav");
+        //    FavoritesList = (ObservableCollection<PocketItem>)await PocketHandler.GetListAsync(
+        //        state: State.all,
+        //        favorite: true,
+        //        tag: null,
+        //        search: null,
+        //        count: 40,
+        //        offset: 0);
+        //}
         public async void LoadHomeCommand()
         {
             Logger.Logger.L("Tap Home");
@@ -126,46 +152,51 @@ namespace PocketX.ViewModels
             request.Data.Properties.Title = "Shared by PocketX";
         }
 
-        public async Task ToggleArchiveAsync([NotNull] PocketItem pocketItem, bool notify)
+        public async Task ToggleArchiveAsync([CanBeNull] PocketItem pocketItem)
         {
+            if (pocketItem == null) return;
             try
             {
                 if (pocketItem.IsArchive)
                 {
                     await PocketHandler.Client.Unarchive(pocketItem);
-                    if (notify) MainContent.Notifier.Show("Added", 2000);
-                    HomeList.Insert(0, pocketItem);
+                    MainContent.Notifier.Show("Added", 2000);
+                    ArticlesList.Insert(0, pocketItem);
+                    ArchivesList.Remove(pocketItem);
                 }
                 else
                 {
                     await PocketHandler.Client.Archive(pocketItem);
-                    if (notify) MainContent.Notifier.Show("Archived", 2000);
-                    ArchivesList.Remove(pocketItem);
+                    ArchivesList.Insert(0, pocketItem);
+                    ArticlesList.Remove(pocketItem);
+                    MainContent.Notifier.Show("Archived", 2000);
                 }
             }
-            catch { }
+            catch (Exception e) { MainContent.Notifier.Show(e.Message, 2000); }
         }
 
-        public async Task DeleteArticleAsync([CanBeNull] PocketItem pocketItem, bool notify)
+        public async Task DeleteArticleAsync([CanBeNull] PocketItem pocketItem)
         {
             if (pocketItem == null) return;
             await PocketHandler.Delete(pocketItem);
-            CurrentList.Remove(pocketItem);
-            if (notify) MainContent.Notifier?.Show("Deleted", 2000);
+            CurrentList()?.Remove(pocketItem);
+            MainContent.Notifier?.Show("Deleted", 2000);
         }
 
-        public async Task ToggleFavoriteArticleAsync([CanBeNull] PocketItem pocketItem, bool notify)
+        public async Task ToggleFavoriteArticleAsync([CanBeNull] PocketItem pocketItem)
         {
             if (pocketItem == null) return;
             if (pocketItem.IsFavorite)
             {
                 await PocketHandler.GetInstance().Client.Unfavorite(pocketItem);
-                if (notify) MainContent.Notifier.Show("Remove from Favorite", 2000);
+                FavoritesList.Remove(pocketItem);
+                MainContent.Notifier.Show("Remove from Favorite", 2000);
             }
             else
             {
                 await PocketHandler.GetInstance().Client.Favorite(pocketItem);
-                if (notify) MainContent.Notifier.Show("Saved as Favorite", 2000);
+                FavoritesList.Add(pocketItem);
+                MainContent.Notifier.Show("Saved as Favorite", 2000);
             }
         }
     }

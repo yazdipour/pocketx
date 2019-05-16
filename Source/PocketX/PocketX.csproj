@@ -115,6 +115,7 @@
     <Compile Include="Handlers\Keys.cs" />
     <Compile Include="Handlers\MarkdownHandler.cs" />
     <Compile Include="Handlers\PocketHandler.cs" />
+    <Compile Include="Handlers\PocketIncrementalSource.cs" />
     <Compile Include="Handlers\SimpleCommand.cs" />
     <Compile Include="Handlers\UiUtils.cs" />
     <Compile Include="Handlers\Utils.cs" />
@@ -122,6 +123,9 @@
     <Compile Include="Handlers\SettingsHandler.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModels\MainContentViewModel.cs" />
+    <Compile Include="Views\Dialog\EditArticleTagsDialog.xaml.cs">
+      <DependentUpon>EditArticleTagsDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Dialog\ImageDialog.xaml.cs">
       <DependentUpon>ImageDialog.xaml</DependentUpon>
     </Compile>
@@ -240,6 +244,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Views\Dialog\EditArticleTagsDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Dialog\ImageDialog.xaml">
       <SubType>Designer</SubType>

@@ -32,18 +32,30 @@ namespace PocketX.Views
                 Logger.Logger.InitOnlineLogger(Keys.AppCenter);
                 Logger.Logger.SetDebugMode(App.DEBUGMODE);
             };
-            MarkdownCtrl.ToggleArchiveArticleAsync = _vm.ToggleArchiveAsync;
-            MarkdownCtrl.DeleteArticleAsync = _vm.DeleteArticleAsync;
-            MarkdownCtrl.ToggleFavoriteArticleAsync = _vm.ToggleFavoriteArticleAsync;
+            MarkdownCtrl.ToggleArchiveArticleAsync
+                = HomeListControl.ToggleArchiveArticleAsync 
+                    = ArchiveListControl.ToggleArchiveArticleAsync
+                        = FavListControl.ToggleArchiveArticleAsync
+                            = _vm.ToggleArchiveAsync;
+            MarkdownCtrl.DeleteArticleAsync
+                = HomeListControl.DeleteArticleAsync
+                    = ArchiveListControl.DeleteArticleAsync
+                        = FavListControl.DeleteArticleAsync
+                            = _vm.DeleteArticleAsync;
+            MarkdownCtrl.ToggleFavoriteArticleAsync 
+                = HomeListControl.ToggleFavoriteArticleAsync
+                    = ArchiveListControl.ToggleFavoriteArticleAsync
+                        = FavListControl.ToggleFavoriteArticleAsync
+                            = _vm.ToggleFavoriteArticleAsync;
             TagsListCtrl.SearchAsync = async (tag) =>
             {
-                Pivot.SelectedIndex = 3;
+                PivotList.SelectedIndex = 3;
                 SearchBox.Text = tag;
                 await _vm.SearchCommand(tag);
             };
         }
         private void AutoSuggestBox_OnQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) => _vm.SearchCommand(sender?.Text);
-        private void HeadAppBarClicked(object sender, RoutedEventArgs e) => Pivot.SelectedIndex = ((AppBarButton)sender)?.Tag?.ToString() == "Find" ? 3 : 4;
+        private void HeadAppBarClicked(object sender, RoutedEventArgs e) => PivotList.SelectedIndex = ((AppBarButton)sender)?.Tag?.ToString() == "Find" ? 3 : 4;
 
         private void listViewInSplitView_ItemClick(object sender, ItemClickEventArgs e)
         {

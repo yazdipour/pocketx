@@ -91,9 +91,9 @@ namespace PocketX.Controls
                 , typeof(MarkdownControl)
                 , new PropertyMetadata(0));
 
-        public Func<PocketItem, bool, Task> ToggleArchiveArticleAsync { get; set; }
-        public Func<PocketItem, bool, Task> DeleteArticleAsync { get; set; }
-        public Func<PocketItem, bool, Task> ToggleFavoriteArticleAsync { get; set; }
+        public Func<PocketItem, Task> ToggleArchiveArticleAsync { get; set; }
+        public Func<PocketItem, Task> DeleteArticleAsync { get; set; }
+        public Func<PocketItem, Task> ToggleFavoriteArticleAsync { get; set; }
         #endregion
 
         private async void AppBar_Click(object sender, RoutedEventArgs e)
@@ -102,14 +102,14 @@ namespace PocketX.Controls
             switch (tag)
             {
                 case "favorite":
-                    await ToggleFavoriteArticleAsync(Article, true);
+                    await ToggleFavoriteArticleAsync(Article);
                     OnPropertyChanged(nameof(FavLabel));
                     break;
                 case "share":
                     DataTransferManager.ShowShareUI();
                     break;
                 case "archive":
-                    await ToggleArchiveArticleAsync(Article, true);
+                    await ToggleArchiveArticleAsync(Article);
                     OnPropertyChanged(nameof(ArchiveLabel));
                     //OnPropertyChanged(nameof(ArchiveIcon));
                     break;
@@ -130,7 +130,7 @@ namespace PocketX.Controls
                     OpenInArticleView(true);
                     break;
                 case "delete":
-                    await DeleteArticleAsync(Article, true);
+                    await DeleteArticleAsync(Article);
                     break;
                 case "back":
                     ToggleSplitView();

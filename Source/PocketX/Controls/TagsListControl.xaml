@@ -10,6 +10,8 @@
     <GridView ItemsSource="{x:Bind Tags, Mode=OneWay}" 
               IsItemClickEnabled="True" 
               SelectionMode="None"
+              ScrollViewer.VerticalScrollMode="Enabled"
+              ScrollViewer.HorizontalScrollMode="Disabled"
               ItemClick="ItemClick">
         <GridView.ItemTemplate>
             <DataTemplate>

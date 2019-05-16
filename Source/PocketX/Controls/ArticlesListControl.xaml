@@ -13,7 +13,7 @@
                           SelectionMode="Single" 
                           IsItemClickEnabled="True"
                           ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                          ItemClick="ListViewInSplitView_ItemClick"
+                          ItemClick="ItemClick"
                           VerticalAlignment="Stretch">
         <ListView.ItemContainerStyle>
             <Style TargetType="ListViewItem">
@@ -24,28 +24,35 @@
             <FontIconSource x:Key="Delete" Glyph="&#xE107;" />
             <FontIconSource x:Key="Add" Glyph="" />
             <FontIconSource x:Key="Archive" Glyph="&#xE15D;" />
-            <SwipeItems x:Key="right" Mode="Execute" />
-            <!--Text="Delete" IconSource="{StaticResource Add}"
-                                    BehaviorOnInvoked="Close"
-                                    Invoked="SwipeItem_Invoked"
-                                    Background="#e74c3c"
-                                    Foreground="White" />-->
-            <SwipeItem x:Name="leftSwipeAdd" Text="Add" IconSource="{StaticResource Add}" BehaviorOnInvoked="Close"
-                                       Invoked="SwipeItem_Invoked" Background="#1abc9c" Foreground="White" />
-            <SwipeItem x:Name="leftSwipeArchive" Text="Archive" IconSource="{StaticResource Archive}" BehaviorOnInvoked="Close"
-                                       Invoked="SwipeItem_Invoked" Background="#1abc9c" Foreground="White" />
-            <SwipeItems x:Name="leftSwipeItems" x:Key="left" Mode="Execute" />
+            <SwipeItems x:Key="SwipeItemsRight" Mode="Execute" >
+                <SwipeItem Text="Delete" 
+                           IconSource="{StaticResource Add}"
+                           BehaviorOnInvoked="Close"
+                           Invoked="SwipeItem_Invoked"
+                           Background="#e74c3c"
+                           Foreground="White" />
+            </SwipeItems>
+            <SwipeItems x:Name="SwipeItemsLeft" 
+                        x:Key="SwipeItemsLeft" 
+                        Mode="Execute">
+                <SwipeItem Text="Add"
+                           IconSource="{StaticResource Add}"
+                           BehaviorOnInvoked="Close"
+                           Invoked="SwipeItem_Invoked"
+                           Background="#1abc9c" 
+                           Foreground="White" />
+            </SwipeItems>
         </ListView.Resources>
         <ListView.ItemTemplate>
             <DataTemplate x:DataType="models:PocketItem">
-                <SwipeControl LeftItems="{StaticResource left}" RightItems="{StaticResource right}">
+                <SwipeControl RightItems="{StaticResource SwipeItemsRight}">
                     <StackPanel Orientation="Horizontal"
                                             Height="64"
                                             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                             Margin="0 2"
                                             CornerRadius="2"
                                             HorizontalAlignment="Stretch"
-                                            RightTapped="GridView_RightTapped">
+                                            RightTapped="ItemRightTapped">
                         <controls:ImageEx Margin="0 0 8 0" 
                                                       BorderBrush="#eee"
                                                       Source="{x:Bind LeadImage.Uri}" 
@@ -61,8 +68,7 @@
                                                    Width="200"
                                                    MaxLines="1"
                                                    Style="{ThemeResource BaseTextBlockStyle}" />
-                            <TextBlock Text="{x:Bind Uri.Host}"
-                                                       Style="{ThemeResource CaptionTextBlockStyle}" />
+                            <TextBlock Text="{x:Bind Uri.Host}" Style="{ThemeResource CaptionTextBlockStyle}" />
                         </StackPanel>
                     </StackPanel>
                 </SwipeControl>

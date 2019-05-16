@@ -1,5 +1,4 @@
 ﻿using Akavache;
-using Microsoft.Toolkit.Collections;
 using Microsoft.Toolkit.Uwp.Helpers;
 using PocketSharp;
 using PocketSharp.Models;
@@ -11,22 +10,17 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Threading.Tasks;
-using MarkdownLog;
-using PocketX.Annotations;
 
 namespace PocketX.Handlers
 {
-    internal class PocketHandler : IIncrementalSource<PocketItem>, INotifyPropertyChanged
+    internal class PocketHandler : INotifyPropertyChanged
     {
         public PocketClient Client;
         private static PocketHandler _pocketHandler;
         private PocketItem _currentPocketItem;
         public ObservableCollection<string> Tags { set; get; } = new ObservableCollection<string>();
         public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         public PocketItem CurrentPocketItem
         {
@@ -202,9 +196,6 @@ namespace PocketX.Handlers
             }
         }
 
-        public async Task<IEnumerable<PocketItem>> GetPagedItemsAsync(int pageIndex, int pageSize, CancellationToken cancellationToken = default(CancellationToken))
-            => await GetListAsync(State.unread, false, null, null, pageSize, pageIndex * pageSize);
-
         internal async Task Delete(PocketItem pocketItem)
         {
             await Client.Delete(pocketItem);
@@ -213,10 +204,6 @@ namespace PocketX.Handlers
         }
 
         public async Task<string> TextProviderForAudioPlayer()
-        {
-            return await BlobCache.LocalMachine.GetObject<string>
-                    ("plain_" + CurrentPocketItem?.Uri?.AbsoluteUri).Catch(Observable.Return(""));
-        }
-
+            => await BlobCache.LocalMachine.GetObject<string>("plain_" + CurrentPocketItem?.Uri?.AbsoluteUri).Catch(Observable.Return(""));
     }
 }

@@ -48,20 +48,26 @@
                                           Width="40"/>
                         </StackPanel>
                     </Grid>
-                    <Pivot x:Name="Pivot" Grid.Row="1" SelectedIndex="0">
+                    <Pivot x:Name="PivotList" Grid.Row="1" SelectedIndex="{x:Bind _vm.PivotListSelectedIndex, Mode=TwoWay}">
                         <Pivot.Resources>
                             <Style TargetType="PivotHeaderItem">
                                 <Setter Property="FontSize" Value="16"/>
                             </Style>
                         </Pivot.Resources>
                         <PivotItem Header="Home">
-                            <ctrl:ArticlesListControl ItemsSource="{x:Bind _vm.HomeList,Mode=OneWay}"/>
+                            <ctrl:ArticlesListControl 
+                                x:Name="HomeListControl"
+                                ItemsSource="{x:Bind _vm.ArticlesList,Mode=OneWay}"/>
                         </PivotItem>
                         <PivotItem Header="Favorite">
-                            <ctrl:ArticlesListControl ItemsSource="{x:Bind _vm.FavoritesList,Mode=OneWay}"/>
+                            <ctrl:ArticlesListControl 
+                                x:Name="FavListControl"
+                                ItemsSource="{x:Bind _vm.FavoritesList,Mode=OneWay}"/>
                         </PivotItem>
                         <PivotItem Header="Archive">
-                            <ctrl:ArticlesListControl ItemsSource="{x:Bind _vm.ArchivesList,Mode=OneWay}"/>
+                            <ctrl:ArticlesListControl 
+                                x:Name="ArchiveListControl"
+                                ItemsSource="{x:Bind _vm.ArchivesList,Mode=OneWay}"/>
                         </PivotItem>
                         <PivotItem Header="Search">
                             <Grid>
@@ -76,7 +82,9 @@
                                     IsEnabled="True"
                                     PlaceholderText="Search"
                                     QuerySubmitted="AutoSuggestBox_OnQuerySubmitted" />
-                                <ctrl:ArticlesListControl Grid.Row="1" ItemsSource="{x:Bind _vm.SearchList,Mode=OneWay}"/>
+                                <ctrl:ArticlesListControl Grid.Row="1"
+                                                          x:Name="SearchListControl"
+                                                          ItemsSource="{x:Bind _vm.SearchList,Mode=OneWay}"/>
                             </Grid>
                         </PivotItem>
                         <PivotItem Header="Tags">
