@@ -1,13 +1,9 @@
 ﻿using Akavache;
-
 using Microsoft.Toolkit.Collections;
 using Microsoft.Toolkit.Uwp.Helpers;
-
 using PocketSharp;
 using PocketSharp.Models;
-
 using ReadSharp;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,8 +11,6 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
-using Windows.UI.Xaml.Controls;
 
 namespace PocketX.Handlers
 {
@@ -175,7 +169,7 @@ namespace PocketX.Handlers
             if (cache)
             {
                 _tags = await BlobCache.LocalMachine.GetObject<ObservableCollection<string>>("tags");
-                    //.Catch(Observable.Return(new List<string>()));
+                //.Catch(Observable.Return(new List<string>()));
                 if (_tags?.Count > 0) return _tags;
             }
             var tags = (await Client.GetTags()).ToList().Select(o => o.Name);
@@ -193,6 +187,12 @@ namespace PocketX.Handlers
             await Client.Delete(pocketItem);
             await BlobCache.LocalMachine.Invalidate(pocketItem.Uri.AbsoluteUri);
             await BlobCache.LocalMachine.Invalidate("plain_" + pocketItem.Uri.AbsoluteUri);
+        }
+
+        public async Task<string> TextProviderForAudioPlayer()
+        {
+            return await BlobCache.LocalMachine.GetObject<string>
+                    ("plain_" + CurrentPocketItem?.Uri?.AbsoluteUri).Catch(Observable.Return(""));
         }
     }
 }

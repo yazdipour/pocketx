@@ -43,7 +43,7 @@ namespace PocketX
                 else
                 {
                     PocketHandler.GetInstance().Client = client;
-                    rootFrame.Navigate(typeof(MainPage), e?.Arguments);
+                    rootFrame.Navigate(typeof(MainContent), e?.Arguments);
                 }
             }
             Window.Current.Activate();

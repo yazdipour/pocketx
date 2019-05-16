@@ -102,6 +102,15 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ArticlesListControl.xaml.cs">
+      <DependentUpon>ArticlesListControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MarkdownControl.xaml.cs">
+      <DependentUpon>MarkdownControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TagsListControl.xaml.cs">
+      <DependentUpon>TagsListControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Handlers\AudioHandler.cs" />
     <Compile Include="Handlers\Keys.cs" />
     <Compile Include="Handlers\MarkdownHandler.cs" />
@@ -111,22 +120,16 @@
     <Compile Include="Handlers\Utils.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Handlers\SettingsHandler.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModels\MainContentViewModel.cs" />
-    <Compile Include="ViewModels\MainPageViewModel.cs" />
     <Compile Include="Views\Dialog\ImageDialog.xaml.cs">
       <DependentUpon>ImageDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dialog\SettingsDialog.xaml.cs">
       <DependentUpon>SettingsDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Dialog\TagsDialog.xaml.cs">
-      <DependentUpon>TagsDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\MainContent.xaml.cs">
       <DependentUpon>MainContent.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\MainPage.xaml.cs">
-      <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\Dialog\AddDialog.xaml.cs">
@@ -216,6 +219,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\ArticlesListControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MarkdownControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\TagsListControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\ColorPalette.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -234,17 +249,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Dialog\TagsDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\MainContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\MainPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Dialog\AddDialog.xaml">
       <SubType>Designer</SubType>

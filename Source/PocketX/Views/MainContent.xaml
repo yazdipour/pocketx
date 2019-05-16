@@ -7,263 +7,169 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:pocket="using:PocketSharp.Models"
+    xmlns:ctrl="using:PocketX.Controls"
+    RequestedTheme="{x:Bind _vm.Settings.AppTheme,Mode=OneWay}"
+    Background="{ThemeResource SystemControlAcrylicWindowBrush}"
     mc:Ignorable="d">
-    <SplitView x:Name="SplitView"
-               PaneOpened="splitView_PaneOpened"
-               PaneClosed="splitView_PaneOpened"
-               PaneBackground="Transparent" IsPaneOpen="True"
-               OpenPaneLength="360" DisplayMode="Inline">
-        <SplitView.Pane>
-            <Grid>
-                <!--Articles List-->
-                <ListView x:Name="ListViewInSplitView"
-                          SelectionMode="Single" 
-                          IsItemClickEnabled="True"
-                          ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                          ItemClick="listViewInSplitView_ItemClick"
-                          VerticalAlignment="Stretch">
-                    <ListView.Header>
-                        <AutoSuggestBox Margin="12 4"
-                                        QueryIcon="Find"
-                                        IsEnabled="True"
-                                        PlaceholderText="Search"
-                                        QuerySubmitted="AutoSuggestBox_QuerySubmitted"
-                                        Opacity=".5" />
-                    </ListView.Header>
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.Resources>
-                        <FontIconSource x:Key="Delete" Glyph="&#xE107;" />
-                        <FontIconSource x:Key="Add" Glyph="" />
-                        <FontIconSource x:Key="Archive" Glyph="&#xE15D;" />
-                        <SwipeItems x:Key="right" Mode="Execute" />
-                        <!--Text="Delete" IconSource="{StaticResource Add}"
-                                    BehaviorOnInvoked="Close"
-                                    Invoked="SwipeItem_Invoked"
-                                    Background="#e74c3c"
-                                    Foreground="White" />-->
-                        <SwipeItem x:Name="leftSwipeAdd" Text="Add" IconSource="{StaticResource Add}" BehaviorOnInvoked="Close"
-                                       Invoked="SwipeItem_Invoked" Background="#1abc9c" Foreground="White" />
-                        <SwipeItem x:Name="leftSwipeArchive" Text="Archive" IconSource="{StaticResource Archive}" BehaviorOnInvoked="Close"
-                                       Invoked="SwipeItem_Invoked" Background="#1abc9c" Foreground="White" />
-                        <SwipeItems x:Name="leftSwipeItems" x:Key="left" Mode="Execute" />
-                    </ListView.Resources>
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="pocket:PocketItem">
-                            <SwipeControl LeftItems="{StaticResource left}"
-                                          RightItems="{StaticResource right}">
-                                <StackPanel Orientation="Horizontal"
-                                            Height="64"
-                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                            Margin="0 2"
-                                            CornerRadius="8"
-                                            HorizontalAlignment="Stretch"
-                                            RightTapped="gridView_RightTapped">
-                                    <controls:ImageEx Margin="0 0 8 0" 
-                                                      BorderBrush="#eee"
-                                                      Source="{x:Bind LeadImage.Uri}" 
-                                                      Width="100" 
-                                                      CornerRadius="4 0 0 4"
-                                                      PlaceholderSource="ms-appx:///Assets/Square44x44Logo.png"
-                                                      Stretch="UniformToFill" 
-                                                      x:Phase="10"
-                                                      BorderThickness="0 0 .5 0"/>
-                                    <StackPanel Orientation="Vertical" 
-                                                VerticalAlignment="Center">
-                                        <TextBlock Text="{x:Bind Title}"
-                                                   FontFamily="Calibri"
-                                                   CharacterSpacing="12" 
-                                                   Width="200"
-                                                   VerticalAlignment="Center"  
-                                                   MaxLines="2"
-                                                   Style="{ThemeResource BaseTextBlockStyle}" />
-                                        <TextBlock Text="{x:Bind Uri.Host}"
-                                           VerticalAlignment="Center"
-                                           Style="{ThemeResource CaptionTextBlockStyle}" />
-                                    </StackPanel>
-                                </StackPanel>
-                            </SwipeControl>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-                <!--AddLink Button-->
-                <controls:DropShadowPanel Margin="4" 
+    <Grid>
+        <SplitView x:Name="SplitView"
+               PaneBackground="Transparent" 
+               IsPaneOpen="True"
+               OpenPaneLength="360" 
+               DisplayMode="Inline">
+            <SplitView.Pane>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <!--Head-->
+                    <Grid Grid.Row="0">
+                        <TextBlock 
+                            VerticalAlignment="Center"
+                            Text="Pocket✘"
+                            Margin="10 0" 
+                            FontWeight="Medium"
+                            FontSize="22"/>
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    Height="42">
+                            <AppBarButton Click="HeadAppBarClicked"
+                                          Width="40"
+                                          Icon="Find"
+                                          Tag="Find"/>
+                            <AppBarButton Click="HeadAppBarClicked"
+                                          Width="40"
+                                          Icon="Tag"/>
+                            <AppBarButton Command="{x:Bind _vm.TopAppBarClick}" 
+                                          CommandParameter="Setting" 
+                                          Icon="Setting"
+                                          Width="40"/>
+                        </StackPanel>
+                    </Grid>
+                    <Pivot x:Name="Pivot" Grid.Row="1" SelectedIndex="0">
+                        <Pivot.Resources>
+                            <Style TargetType="PivotHeaderItem">
+                                <Setter Property="FontSize" Value="16"/>
+                            </Style>
+                        </Pivot.Resources>
+                        <PivotItem Header="Home">
+                            <ctrl:ArticlesListControl ItemsSource="{x:Bind _vm.HomeList,Mode=OneWay}"/>
+                        </PivotItem>
+                        <PivotItem Header="Favorite">
+                            <ctrl:ArticlesListControl ItemsSource="{x:Bind _vm.FavoritesList,Mode=OneWay}"/>
+                        </PivotItem>
+                        <PivotItem Header="Archive">
+                            <ctrl:ArticlesListControl ItemsSource="{x:Bind _vm.ArchivesList,Mode=OneWay}"/>
+                        </PivotItem>
+                        <PivotItem Header="Search">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <AutoSuggestBox Grid.Row="0"
+                                                QueryIcon="Find"
+                                                IsEnabled="True"
+                                                PlaceholderText="Search"
+                                                QuerySubmitted="AutoSuggestBox_OnQuerySubmitted"
+                                                Opacity=".5" />
+                                <ctrl:ArticlesListControl Grid.Row="1" ItemsSource="{x:Bind _vm.SearchList,Mode=OneWay}"/>
+                            </Grid>
+                        </PivotItem>
+                        <PivotItem Header="Tags">
+                            <ctrl:TagsListControl/>
+                        </PivotItem>
+                    </Pivot>
+                    <!--AddLink Button-->
+                    <controls:DropShadowPanel Margin="4" 
+                                              Grid.Row="2"
                                           BlurRadius="35"
                                           HorizontalAlignment="Center"
                                           VerticalAlignment="Bottom">
-                    <Button  CornerRadius="16"
+                        <!-- ReSharper disable once Xaml.InvalidResourceType -->
+                        <Button  CornerRadius="16"
                              Content="ADD LINK"
                              Foreground="White"
-                             Height="42"
-                             Width="142"
+                             Height="40"
+                             Width="162"
                              FontFamily="Calibri"
                              FontWeight="Bold"
                              FontSize="18"
                              Command="{x:Bind _vm.AddArticle}"
                              Background="{ThemeResource AccentColor}" />
-                </controls:DropShadowPanel>
-                <!--LoadingControl-->
-                <controls:Loading x:Name="LoadingControl" 
-                                  Background="#7f111111"
-                                  VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" Padding="42">
-                        <ProgressRing IsActive="{x:Bind LoadingControl.IsLoading, Mode=OneWay}" 
-                                      Margin="0,0,12,0" 
-                                      Foreground="White" />
-                        <TextBlock Text="Loading your pocket" 
-                                   VerticalAlignment="Center" 
-                                   Foreground="White" />
-                    </StackPanel>
-                </controls:Loading>
-            </Grid>
-        </SplitView.Pane>
-        <!--Main Body-->
-        <Grid x:Name="MainGrid"
-              Background="{x:Bind _vm.Settings.ReaderBg,Mode=OneWay}"
-              RequestedTheme="{x:Bind _vm.Settings.ReaderTheme,Mode=OneWay}">
-            <!--markdownScrollViewer-->
-            <ScrollViewer 
-                x:Name="MarkdownGrid" 
-                HorizontalScrollBarVisibility="Disabled"
-                VerticalScrollBarVisibility="Visible">
-                <Grid Background="{x:Bind _vm.Settings.ReaderBg,Mode=OneWay}">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0"
-                                HorizontalAlignment="Stretch"
-                                Padding="16 16 16 4">
-                        <TextBlock x:Name="HeaderTitle" 
-                                   Text="{x:Bind _vm.PocketHandler.CurrentPocketItem.Title,Mode=OneWay}"
-                                   Style="{ThemeResource SubtitleTextBlockStyle}"
-                                   HorizontalAlignment="Center" TextAlignment="Center"
-                                   FontFamily="Calibri" />
-                        <HyperlinkButton HorizontalAlignment="Center"
-                                             Content="{x:Bind _vm.PocketHandler.CurrentPocketItem.Uri.Host,Mode=OneWay}"
-                                             Foreground="{x:Bind MarkdownText.LinkForeground,Mode=OneWay}"
-                                             NavigateUri="{x:Bind _vm.PocketHandler.CurrentPocketItem.Uri.AbsoluteUri,Mode=OneWay}" />
-                        <TextBlock Text="{x:Bind _vm.PocketHandler.CurrentPocketItem.UpdateTime,Mode=OneWay}" 
-                                   Style="{ThemeResource CaptionTextBlockStyle}" 
-                                   HorizontalAlignment="Center" />
-                    </StackPanel>
-                    <controls:MarkdownTextBlock x:Name="MarkdownText" Grid.Row="1"
-                                                        Padding="32 0 32 32" BorderThickness="0"
-                                                        LinkForeground="#00cec9"
-                                                        WrapCodeBlock="True"
-                                                        Background="Transparent"
-                                                        TextWrapping="WrapWholeWords"
-                                                        UseSyntaxHighlighting="True"
-                                                        FontSize="{x:Bind _vm.Settings.ReaderFontSize,Mode=OneWay}"
-                                                        FontFamily="{x:Bind _vm.Settings.ReaderFontFamily,Mode=OneWay}" />
+                    </controls:DropShadowPanel>
+                    <!--LoadingControl-->
+                    <controls:Loading x:Name="LoadingListControl"
+                                      Grid.Row="2"
+                                      Background="#7f111111"
+                                      RequestedTheme="Dark"
+                                      VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Padding="42" Spacing="12">
+                            <ProgressRing IsActive="{x:Bind LoadingListControl.IsLoading, Mode=OneWay}" />
+                            <TextBlock Text="Loading your pocket" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </controls:Loading>
                 </Grid>
-            </ScrollViewer>
-            <!--LoadingControl-->
-            <controls:Loading x:Name="MarkdownLoading" 
-                                      HorizontalContentAlignment="Center" 
-                                      VerticalContentAlignment="Center"
-                                      Background="#5f111111">
-                <ProgressBar Width="130" 
-                             IsIndeterminate="True" 
-                             Foreground="White" />
-            </controls:Loading>
-            <!--webView-->
-            <WebView ScrollViewer.HorizontalScrollMode="Disabled" 
-                     x:Name="WebView" 
-                     x:Load="False" />
-            <!--errorView-->
-            <StackPanel x:Name="errorView" 
-                                x:Load="False"
-                                HorizontalAlignment="Center" 
-                                VerticalAlignment="Center">
-                <controls:HeaderedTextBlock FontFamily="Segoe UI Symbol"
-                                Header=" Could not get the article" Text="Try again or Open it in webview"
-                                HorizontalAlignment="Center" VerticalAlignment="Center" />
-                <StackPanel Orientation="Horizontal"
-                                        Margin="0 8"
-                                        HorizontalAlignment="Center">
-                    <Button Content="Reload ArticleView" Click="Reload_ArticleView" />
-                    <Button Margin="8 0" Content="Open WebView" Tag="webView"
-                                    Click="AppBar_Click" />
-                </StackPanel>
-            </StackPanel>
-            <!--Audio Player-->
-            <MediaElement x:Name="media" 
-                                  Grid.RowSpan="2" 
-                                  Height="40"
-                                  VerticalAlignment="Bottom"
-                                  AutoPlay="True" 
-                                  AreTransportControlsEnabled="False"
-                                  AudioCategory="Speech">
-                <MediaElement.TransportControls>
-                    <MediaTransportControls
-                                IsFullWindowButtonVisible="False"
-                                IsSkipForwardButtonVisible="True"
-                                IsSkipBackwardEnabled="True"
-                                IsSkipBackwardButtonVisible="True"
-                                IsSkipForwardEnabled="True"
-                                IsZoomButtonVisible="False"
-                                IsCompact="True"/>
-                </MediaElement.TransportControls>
-            </MediaElement>
-            <!--AppBar-->
-            <CommandBar x:Name="TopBar"
-                        VerticalAlignment="Bottom"
-                        DefaultLabelPosition="Right"
-                        HorizontalAlignment="Right">
-                <AppBarButton Icon="Accept" 
-                              x:Name="ArchiveBtn" 
-                              Tag="Archive"
-                              Click="AppBar_Click"
-                              Label="Archive" />
-                <AppBarButton Tag="Share" 
-                              Icon="Share" 
-                              Label="Share" 
-                              Click="AppBar_Click" />
-                <AppBarButton Tag="Settings" 
-                              Icon="Font" 
-                              Label="Theme" 
-                              Click="AppBar_Click" />
-                <AppBarButton Icon="Volume"
-                              Label="Read"
-                              Command="{x:Bind _vm.TextToSpeech}"/>
-                <CommandBar.SecondaryCommands>
-                    <AppBarButton x:Name="FavBtn" 
-                                  Tag="Favorite"
-                                  Click="AppBar_Click"
-                                  Label="Favorite" 
-                                  Icon="Favorite" />
-                    <AppBarButton Tag="Copy" 
-                                  Click="AppBar_Click" 
-                                  Label="Copy Link"
-                                  Icon="Paste" />
-                    <AppBarButton x:Name="WebViewBtn"
-                                  Tag="webView" 
-                                  Click="AppBar_Click"
-                                  Label="Open in WebView" 
-                                  Icon="View" />
-                    <AppBarButton Tag="Delete" 
-                                  Click="AppBar_Click" 
-                                  Label="Delete Article" 
-                                  Icon="Delete" />
-                </CommandBar.SecondaryCommands>
-            </CommandBar>
-            <!--BackButton-->
-            <Button Height="66" 
-                    Width="14"
-                    Margin="-4 0 0 0"
-                    Click="AppBar_Click" 
-                    Tag="Back"
-                    Padding="0"
-                    VerticalAlignment="Center" >
-                <FontIcon x:Name="BackBtn" 
-                          FontFamily="Segoe MDL2 Assets"
-                          Glyph="&#xF743;" 
-                          FontSize="12" />
-            </Button>
-        </Grid>
-    </SplitView>
+            </SplitView.Pane>
+            <!--Main Body-->
+            <ctrl:MarkdownControl
+                x:Name="MarkdownCtrl"
+                SplitView="{x:Bind SplitView}"
+                Article="{x:Bind _vm.PocketHandler.CurrentPocketItem, Mode=TwoWay}"/>
+        </SplitView>
+
+        <Button HorizontalAlignment="Left" 
+                Height="34" 
+                Width="18"
+                Visibility="Collapsed"
+                VerticalAlignment="Top"
+                Content="&#xE141;" 
+                FontFamily="Segoe MDL2 Assets" 
+                CornerRadius="0 0 12 0"
+                Click="{x:Bind _vm.PinBtnClicked}"/>
+        <controls:InAppNotification x:Name="InAppNotifier" 
+                                    Content="Error!" 
+                                    RequestedTheme="Dark"
+                                    AnimationDuration="00:00:00.1000000"
+                                    VerticalOffset="100" BorderThickness="0"
+                                    HorizontalOffset="0">
+            <controls:InAppNotification.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#A1051D" />
+                    <GradientStop Color="#F5515F" Offset="1" />
+                </LinearGradientBrush>
+            </controls:InAppNotification.Background>
+        </controls:InAppNotification>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="mobile">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="SplitView.IsPaneOpen" Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="pc">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="720"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="SplitView.IsPaneOpen" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
+
+    <!--<Button HorizontalAlignment="Left"
+            Height="24" 
+            VerticalAlignment="Top"
+            Content="&#xE141;" 
+            FontFamily="Segoe MDL2 Assets" 
+            CornerRadius="0 0 4 0"
+            Click="{x:Bind _vm.PinBtnClicked}"/>-->
 </Page>
