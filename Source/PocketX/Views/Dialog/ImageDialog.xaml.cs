@@ -36,5 +36,7 @@ namespace PocketX.Views.Dialog
                     break;
             }
         }
+
+        private void ImageTapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e) => Hide();
     }
 }

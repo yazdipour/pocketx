@@ -6,40 +6,37 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    mc:Ignorable="d" BorderBrush="Transparent"
+    mc:Ignorable="d" 
+    RequestedTheme="Dark"
+    BorderBrush="Transparent"
     Background="Transparent">
     <ContentDialog.Resources>
         <Thickness x:Key="ContentDialogPadding">0,0,0,0</Thickness>
+        <Style TargetType="Button">
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+        </Style>
     </ContentDialog.Resources>
     <Grid>
-        <controls:ImageEx Source="{x:Bind Uri}" Background="#5f111111"
+        <controls:ImageEx Source="{x:Bind Uri}" 
                           HorizontalAlignment="Stretch"
+                          Tapped="ImageTapped"
                           Margin="16"/>
-        <!--Close-->
-        <Button Tag="Close" HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Background="#555"
-                Style="{ThemeResource CircleButtonStyle}"  
-                Click="AppBar_Click"  Foreground="White" 
-                Content="" FontFamily="Segoe MDL2 Assets" />
-        <StackPanel x:Name="TopBar" Orientation="Horizontal"
-                    HorizontalAlignment="Center" VerticalAlignment="Bottom">
-
+        <StackPanel Orientation="Horizontal"
+                    Spacing="8"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom">
             <!--Save-->
-            <Button Style="{ThemeResource CircleButtonStyle}" 
-                    Click="AppBar_Click" Tag="Save"
-                    Foreground="White"
-                    Content="" FontFamily="Segoe MDL2 Assets" 
-                    Background="#3498db"/>
+            <Button Click="AppBar_Click"
+                    Tag="Save"
+                    Content=""
+                    Width="52"
+                    Background="DeepSkyBlue"/>
             <!--Share-->
             <Button Tag="Share" 
-                    Style="{ThemeResource CircleButtonStyle}" 
                     Click="AppBar_Click" 
+                    Width="52"
                     Content="" 
-                    FontFamily="Segoe MDL2 Assets" 
-                    Foreground="White"
-                    Margin="8 0" 
-                    Background="#d35400"/>
+                    Background="DarkOrange"/>
         </StackPanel>
     </Grid>
 </ContentDialog>
