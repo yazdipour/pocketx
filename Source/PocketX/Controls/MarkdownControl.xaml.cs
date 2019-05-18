@@ -83,6 +83,7 @@ namespace PocketX.Controls
             set
             {
                 SetValue(ArticleProperty, value);
+                AppBar_Click("articleview", null);
                 Bindings.Update();
             }
         }
@@ -113,7 +114,6 @@ namespace PocketX.Controls
                 case "archive":
                     await ToggleArchiveArticleAsync(Article);
                     OnPropertyChanged(nameof(ArchiveLabel));
-                    //OnPropertyChanged(nameof(ArchiveIcon));
                     break;
                 case "copy":
                     Utils.CopyToClipboard(Article?.Uri?.AbsoluteUri);

@@ -29,13 +29,13 @@ namespace PocketX.ViewModels
         internal PocketHandler PocketHandler => PocketHandler.GetInstance();
         public event PropertyChangedEventHandler PropertyChanged;
         private ICommand _addArticle;
-        private ICommand _topAppBarClick;
         private bool _listIsLoading;
         public int PivotListSelectedIndex { get; set; }
         protected virtual void OnPropertyChanged(string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         public bool ListIsLoading
         {
-            get => _listIsLoading || ArticlesList.IsLoading || ArchivesList.IsLoading || FavoritesList.IsLoading;
+            get => _listIsLoading;
+            //|| ArticlesList.IsLoading || ArchivesList.IsLoading || FavoritesList.IsLoading;
             set
             {
                 _listIsLoading = value;
@@ -86,20 +86,6 @@ namespace PocketX.ViewModels
                 }
                 else await UiUtils.ShowDialogAsync("You need to connect to the internet first");
             }));
-        internal ICommand TopAppBarClick =>
-            _topAppBarClick ?? (_topAppBarClick = new SimpleCommand(async param =>
-            {
-                var dialog = new SettingsDialog(0);
-                await dialog.ShowAsync();
-                if (dialog.Tag?.ToString() == Keys.Logout)
-                {
-                    PocketHandler.GetInstance().Logout();
-                    //frame?.Navigate(typeof(Views.LoginPage));
-                    //frame?.BackStack.Clear();
-                    return;
-                }
-                OnPropertyChanged(nameof(Settings));
-            }));
         internal async void PinBtnClicked() => await new UiUtils().PinAppWindow(520, 400);
         internal void ShareArticle(DataTransferManager sender, DataRequestedEventArgs args)
         {
@@ -107,7 +93,7 @@ namespace PocketX.ViewModels
             request.Data.SetText(PocketHandler?.CurrentPocketItem?.Uri?.ToString() ?? "");
             request.Data.Properties.Title = "Shared by PocketX";
         }
-        public async Task ToggleArchiveAsync(PocketItem pocketItem)
+        public async Task ToggleArchiveArticleAsync(PocketItem pocketItem)
         {
             if (pocketItem == null) return;
             try
@@ -174,7 +160,7 @@ namespace PocketX.ViewModels
                 Text = item?.IsArchive ?? false ? "Add" : "Archive",
                 Icon = new SymbolIcon(item?.IsArchive ?? false ? Symbol.Add : Symbol.Accept)
             };
-            el.Click += async (sen, ee) => await ToggleArchiveAsync(item);
+            el.Click += async (sen, ee) => await ToggleArchiveArticleAsync(item);
             flyout?.Items?.Insert(0, el);
             if (sender is StackPanel parent) flyout.ShowAt(parent, e.GetPosition(parent));
         }

@@ -8,6 +8,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using PocketX.ViewModels;
+using PocketX.Views.Dialog;
 
 namespace PocketX.Views
 {
@@ -34,6 +35,9 @@ namespace PocketX.Views
                 Logger.Logger.InitOnlineLogger(Keys.AppCenter);
                 Logger.Logger.SetDebugMode(App.DEBUGMODE);
             };
+            MarkdownCtrl.DeleteArticleAsync = _vm.DeleteArticleAsync;
+            MarkdownCtrl.ToggleArchiveArticleAsync = _vm.ToggleArchiveArticleAsync;
+            MarkdownCtrl.ToggleFavoriteArticleAsync = _vm.ToggleFavoriteArticleAsync;
         }
         private async void AutoSuggestBox_OnQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) => await _vm.SearchCommand(sender?.Text);
         private void HeadAppBarClicked(object sender, RoutedEventArgs e) => PivotList.SelectedIndex = ((AppBarButton)sender)?.Tag?.ToString() == "Find" ? 3 : 4;
@@ -55,5 +59,19 @@ namespace PocketX.Views
             await _vm.SearchCommand(tag);
         }
         private void PivotList_SelectionChanged(object sender, SelectionChangedEventArgs e) => _vm.ListIsLoading = false;
+
+        private async void TopAppBarClick(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SettingsDialog(0);
+            await dialog.ShowAsync();
+            if (dialog.Tag?.ToString() == Keys.Logout)
+            {
+                PocketHandler.GetInstance().Logout();
+                Frame?.Navigate(typeof(Views.LoginPage));
+                Frame?.BackStack.Clear();
+                return;
+            }
+            Bindings.Update();
+        }
     }
 }

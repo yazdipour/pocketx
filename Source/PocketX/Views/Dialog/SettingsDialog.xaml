@@ -3,11 +3,12 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:PocketX.Views.Dialog"
+    xmlns:model="using:PocketX.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d" 
-    Loaded="ContentDialog_Loaded" 
+    Closed="ContentDialog_Closed"
     CornerRadius="4">
     <Grid>
         <Pivot x:Name="pivot">
@@ -23,13 +24,15 @@
                     <controls:DropShadowPanel Margin="42" HorizontalAlignment="Center" VerticalAlignment="Center" ShadowOpacity=".2" OffsetY="3">
                         <StackPanel Background="White" CornerRadius="8" Padding="16 8 6 8" Orientation="Horizontal"
                                     HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <PersonPicture ProfilePicture="https://docs.microsoft.com/en-us/windows/uwp/contacts-and-calendar/images/shoulder-tap-static-payload.png" 
+                            <PersonPicture ProfilePicture="{x:Bind PocketHandler.User.Avatar.AbsoluteUri}" 
                                            DisplayName="Jane Doe" Height="62"/>
-                            <controls:HeaderedContentControl Header="TextBlock content" Margin="12 0"
+                            <controls:HeaderedContentControl Header="{x:Bind PocketHandler.User.Username}"
+                                                             Margin="12 0"
                                                              VerticalAlignment="Center">
                                 <TextBlock FontSize="12" Text="Jane Doe"/>
                             </controls:HeaderedContentControl>
-                            <AppBarButton Icon="ContactPresence"  Label="Log Out" Click="Logout_Click" 
+                            <AppBarButton Icon="ContactPresence"  Label="Log Out" 
+                                          Click="Logout_Click" 
                                           Height="48" VerticalAlignment="Center"
                                           Style="{ThemeResource AppBarButtonRevealStyle}"/>
                         </StackPanel>
@@ -43,22 +46,24 @@
             <PivotItem Header="Themes">
                 <StackPanel Spacing="8">
                     <TextBlock Text="Theme"/>
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <StackPanel.Resources>
-                            <Style TargetType="controls:ImageEx">
-                                <Setter Property="Height" Value="92"/>
-                                <Setter Property="BorderBrush" Value="{ThemeResource AccentColor}"/>
-                            </Style>
-                        </StackPanel.Resources>
-                        <controls:ImageEx CornerRadius="8" Source="/Assets/ReadTheme/theme1.png"/>
-                        <controls:ImageEx CornerRadius="8" Source="/Assets/ReadTheme/theme4.png" BorderThickness="5"/>
-                        <controls:ImageEx CornerRadius="8" Source="/Assets/ReadTheme/theme5.png"/>
-                    </StackPanel>
+                    <GridView IsItemClickEnabled="True" 
+                              SelectionMode="Single"
+                              ItemsSource="{x:Bind _themes}"
+                              ItemClick="GridView_ItemClick">
+                        <GridView.ItemTemplate>
+                            <DataTemplate x:DataType="model:Settings">
+                                <controls:ImageEx CornerRadius="8" 
+                                                      Source="{x:Bind Thumbnail}"
+                                                      Height="92"
+                                                      BorderBrush="{ThemeResource AccentColor}"/>
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                    </GridView>
                     <!--<ToggleSwitch x:Name="tg_app" OffContent="Dark" OnContent="Light"/>-->
                     <TextBlock Text="Text Font"/>
-                    <ComboBox x:Name="comboBox2" SelectedValue="{x:Bind _settings.ReaderFontFamily,Mode=TwoWay}"/>
+                    <ComboBox x:Name="comboBox2" SelectedValue="{x:Bind Settings.ReaderFontFamily,Mode=TwoWay}"/>
                     <TextBlock Text="Text Size"/>
-                    <ComboBox x:Name="comboBox" SelectedValue="{x:Bind _settings.ReaderFontSize.ToString()}">
+                    <ComboBox x:Name="comboBox" SelectedValue="{x:Bind Settings.ReaderFontSize.ToString()}">
                         <x:String>12</x:String>
                         <x:String>14</x:String>
                         <x:String>16</x:String>

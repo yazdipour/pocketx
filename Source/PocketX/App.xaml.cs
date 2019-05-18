@@ -37,14 +37,9 @@ namespace PocketX
             if (e != null && e?.PrelaunchActivated != false) return;
             if (rootFrame.Content == null)
             {
-                var client = PocketHandler.GetInstance().LoadCacheClient();
-                if (client == null)
-                    rootFrame.Navigate(typeof(LoginPage), e?.Arguments);
-                else
-                {
-                    PocketHandler.GetInstance().Client = client;
-                    rootFrame.Navigate(typeof(MainContent), e?.Arguments);
-                }
+                var handler = PocketHandler.GetInstance();
+                handler.LoadCacheClient();
+                rootFrame.Navigate(handler.Client == null ? typeof(LoginPage) : typeof(MainContent), e?.Arguments);
             }
             Window.Current.Activate();
         }

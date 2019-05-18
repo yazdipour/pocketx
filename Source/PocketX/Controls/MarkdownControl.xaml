@@ -113,10 +113,10 @@
                           Icon="Share" 
                           Label="Share" 
                           Click="AppBar_Click" />
-            <AppBarButton Tag="Settings" 
+            <!--<AppBarButton Tag="Settings" 
                           Icon="Font" 
                           Label="Theme" 
-                          Click="AppBar_Click" />
+                          Click="AppBar_Click" />-->
             <AppBarButton Icon="Volume"
                           Label="Read"
                           Command="{x:Bind TextToSpeech}"/>

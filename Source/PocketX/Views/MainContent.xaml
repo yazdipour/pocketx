@@ -97,17 +97,9 @@
                             Margin="10 0" 
                             FontWeight="Medium"
                             FontSize="22"/>
-                        <AppBarButton Grid.Column="1" Click="HeadAppBarClicked"
-                                          Width="40"
-                                          Icon="Find"
-                                          Tag="Find"/>
-                        <!--<AppBarButton  Click="HeadAppBarClicked"
-                                          Width="40"
-                                          Icon="Tag"/>-->
-                        <AppBarButton Grid.Column="2" Command="{x:Bind _vm.TopAppBarClick}" 
-                                          CommandParameter="Setting" 
-                                          Icon="Setting"
-                                          Width="40"/>
+                        <AppBarButton Grid.Column="1" Click="HeadAppBarClicked" Width="40" Icon="Find" Tag="Find"/>
+                        <!--<AppBarButton  Click="HeadAppBarClicked" Width="40" Icon="Tag"/>-->
+                        <AppBarButton Grid.Column="2" Click="TopAppBarClick" Icon="Setting" Width="40"/>
                     </Grid>
                     <Pivot x:Name="PivotList" 
                            Grid.Row="1" 

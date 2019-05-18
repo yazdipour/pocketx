@@ -32,14 +32,18 @@ namespace PocketX.Handlers
             }
         }
 
+        public PocketUser User { get; set; }
+
         #region Login\Logout
 
         public static PocketHandler GetInstance() => _pocketHandler ?? (_pocketHandler = new PocketHandler());
 
-        public PocketClient LoadCacheClient()
+        public async void LoadCacheClient()
         {
             var cache = new LocalObjectStorageHelper().Read(Keys.PocketClientCache, "");
-            return cache == "" ? null : new PocketClient(Keys.Pocket, cache);
+            Client = cache == "" ? null : new PocketClient(Keys.Pocket, cache);
+            try { if (Client != null) User = await Client.GetUser(); }
+            catch{ }
         }
 
         private void SaveCacheUser(PocketUser user)
@@ -49,6 +53,7 @@ namespace PocketX.Handlers
         {
             Logger.Logger.L("Logout");
             Client = null;
+            _pocketHandler = null;
             SettingsHandler.Clear();
             BlobCache.LocalMachine.InvalidateAll();
             BlobCache.LocalMachine.Vacuum();
@@ -57,9 +62,9 @@ namespace PocketX.Handlers
 
         internal async Task<bool> LoginAsync()
         {
-            var user = await Client.GetUser();
-            if (user == null) return false;
-            SaveCacheUser(user);
+            User = await Client.GetUser();
+            if (User == null) return false;
+            SaveCacheUser(User);
             return true;
         }
 
@@ -83,7 +88,8 @@ namespace PocketX.Handlers
             }
             try
             {
-                await _pocketHandler.LoadCacheClient().Add(url);
+                _pocketHandler.LoadCacheClient();
+                await _pocketHandler.Client.Add(url);
                 return (SUCCESS, url.AbsoluteUri);
             }
             catch (Exception e) { return (FAILED, e.Message); }
