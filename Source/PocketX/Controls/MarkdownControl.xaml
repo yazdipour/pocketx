@@ -1,0 +1,165 @@
+﻿<UserControl
+    x:Class="PocketX.Controls.MarkdownControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PocketX.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    Background="{x:Bind Settings.ReaderBg,Mode=OneWay}" 
+    RequestedTheme="{x:Bind Settings.ReaderTheme,Mode=OneWay}"
+    mc:Ignorable="d">
+    <Grid Background="{x:Bind Settings.ReaderBg,Mode=OneWay, FallbackValue='#EEE'}">
+        <!--markdownScrollViewer-->
+        <ScrollViewer 
+                x:Name="MarkdownGrid" 
+                HorizontalScrollBarVisibility="Disabled"
+                VerticalScrollBarVisibility="Visible">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <StackPanel  Grid.Row="0" HorizontalAlignment="Stretch" Padding="16 16 16 4">
+                    <!--x:Name="HeaderTitle"-->
+                    <TextBlock Text="{x:Bind Article.Title,Mode=OneWay, FallbackValue='PocketX'}"
+                               Style="{ThemeResource SubtitleTextBlockStyle}"
+                               HorizontalAlignment="Center" TextAlignment="Center"
+                               FontFamily="Calibri" />
+                    <HyperlinkButton HorizontalAlignment="Center"
+                                             Content="{x:Bind Article.Uri.Host,Mode=OneWay}"
+                                             Foreground="{x:Bind MarkdownCtrl.LinkForeground,Mode=OneWay}"
+                                             NavigateUri="{x:Bind Article.Uri.AbsoluteUri,Mode=OneWay}" />
+                    <TextBlock Text="{x:Bind Article.UpdateTime,Mode=OneWay}" 
+                                   Style="{ThemeResource CaptionTextBlockStyle}" 
+                                   HorizontalAlignment="Center" />
+                </StackPanel>
+                <controls:MarkdownTextBlock 
+                    x:Name="MarkdownCtrl"
+                    Text="{x:Bind MarkdownText, Mode=OneWay}"
+                    Grid.Row="1"
+                    Padding="32 0 32 32" 
+                    BorderThickness="0"
+                    LinkForeground="#00cec9"
+                    WrapCodeBlock="True"
+                    Background="Transparent"
+                    TextWrapping="WrapWholeWords"
+                    UseSyntaxHighlighting="True"
+                    FontSize="{x:Bind Settings.ReaderFontSize,Mode=OneWay}"
+                    FontFamily="{x:Bind Settings.ReaderFontFamily,Mode=OneWay}" />
+            </Grid>
+        </ScrollViewer>
+        <!--LoadingControl-->
+        <controls:Loading x:Name="MarkdownLoading" 
+                                      HorizontalContentAlignment="Center" 
+                                      VerticalContentAlignment="Center"
+                                      Background="#5f111111">
+            <ProgressBar Width="130" 
+                             IsIndeterminate="True" 
+                             Foreground="White" />
+        </controls:Loading>
+        <!--webView-->
+        <WebView 
+            ScrollViewer.HorizontalScrollMode="Disabled" 
+            x:Name="WebView" 
+            x:Load="False" />
+        <!--errorView-->
+        <StackPanel 
+            x:Name="ErrorView" 
+            x:Load="False"
+            HorizontalAlignment="Center" 
+            VerticalAlignment="Center">
+            <controls:HeaderedTextBlock FontFamily="Segoe UI Symbol"
+                                Header=" Could not get the article"
+                                Text="Try again or Open it in webview"
+                                HorizontalAlignment="Center" 
+                                VerticalAlignment="Center" />
+            <StackPanel Orientation="Horizontal" Margin="0 8" HorizontalAlignment="Center">
+                <Button Content="Reload ArticleView" Click="Reload_ArticleView" />
+                <Button Margin="8 0" Content="Open WebView" Tag="webView"
+                                    Click="AppBar_Click" />
+            </StackPanel>
+        </StackPanel>
+        <!--Audio Player-->
+        <MediaElement x:Name="Media" 
+                      Grid.RowSpan="2" 
+                      Height="40"
+                      VerticalAlignment="Bottom"
+                      AutoPlay="True" 
+                      AreTransportControlsEnabled="False"
+                      AudioCategory="Speech">
+            <MediaElement.TransportControls>
+                <MediaTransportControls
+                                IsFullWindowButtonVisible="False"
+                                IsSkipForwardButtonVisible="True"
+                                IsSkipBackwardEnabled="True"
+                                IsSkipBackwardButtonVisible="True"
+                                IsSkipForwardEnabled="True"
+                                IsZoomButtonVisible="False"
+                                IsCompact="True"/>
+            </MediaElement.TransportControls>
+        </MediaElement>
+        <!--AppBar-->
+        <CommandBar x:Name="MarkdownAppBar"
+                    Visibility="Collapsed"
+                    VerticalAlignment="Bottom"
+                    DefaultLabelPosition="Right"
+                    HorizontalAlignment="Right">
+            <AppBarButton Icon="{x:Bind ArchiveIcon,Mode=OneWay}"
+                          Click="AppBar_Click"
+                          Tag="Archive"
+                          Label="{x:Bind ArchiveLabel, Mode=OneWay}" />
+            <AppBarButton Tag="Share" 
+                          Icon="Share" 
+                          Label="Share" 
+                          Click="AppBar_Click" />
+            <!--<AppBarButton Tag="Settings" 
+                          Icon="Font" 
+                          Label="Theme" 
+                          Click="AppBar_Click" />-->
+            <AppBarButton Icon="Volume"
+                          Label="Read"
+                          Command="{x:Bind TextToSpeech}"/>
+            <CommandBar.SecondaryCommands>
+                <AppBarButton Click="AppBar_Click"
+                              Tag="Favorite"
+                              Label="{x:Bind FavLabel, Mode=OneWay}" 
+                              Icon="Favorite" />
+                <AppBarButton Tag="Copy" 
+                              Click="AppBar_Click" 
+                              Label="Copy Link"
+                              Icon="Paste" />
+                <AppBarButton x:Name="WebViewBtn"
+                              Click="AppBar_Click"
+                              Tag="WebView"
+                              Label="Open in WebView"
+                              Icon="View" />
+                <AppBarButton Tag="Delete"
+                              Label="Delete"
+                              Click="AppBar_Click" 
+                              Icon="Delete" />
+            </CommandBar.SecondaryCommands>
+        </CommandBar>
+        <Rectangle Height="66" 
+                   Fill="Transparent"
+                   x:Name="WindowBorder"
+                   VerticalAlignment="Top"
+                   x:FieldModifier="public" />
+        <!--BackButton-->
+        <Button Height="66" 
+                    Width="34"
+                    Click="AppBar_Click" 
+                    Background="Transparent"
+                    Tag="Back"
+                    Padding="0"
+                    VerticalAlignment="Top" >
+            <FontIcon x:Name="BackBtn" 
+                          FontFamily="Segoe MDL2 Assets"
+                          Glyph="&#xF743;"
+                          Foreground="#D7D7D7"
+                          FontWeight="Bold"
+                          FontSize="14"
+                          x:FieldModifier="public" />
+        </Button>
+    </Grid>
+</UserControl>

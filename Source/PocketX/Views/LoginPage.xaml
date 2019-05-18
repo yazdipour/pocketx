@@ -10,6 +10,7 @@
     Background="{ThemeResource BlackAcrylicBackgroundBrush60}">
 
     <controls:DropShadowPanel BlurRadius="35"
+                              RequestedTheme="Dark"
                               VerticalAlignment="Center"
                               HorizontalAlignment="Center">
         <StackPanel HorizontalAlignment="Center" 

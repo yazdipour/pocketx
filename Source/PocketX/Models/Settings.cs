@@ -17,5 +17,6 @@ namespace PocketX.Models
         public int ReaderFontSize = 16;
         [JsonProperty("reader_font_family")]
         public string ReaderFontFamily = "Calibri";
+        [JsonIgnore] public string Thumbnail { get; set; }
     }
 }
