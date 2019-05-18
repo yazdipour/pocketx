@@ -102,9 +102,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ArticlesListControl.xaml.cs">
-      <DependentUpon>ArticlesListControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\MarkdownControl.xaml.cs">
       <DependentUpon>MarkdownControl.xaml</DependentUpon>
     </Compile>
@@ -223,10 +220,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\ArticlesListControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\MarkdownControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

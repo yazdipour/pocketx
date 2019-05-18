@@ -7,20 +7,19 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uwpChipsX="using:UWPChipsX"
     mc:Ignorable="d">
-    <GridView ItemsSource="{x:Bind Tags, Mode=OneWay}" 
+    <UserControl.Resources>
+        <DataTemplate x:Key="TagsTemplate">
+            <!-- ReSharper disable once Xaml.InvalidResourceType -->
+            <Border Background="{ThemeResource AccentColor}" Padding="12 4"
+                    CornerRadius="8" RequestedTheme="Dark" Margin="4">
+                <TextBlock Text="{Binding}"/>
+            </Border>
+        </DataTemplate>
+    </UserControl.Resources>
+    <ListView ItemsSource="{x:Bind Tags, Mode=OneWay}" 
               IsItemClickEnabled="True" 
               SelectionMode="None"
               ScrollViewer.VerticalScrollMode="Enabled"
               ScrollViewer.HorizontalScrollMode="Disabled"
-              ItemClick="ItemClick">
-        <GridView.ItemTemplate>
-            <DataTemplate>
-                <!-- ReSharper disable once Xaml.InvalidResourceType -->
-                <Border Background="{ThemeResource AccentColor}" Padding="12 4"
-                        CornerRadius="8" RequestedTheme="Dark" Margin="4">
-                    <TextBlock Text="{Binding}"/>
-                </Border>
-            </DataTemplate>
-        </GridView.ItemTemplate>
-    </GridView>
-</UserControl>
+              ItemClick="ItemClick"/>
+</UserControl>  

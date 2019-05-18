@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.System;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Microsoft.Toolkit.Uwp;
 using PocketSharp.Models;
-using PocketX.Annotations;
 using PocketX.Handlers;
 using PocketX.Models;
 using PocketX.Views;
@@ -23,8 +24,25 @@ namespace PocketX.ViewModels
             = new IncrementalLoadingCollection<PocketIncrementalSource.Archives, PocketItem>();
         public readonly IncrementalLoadingCollection<PocketIncrementalSource.Favorites, PocketItem> FavoritesList
             = new IncrementalLoadingCollection<PocketIncrementalSource.Favorites, PocketItem>();
-        public ObservableCollection<PocketItem> SearchList { get; set; } = new ObservableCollection<PocketItem>();
+        public ObservableCollection<PocketItem> SearchList = new ObservableCollection<PocketItem>();
+        internal Settings Settings => SettingsHandler.Settings;
+        internal PocketHandler PocketHandler => PocketHandler.GetInstance();
+        public event PropertyChangedEventHandler PropertyChanged;
+        private ICommand _addArticle;
+        private ICommand _topAppBarClick;
+        private bool _listIsLoading;
         public int PivotListSelectedIndex { get; set; }
+        protected virtual void OnPropertyChanged(string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public bool ListIsLoading
+        {
+            get => _listIsLoading || ArticlesList.IsLoading || ArchivesList.IsLoading || FavoritesList.IsLoading;
+            set
+            {
+                _listIsLoading = value;
+                OnPropertyChanged(nameof(ListIsLoading));
+            }
+        }
+
         public ObservableCollection<PocketItem> CurrentList()
         {
             switch (PivotListSelectedIndex)
@@ -39,79 +57,20 @@ namespace PocketX.ViewModels
                     return ArticlesList;
             }
         }
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-        event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
-        {
-            add
-            {
-                ((INotifyPropertyChanged)ArticlesList).PropertyChanged += value;
-                ((INotifyPropertyChanged)ArchivesList).PropertyChanged += value;
-                ((INotifyPropertyChanged)FavoritesList).PropertyChanged += value;
-                ((INotifyPropertyChanged)SearchList).PropertyChanged += value;
-            }
-            remove
-            {
-                ((INotifyPropertyChanged)ArticlesList).PropertyChanged -= value;
-                ((INotifyPropertyChanged)ArchivesList).PropertyChanged -= value;
-                ((INotifyPropertyChanged)FavoritesList).PropertyChanged -= value;
-                ((INotifyPropertyChanged)SearchList).PropertyChanged -= value;
-            }
-        }
-
-        internal Settings Settings => SettingsHandler.Settings;
-        internal PocketHandler PocketHandler => PocketHandler.GetInstance();
-
-        private ICommand _addArticle;
-        private ICommand _topAppBarClick;
-        //internal async void PinBtnClicked() => await new UiUtils().PinAppWindow(520, 400);
         public async Task SearchCommand(string q)
         {
+            if (string.IsNullOrWhiteSpace(q)) return;
             Logger.Logger.L("Search");
-            foreach (var pocketItem in await PocketHandler.GetListAsync(state: State.all, favorite: null, tag: null, search: q, count: 40, offset: 0)) SearchList.Add(pocketItem);
-        }
-
-        public async void LoadTagCommand(string tag)
-        {
-            Logger.Logger.L($"Tag {tag}");
-            SearchList = (ObservableCollection<PocketItem>)await PocketHandler.GetListAsync(
-                state: State.all,
-                favorite: null,
-                tag: tag.Substring(1),
-                search: null,
-                count: 40,
-                offset: 0);
-        }
-
-        //public async void LoadArchiveCommand()
-        //{
-        //    Logger.Logger.L("Tap LoadArchiveCommand");
-        //    ArchivesList = await PocketHandler.GetListAsync(
-        //        state: State.archive,
-        //        favorite: null,
-        //        tag: null,
-        //        search: null,
-        //        count: 40,
-        //        offset: 0);
-        //}
-
-        //public async void LoadFavCommand()
-        //{
-        //    Logger.Logger.L($"Tap Fav");
-        //    FavoritesList = (ObservableCollection<PocketItem>)await PocketHandler.GetListAsync(
-        //        state: State.all,
-        //        favorite: true,
-        //        tag: null,
-        //        search: null,
-        //        count: 40,
-        //        offset: 0);
-        //}
-        public async void LoadHomeCommand()
-        {
-            Logger.Logger.L("Tap Home");
-            if (ArticlesList.Count == 0) await ArticlesList.RefreshAsync();
+            q = Uri.EscapeUriString(q);
+            SearchList.Clear();
+            var task = q[0] == '#'
+                ? PocketHandler.GetListAsync(state: State.all, favorite: null, tag: q.Substring(1), search: null, count: 40, 0)
+                : PocketHandler.GetListAsync(state: State.all, favorite: null, tag: null, search: q, count: 40, offset: 0);
+            ListIsLoading = true;
+            foreach (var pocketItem in await task)
+                SearchList.Add(pocketItem);
+            OnPropertyChanged(nameof(SearchList));
+            ListIsLoading = false;
         }
         internal ICommand AddArticle =>
             _addArticle ?? (_addArticle = new SimpleCommand(async param =>
@@ -127,7 +86,6 @@ namespace PocketX.ViewModels
                 }
                 else await UiUtils.ShowDialogAsync("You need to connect to the internet first");
             }));
-
         internal ICommand TopAppBarClick =>
             _topAppBarClick ?? (_topAppBarClick = new SimpleCommand(async param =>
             {
@@ -142,8 +100,6 @@ namespace PocketX.ViewModels
                 }
                 OnPropertyChanged(nameof(Settings));
             }));
-
-
         internal async void PinBtnClicked() => await new UiUtils().PinAppWindow(520, 400);
         internal void ShareArticle(DataTransferManager sender, DataRequestedEventArgs args)
         {
@@ -151,8 +107,7 @@ namespace PocketX.ViewModels
             request.Data.SetText(PocketHandler?.CurrentPocketItem?.Uri?.ToString() ?? "");
             request.Data.Properties.Title = "Shared by PocketX";
         }
-
-        public async Task ToggleArchiveAsync([CanBeNull] PocketItem pocketItem)
+        public async Task ToggleArchiveAsync(PocketItem pocketItem)
         {
             if (pocketItem == null) return;
             try
@@ -174,16 +129,14 @@ namespace PocketX.ViewModels
             }
             catch (Exception e) { MainContent.Notifier.Show(e.Message, 2000); }
         }
-
-        public async Task DeleteArticleAsync([CanBeNull] PocketItem pocketItem)
+        public async Task DeleteArticleAsync(PocketItem pocketItem)
         {
             if (pocketItem == null) return;
             await PocketHandler.Delete(pocketItem);
             CurrentList()?.Remove(pocketItem);
             MainContent.Notifier?.Show("Deleted", 2000);
         }
-
-        public async Task ToggleFavoriteArticleAsync([CanBeNull] PocketItem pocketItem)
+        public async Task ToggleFavoriteArticleAsync(PocketItem pocketItem)
         {
             if (pocketItem == null) return;
             if (pocketItem.IsFavorite)
@@ -198,6 +151,38 @@ namespace PocketX.ViewModels
                 FavoritesList.Add(pocketItem);
                 MainContent.Notifier.Show("Saved as Favorite", 2000);
             }
+        }
+        public void ItemRightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)
+        {
+            var item = ((FrameworkElement)e.OriginalSource).DataContext as PocketItem;
+            var flyout = new MenuFlyout();
+            var el = new MenuFlyoutItem { Text = "Copy Link", Icon = new SymbolIcon(Symbol.Copy) };
+            el.Click += (sen, ee) =>
+            {
+                Utils.CopyToClipboard(item?.Uri?.AbsoluteUri);
+                MainContent.Notifier.Show("Copied", 2000);
+            };
+            flyout?.Items?.Add(el);
+            el = new MenuFlyoutItem { Text = "Open in browser", Icon = new SymbolIcon(Symbol.World) };
+            el.Click += async (sen, ee) => await Launcher.LaunchUriAsync(item?.Uri);
+            flyout?.Items?.Add(el);
+            el = new MenuFlyoutItem { Text = "Delete", Icon = new SymbolIcon(Symbol.Delete) };
+            el.Click += async (sen, ee) => await DeleteArticleAsync(item);
+            flyout?.Items?.Add(el);
+            el = new MenuFlyoutItem
+            {
+                Text = item?.IsArchive ?? false ? "Add" : "Archive",
+                Icon = new SymbolIcon(item?.IsArchive ?? false ? Symbol.Add : Symbol.Accept)
+            };
+            el.Click += async (sen, ee) => await ToggleArchiveAsync(item);
+            flyout?.Items?.Insert(0, el);
+            if (sender is StackPanel parent) flyout.ShowAt(parent, e.GetPosition(parent));
+        }
+        public async Task SwipeItem_Invoked(SwipeItem sender, SwipeItemInvokedEventArgs args)
+        {
+            var item = args.SwipeControl?.DataContext as PocketItem;
+            if (sender.Text == "Delete")
+                await DeleteArticleAsync(item);
         }
     }
 }

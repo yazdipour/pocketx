@@ -81,11 +81,11 @@
                                         TintColor="#66ffffff"
                                         FallbackColor="#eee" />
 
-            <media:AcrylicBrush x:Key="DialogBoxAcrylicBrush"
+            <!--<media:AcrylicBrush x:Key="DialogBoxAcrylicBrush"
                             BackgroundSource="Backdrop"
                             TintOpacity="0.1"
                             TintColor="#19FFFFFF"
-                            FallbackColor="#FFF" />
+                            FallbackColor="#FFF" />-->
         </ResourceDictionary>
     </Application.Resources>
 </Application>

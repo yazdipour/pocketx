@@ -102,6 +102,7 @@ namespace PocketX.Handlers
                        sort: Sort.newest, search: search,
                        domain: null, since: null,
                        count: count, offset: offset);
+
                 if (offset == 0) await SetItemsCache(pocketItems);
                 return pocketItems;
             }
@@ -198,9 +199,16 @@ namespace PocketX.Handlers
 
         internal async Task Delete(PocketItem pocketItem)
         {
-            await Client.Delete(pocketItem);
-            await BlobCache.LocalMachine.Invalidate(pocketItem.Uri.AbsoluteUri);
-            await BlobCache.LocalMachine.Invalidate("plain_" + pocketItem.Uri.AbsoluteUri);
+            try
+            {
+                await Client.Delete(pocketItem);
+                await BlobCache.LocalMachine.Invalidate(pocketItem.Uri.AbsoluteUri);
+                await BlobCache.LocalMachine.Invalidate("plain_" + pocketItem.Uri.AbsoluteUri);
+            }
+            catch (Exception e)
+            {
+                Logger.Logger.E(e);
+            }
         }
 
         public async Task<string> TextProviderForAudioPlayer()

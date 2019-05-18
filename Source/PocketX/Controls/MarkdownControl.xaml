@@ -9,13 +9,13 @@
     Background="{x:Bind Settings.ReaderBg,Mode=OneWay}" 
     RequestedTheme="{x:Bind Settings.ReaderTheme,Mode=OneWay}"
     mc:Ignorable="d">
-    <Grid>
+    <Grid Background="{x:Bind Settings.ReaderBg,Mode=OneWay, FallbackValue='#EEE'}">
         <!--markdownScrollViewer-->
         <ScrollViewer 
                 x:Name="MarkdownGrid" 
                 HorizontalScrollBarVisibility="Disabled"
                 VerticalScrollBarVisibility="Visible">
-            <Grid Background="{x:Bind Settings.ReaderBg,Mode=OneWay}">
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />
                     <RowDefinition />
@@ -70,8 +70,10 @@
             HorizontalAlignment="Center" 
             VerticalAlignment="Center">
             <controls:HeaderedTextBlock FontFamily="Segoe UI Symbol"
-                                Header=" Could not get the article" Text="Try again or Open it in webview"
-                                HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                Header=" Could not get the article"
+                                Text="Try again or Open it in webview"
+                                HorizontalAlignment="Center" 
+                                VerticalAlignment="Center" />
             <StackPanel Orientation="Horizontal" Margin="0 8" HorizontalAlignment="Center">
                 <Button Content="Reload ArticleView" Click="Reload_ArticleView" />
                 <Button Margin="8 0" Content="Open WebView" Tag="webView"

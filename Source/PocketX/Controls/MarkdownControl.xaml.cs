@@ -7,7 +7,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using PocketSharp.Models;
-using PocketX.Annotations;
 using PocketX.Handlers;
 using PocketX.Models;
 using PocketX.Views;
@@ -17,8 +16,7 @@ namespace PocketX.Controls
     public sealed partial class MarkdownControl : UserControl, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        [NotifyPropertyChangedInvocator]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        private void OnPropertyChanged(string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         public MarkdownControl()
         {
             InitializeComponent();
@@ -82,7 +80,11 @@ namespace PocketX.Controls
         public PocketItem Article
         {
             get => (PocketItem)GetValue(ArticleProperty);
-            set => SetValue(ArticleProperty, value);
+            set
+            {
+                SetValue(ArticleProperty, value);
+                Bindings.Update();
+            }
         }
 
         public static readonly DependencyProperty ArticleProperty =

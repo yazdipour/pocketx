@@ -1,9 +1,12 @@
-﻿using PocketSharp.Models;
+﻿using System;
+using PocketSharp.Models;
 
 using PocketX.Handlers;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using PocketX.ViewModels;
 
 namespace PocketX.Views
@@ -27,43 +30,30 @@ namespace PocketX.Views
                 if (!Microsoft.Toolkit.Uwp.Connectivity.NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
                     foreach (var pocketItem in await _vm.PocketHandler.GetItemsCache())
                         _vm.ArticlesList.Add(pocketItem);
-                else _vm.LoadHomeCommand();
                 await _vm.PocketHandler.FetchTagsAsync();
                 Logger.Logger.InitOnlineLogger(Keys.AppCenter);
                 Logger.Logger.SetDebugMode(App.DEBUGMODE);
             };
-            MarkdownCtrl.ToggleArchiveArticleAsync
-                = HomeListControl.ToggleArchiveArticleAsync 
-                    = ArchiveListControl.ToggleArchiveArticleAsync
-                        = FavListControl.ToggleArchiveArticleAsync
-                            = _vm.ToggleArchiveAsync;
-            MarkdownCtrl.DeleteArticleAsync
-                = HomeListControl.DeleteArticleAsync
-                    = ArchiveListControl.DeleteArticleAsync
-                        = FavListControl.DeleteArticleAsync
-                            = _vm.DeleteArticleAsync;
-            MarkdownCtrl.ToggleFavoriteArticleAsync 
-                = HomeListControl.ToggleFavoriteArticleAsync
-                    = ArchiveListControl.ToggleFavoriteArticleAsync
-                        = FavListControl.ToggleFavoriteArticleAsync
-                            = _vm.ToggleFavoriteArticleAsync;
-            TagsListCtrl.SearchAsync = async (tag) =>
-            {
-                PivotList.SelectedIndex = 3;
-                SearchBox.Text = tag;
-                await _vm.SearchCommand(tag);
-            };
         }
-        private void AutoSuggestBox_OnQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) => _vm.SearchCommand(sender?.Text);
+        private async void AutoSuggestBox_OnQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) => await _vm.SearchCommand(sender?.Text);
         private void HeadAppBarClicked(object sender, RoutedEventArgs e) => PivotList.SelectedIndex = ((AppBarButton)sender)?.Tag?.ToString() == "Find" ? 3 : 4;
-
-        private void listViewInSplitView_ItemClick(object sender, ItemClickEventArgs e)
+        private void ItemClick(object sender, ItemClickEventArgs e)
         {
+            if (!(e?.ClickedItem is PocketItem item)) return;
             if (SplitView.IsPaneOpen && IsSmallWidth(ActualWidth)) SplitView.IsPaneOpen = false;
-            _vm.PocketHandler.CurrentPocketItem = e.ClickedItem as PocketItem;
+            _vm.PocketHandler.CurrentPocketItem = item;
             MarkdownCtrl.OpenInArticleView();
-            LoadingListControl.IsLoading = true;
         }
-
+        private async void SwipeItem_Invoked(SwipeItem sender, SwipeItemInvokedEventArgs args) => await _vm.SwipeItem_Invoked(sender, args);
+        private void ItemRightTapped(object sender, RightTappedRoutedEventArgs e) => _vm.ItemRightTapped(sender, e);
+        private async void TagItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (!(e?.ClickedItem is string tag)) return;
+            PivotList.SelectedIndex = 3;
+            tag = '#' + tag;
+            SearchBox.Text = tag;
+            await _vm.SearchCommand(tag);
+        }
+        private void PivotList_SelectionChanged(object sender, SelectionChangedEventArgs e) => _vm.ListIsLoading = false;
     }
 }

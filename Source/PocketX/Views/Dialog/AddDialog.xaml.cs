@@ -16,8 +16,8 @@ namespace PocketX.Views.Dialog
 
         public AddDialog(ElementTheme appTheme)
         {
-            this.InitializeComponent();
-            this.RequestedTheme = appTheme;
+            InitializeComponent();
+            RequestedTheme = appTheme;
         }
 
         private void Close_Click(object sender, RoutedEventArgs e) => Hide();

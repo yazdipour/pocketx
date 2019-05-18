@@ -8,9 +8,70 @@
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:pocket="using:PocketSharp.Models"
     xmlns:ctrl="using:PocketX.Controls"
+    xmlns:uwpChipsX="using:UWPChipsX"
     RequestedTheme="{x:Bind _vm.Settings.AppTheme,Mode=OneWay}"
     Background="{ThemeResource SystemControlAcrylicWindowBrush}"
     mc:Ignorable="d">
+    <Page.Resources>
+        <FontIconSource x:Key="Delete" Glyph="&#xE107;" />
+        <FontIconSource x:Key="Add" Glyph="" />
+        <FontIconSource x:Key="Archive" Glyph="&#xE15D;" />
+        <SwipeItems x:Key="SwipeItemsRight" Mode="Execute" >
+            <SwipeItem Text="Delete" 
+                       IconSource="{StaticResource Add}"
+                       BehaviorOnInvoked="Close"
+                       Invoked="SwipeItem_Invoked"
+                       Background="#e74c3c"
+                       Foreground="White" />
+        </SwipeItems>
+        <SwipeItems x:Name="SwipeItemsLeft" 
+                    x:Key="SwipeItemsLeft" 
+                    Mode="Execute">
+            <SwipeItem Text="Add"
+                       IconSource="{StaticResource Add}"
+                       BehaviorOnInvoked="Close"
+                       Invoked="SwipeItem_Invoked"
+                       Background="#1abc9c" 
+                       Foreground="White" />
+        </SwipeItems>
+        <DataTemplate x:DataType="pocket:PocketItem" x:Key="ArticleTemplate">
+            <SwipeControl RightItems="{StaticResource SwipeItemsRight}" Margin="-10 2">
+                <StackPanel Orientation="Horizontal"
+                            Height="64"
+                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                            CornerRadius="2"
+                            HorizontalAlignment="Stretch"
+                            RightTapped="ItemRightTapped">
+                    <controls:ImageEx Margin="0 0 8 0" 
+                                      BorderBrush="#eee"
+                                      Source="{x:Bind LeadImage.Uri}" 
+                                      Width="100" 
+                                      CornerRadius="2 0 0 2"
+                                      PlaceholderSource="ms-appx:///Assets/Square44x44Logo.png"
+                                      Stretch="UniformToFill" 
+                                      x:Phase="10"
+                                      BorderThickness="0 0 .5 0"/>
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                        <TextBlock Text="{x:Bind Title}"
+                                   Width="200"
+                                   MaxLines="1"
+                                   Style="{ThemeResource BaseTextBlockStyle}" />
+                        <TextBlock Text="{x:Bind Uri.Host}" Style="{ThemeResource CaptionTextBlockStyle}" />
+                    </StackPanel>
+                </StackPanel>
+            </SwipeControl>
+        </DataTemplate>
+        <Style TargetType="ListView" x:Key="PocketTemplate">
+            <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="IsItemClickEnabled" Value="True"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="ItemTemplate" Value="{StaticResource ArticleTemplate}"/>
+        </Style>
+        <Style TargetType="ListViewItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+    </Page.Resources>
     <Grid>
         <SplitView x:Name="SplitView"
                PaneBackground="Transparent" 
@@ -20,53 +81,60 @@
             <SplitView.Pane>
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition/>
+                        <RowDefinition Height="42"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <!--Head-->
-                    <Grid Grid.Row="0">
+                    <Grid Grid.Row="0" Padding="0 0 4 0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
                         <TextBlock 
                             VerticalAlignment="Center"
                             Text="Pocket✘"
                             Margin="10 0" 
                             FontWeight="Medium"
                             FontSize="22"/>
-                        <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="Right"
-                                    Height="42">
-                            <AppBarButton Click="HeadAppBarClicked"
+                        <AppBarButton Grid.Column="1" Click="HeadAppBarClicked"
                                           Width="40"
                                           Icon="Find"
                                           Tag="Find"/>
-                            <AppBarButton Click="HeadAppBarClicked"
+                        <!--<AppBarButton  Click="HeadAppBarClicked"
                                           Width="40"
-                                          Icon="Tag"/>
-                            <AppBarButton Command="{x:Bind _vm.TopAppBarClick}" 
+                                          Icon="Tag"/>-->
+                        <AppBarButton Grid.Column="2" Command="{x:Bind _vm.TopAppBarClick}" 
                                           CommandParameter="Setting" 
                                           Icon="Setting"
                                           Width="40"/>
-                        </StackPanel>
                     </Grid>
-                    <Pivot x:Name="PivotList" Grid.Row="1" SelectedIndex="{x:Bind _vm.PivotListSelectedIndex, Mode=TwoWay}">
+                    <Pivot x:Name="PivotList" 
+                           Grid.Row="1" 
+                           VerticalContentAlignment="Stretch"
+                           SelectionChanged="PivotList_SelectionChanged"
+                           SelectedIndex="{x:Bind _vm.PivotListSelectedIndex, Mode=TwoWay}">
                         <Pivot.Resources>
                             <Style TargetType="PivotHeaderItem">
                                 <Setter Property="FontSize" Value="16"/>
                             </Style>
                         </Pivot.Resources>
                         <PivotItem Header="Home">
-                            <ctrl:ArticlesListControl 
-                                x:Name="HomeListControl"
-                                ItemsSource="{x:Bind _vm.ArticlesList,Mode=OneWay}"/>
+                            <ListView 
+                                Style="{StaticResource PocketTemplate}"
+                                ItemsSource="{x:Bind _vm.ArticlesList,Mode=OneWay}"
+                                ItemClick="ItemClick"/>
                         </PivotItem>
                         <PivotItem Header="Favorite">
-                            <ctrl:ArticlesListControl 
-                                x:Name="FavListControl"
-                                ItemsSource="{x:Bind _vm.FavoritesList,Mode=OneWay}"/>
+                            <ListView 
+                                Style="{StaticResource PocketTemplate}"
+                                ItemsSource="{x:Bind _vm.FavoritesList,Mode=OneWay}"
+                                ItemClick="ItemClick"/>
                         </PivotItem>
                         <PivotItem Header="Archive">
-                            <ctrl:ArticlesListControl 
-                                x:Name="ArchiveListControl"
+                            <ListView 
+                                Style="{StaticResource PocketTemplate}"
+                                ItemClick="ItemClick"
                                 ItemsSource="{x:Bind _vm.ArchivesList,Mode=OneWay}"/>
                         </PivotItem>
                         <PivotItem Header="Search">
@@ -82,18 +150,28 @@
                                     IsEnabled="True"
                                     PlaceholderText="Search"
                                     QuerySubmitted="AutoSuggestBox_OnQuerySubmitted" />
-                                <ctrl:ArticlesListControl Grid.Row="1"
-                                                          x:Name="SearchListControl"
-                                                          ItemsSource="{x:Bind _vm.SearchList,Mode=OneWay}"/>
+                                <ListView Grid.Row="1"
+                                          Style="{StaticResource PocketTemplate}"
+                                          ItemClick="ItemClick"
+                                          ItemsSource="{x:Bind _vm.SearchList,Mode=OneWay}"/>
                             </Grid>
                         </PivotItem>
                         <PivotItem Header="Tags">
-                            <ctrl:TagsListControl x:Name="TagsListCtrl"/>
+                            <ListView ItemsSource="{x:Bind _vm.PocketHandler.Tags, Mode=OneWay}" 
+                                      IsItemClickEnabled="True" 
+                                      ItemClick="TagItemClick"/>
+                                <!--<GridView.ItemTemplate>
+                                    <DataTemplate>
+                                        <uwpChipsX:Chip Content="{Binding}" 
+                                                        CloseButtonVisiblity="Collapsed"/>
+                                    </DataTemplate>
+                                </GridView.ItemTemplate>
+                            </GridView>-->
                         </PivotItem>
                     </Pivot>
                     <!--AddLink Button-->
                     <controls:DropShadowPanel Margin="4" 
-                                              Grid.Row="2"
+                                              Grid.Row="1"
                                           BlurRadius="35"
                                           HorizontalAlignment="Center"
                                           VerticalAlignment="Bottom">
@@ -111,7 +189,8 @@
                     </controls:DropShadowPanel>
                     <!--LoadingControl-->
                     <controls:Loading x:Name="LoadingListControl"
-                                      Grid.Row="2"
+                                      IsLoading="{x:Bind _vm.ListIsLoading, Mode=OneWay}"
+                                      Grid.Row="1"
                                       Background="#7f111111"
                                       RequestedTheme="Dark"
                                       VerticalAlignment="Center">
@@ -123,21 +202,21 @@
                 </Grid>
             </SplitView.Pane>
             <!--Main Body-->
-            <ctrl:MarkdownControl
-                x:Name="MarkdownCtrl"
-                SplitView="{x:Bind SplitView}"
-                Article="{x:Bind _vm.PocketHandler.CurrentPocketItem, Mode=TwoWay}"/>
+            <controls:DropShadowPanel HorizontalContentAlignment="Stretch">
+                <ctrl:MarkdownControl 
+                    x:Name="MarkdownCtrl"
+                    SplitView="{x:Bind SplitView}"
+                    Article="{x:Bind _vm.PocketHandler.CurrentPocketItem, Mode=TwoWay}"/>
+            </controls:DropShadowPanel>
         </SplitView>
-
-        <Button HorizontalAlignment="Left" 
+        <!--<Button HorizontalAlignment="Left" 
                 Height="34" 
                 Width="18"
-                Visibility="Collapsed"
                 VerticalAlignment="Top"
                 Content="&#xE141;" 
                 FontFamily="Segoe MDL2 Assets" 
                 CornerRadius="0 0 12 0"
-                Click="{x:Bind _vm.PinBtnClicked}"/>
+                Click="{x:Bind _vm.PinBtnClicked}"/>-->
         <controls:InAppNotification x:Name="InAppNotifier" 
                                     Content="Error!" 
                                     RequestedTheme="Dark"
@@ -151,7 +230,6 @@
                 </LinearGradientBrush>
             </controls:InAppNotification.Background>
         </controls:InAppNotification>
-
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="mobile">
@@ -173,12 +251,4 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
     </Grid>
-
-    <!--<Button HorizontalAlignment="Left"
-            Height="24" 
-            VerticalAlignment="Top"
-            Content="&#xE141;" 
-            FontFamily="Segoe MDL2 Assets" 
-            CornerRadius="0 0 4 0"
-            Click="{x:Bind _vm.PinBtnClicked}"/>-->
 </Page>
