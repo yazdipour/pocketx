@@ -15,7 +15,7 @@ namespace PocketX.Views.Dialog
         private readonly string _versionString = $"Version {Package.Current.Id.Version.Major}.{Package.Current.Id.Version.Minor}.{Package.Current.Id.Version.Build}";
 
         private readonly Settings[] _themes = {
-            new Settings { AppTheme = ElementTheme.Light,ReaderBg = "#EFEFEF",ReaderTheme = ElementTheme.Light,Thumbnail = "/Assets/ReadTheme/theme1.png"},
+            new Settings { AppTheme = ElementTheme.Light,ReaderBg = "#FEFEFE",ReaderTheme = ElementTheme.Light,Thumbnail = "/Assets/ReadTheme/theme1.png"},
             new Settings { AppTheme = ElementTheme.Dark,ReaderBg = "#454545",ReaderTheme = ElementTheme.Dark,Thumbnail = "/Assets/ReadTheme/theme4.png"},
             new Settings { AppTheme = ElementTheme.Dark,ReaderBg = "#111111",ReaderTheme = ElementTheme.Dark,Thumbnail = "/Assets/ReadTheme/theme5.png"},
         };
