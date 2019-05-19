@@ -4,7 +4,7 @@
 				 xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" 
 				 xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
 				 IgnorableNamespaces="uap mp uap5">
-  <Identity Name="3783mindprojects.PocketX" Publisher="CN=5055881C-9F85-4877-AEA1-AF64140AD34D" Version="1.4.4.0" />
+  <Identity Name="3783mindprojects.PocketX" Publisher="CN=5055881C-9F85-4877-AEA1-AF64140AD34D" Version="2.0.2.0" />
   <mp:PhoneIdentity PhoneProductId="8ecc3aa1-99f7-4d15-9a77-1dad532ac8bc" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>PocketX</DisplayName>

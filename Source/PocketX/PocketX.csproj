@@ -153,8 +153,6 @@
     <Content Include="Assets\Icons\ChangeLog.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="PocketX_StoreKey.pfx" />
-    <None Include="PocketX_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Icons\d_iran.png" />
