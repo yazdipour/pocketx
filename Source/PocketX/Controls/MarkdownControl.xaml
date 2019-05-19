@@ -6,10 +6,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:converter="using:PocketX.Converter"
     Background="{x:Bind Settings.ReaderBg,Mode=OneWay}" 
     RequestedTheme="{x:Bind Settings.ReaderTheme,Mode=OneWay}"
     mc:Ignorable="d">
-    <Grid Background="{x:Bind Settings.ReaderBg,Mode=OneWay, FallbackValue='#EEE'}">
+    <UserControl.Resources>
+        <converter:BooleanToCustomStringConverter x:Key="BoolToStr" />
+    </UserControl.Resources>
+    <Grid Background="{x:Bind Settings.ReaderBg,Mode=OneWay}">
         <!--markdownScrollViewer-->
         <ScrollViewer 
                 x:Name="MarkdownGrid" 
@@ -107,34 +111,33 @@
                     VerticalAlignment="Bottom"
                     DefaultLabelPosition="Right"
                     HorizontalAlignment="Right">
-            <AppBarButton Icon="{x:Bind ArchiveIcon,Mode=OneWay}"
-                          Click="AppBar_Click"
+            <AppBarButton Click="AppBar_Click"
                           Tag="Archive"
-                          Label="{x:Bind ArchiveLabel, Mode=OneWay}" />
+                          Label="{x:Bind IsArchive, Mode=OneWay, Converter={StaticResource BoolToStr}, ConverterParameter='Add|Archive'}" >
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="{x:Bind IsArchive, Mode=OneWay, Converter={StaticResource BoolToStr}, ConverterParameter='&#xE109;|&#xE10B;'}"/>
+                        <!--Icon="{x:Bind ArchiveIcon,Mode=OneWay}"-->
+                </AppBarButton.Icon>
+            </AppBarButton>
             <AppBarButton Tag="Share" 
                           Icon="Share" 
                           Label="Share" 
                           Click="AppBar_Click" />
-            <!--<AppBarButton Tag="Settings" 
-                          Icon="Font" 
-                          Label="Theme" 
-                          Click="AppBar_Click" />-->
             <AppBarButton Icon="Volume"
                           Label="Read"
                           Command="{x:Bind TextToSpeech}"/>
             <CommandBar.SecondaryCommands>
                 <AppBarButton Click="AppBar_Click"
                               Tag="Favorite"
-                              Label="{x:Bind FavLabel, Mode=OneWay}" 
+                              Label="{x:Bind Article.IsFavorite, Mode=OneWay, Converter={StaticResource BoolToStr}, ConverterParameter='Un-favorite|Favorite'}" 
                               Icon="Favorite" />
                 <AppBarButton Tag="Copy" 
                               Click="AppBar_Click" 
                               Label="Copy Link"
                               Icon="Paste" />
-                <AppBarButton x:Name="WebViewBtn"
-                              Click="AppBar_Click"
-                              Tag="WebView"
-                              Label="Open in WebView"
+                <AppBarButton Click="AppBar_Click"
+                              Tag="view"
+                              Label="{x:Bind IsInWebView, Mode=OneWay, Converter={StaticResource BoolToStr}, ConverterParameter='Open in TextView|Open in WebView'}"
                               Icon="View" />
                 <AppBarButton Tag="Delete"
                               Label="Delete"
@@ -142,6 +145,7 @@
                               Icon="Delete" />
             </CommandBar.SecondaryCommands>
         </CommandBar>
+        <!--Window Controller-->
         <Rectangle Height="66" 
                    Fill="Transparent"
                    x:Name="WindowBorder"
@@ -155,13 +159,11 @@
                     Tag="Back"
                     Padding="0"
                     VerticalAlignment="Top" >
-            <FontIcon x:Name="BackBtn" 
-                          FontFamily="Segoe MDL2 Assets"
-                          Glyph="&#xF743;"
-                          Foreground="#D7D7D7"
-                          FontWeight="Bold"
-                          FontSize="14"
-                          x:FieldModifier="public" />
+            <FontIcon FontFamily="Segoe MDL2 Assets"
+                      Glyph="{x:Bind SplitView.IsPaneOpen, Mode=OneWay, ConverterParameter='|', Converter={StaticResource BoolToStr}}"
+                      Foreground="#D7D7D7"
+                      FontWeight="Bold"
+                      FontSize="14" />
         </Button>
     </Grid>
 </UserControl>

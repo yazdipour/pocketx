@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.ApplicationModel.DataTransfer;
@@ -15,8 +14,6 @@ namespace PocketX.Controls
 {
     public sealed partial class MarkdownControl : UserControl, INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         public MarkdownControl()
         {
             InitializeComponent();
@@ -26,15 +23,22 @@ namespace PocketX.Controls
                 MediaStartAction = () => { MarkdownAppBar.MaxWidth = 48; },
                 MediaEndAction = () => { MarkdownAppBar.MaxWidth = 500; }
             };
-            MarkdownCtrl.Loaded += async (s, e)
-                => MarkdownText = await Utils.TextFromAssets(@"Assets\Icons\Home.md");
+            MarkdownCtrl.Loaded += async (s, e) => MarkdownText = await Utils.TextFromAssets(@"Assets\Icons\Home.md");
         }
+
+        #region PropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        #endregion
+
+        #region Parameters
         internal Settings Settings => SettingsHandler.Settings;
         internal MarkdownHandler MarkdownHandler { get; set; }
         private AudioHandler AudioHandler { get; }
         private ICommand _textToSpeech;
         private string _markdownText;
-
+        private bool IsArchive { get; set; }
+        private bool IsInWebView { get; set; }
         public string MarkdownText
         {
             get => _markdownText;
@@ -44,27 +48,36 @@ namespace PocketX.Controls
                 OnPropertyChanged(nameof(MarkdownText));
             }
         }
-        public string FavLabel => Article?.IsFavorite ?? false ? "UnFavorite" : "Favorite";
-        public string ArchiveLabel => Article?.IsArchive ?? false ? "Add" : "Archive";
-        public IconElement ArchiveIcon => new SymbolIcon((Article?.IsArchive ?? false) ? Symbol.Add : Symbol.Accept);
-        internal ICommand TextToSpeech => _textToSpeech ?? (_textToSpeech = new SimpleCommand(async param => await AudioHandler.Toggle()));
-        private void Reload_ArticleView(object sender, RoutedEventArgs e) => OpenInArticleView(true);
+        public PocketItem Article
+        {
+            get => (GetValue(ArticleProperty) is PocketItem i) ? i : null;
+            set
+            {
+                if (value == null) return;
+                SetValue(ArticleProperty, value);
+                IsArchive = value?.IsArchive ?? false;
+                IsInWebView = false;
+                AppBar_Click("view", null);
+                Bindings.Update();
+            }
+        }
+
+        public static readonly DependencyProperty ArticleProperty =
+            DependencyProperty.Register("Article"
+                , typeof(PocketItem)
+                , typeof(MarkdownControl)
+                , new PropertyMetadata(0));
+
+        public Func<PocketItem, bool, Task> ToggleArchiveArticleAsync { get; set; }
+        public Func<PocketItem, Task> DeleteArticleAsync { get; set; }
+        public Func<PocketItem, Task> ToggleFavoriteArticleAsync { get; set; }
+        #endregion
 
         #region SplitView
         public SplitView SplitView
         {
             get => (SplitView)GetValue(SplitViewProperty);
-            set
-            {
-                SetValue(SplitViewProperty, value);
-                SplitView.PaneOpened += SplitViewOnPaneOpened;
-            }
-        }
-
-        private void SplitViewOnPaneOpened(SplitView sender, object args)
-        {
-            if (BackBtn == null) return;
-            BackBtn.Glyph = SplitView.IsPaneOpen ? "" : "";
+            set => SetValue(SplitViewProperty, value);
         }
 
         public static readonly DependencyProperty SplitViewProperty =
@@ -76,29 +89,8 @@ namespace PocketX.Controls
         private void ToggleSplitView() => SplitView.IsPaneOpen = !SplitView.IsPaneOpen;
         #endregion
 
-        #region Parameters
-        public PocketItem Article
-        {
-            get => (PocketItem)GetValue(ArticleProperty);
-            set
-            {
-                SetValue(ArticleProperty, value);
-                AppBar_Click("articleview", null);
-                Bindings.Update();
-            }
-        }
-
-        public static readonly DependencyProperty ArticleProperty =
-            DependencyProperty.Register("Article"
-                , typeof(PocketItem)
-                , typeof(MarkdownControl)
-                , new PropertyMetadata(0));
-
-        public Func<PocketItem, Task> ToggleArchiveArticleAsync { get; set; }
-        public Func<PocketItem, Task> DeleteArticleAsync { get; set; }
-        public Func<PocketItem, Task> ToggleFavoriteArticleAsync { get; set; }
-        #endregion
-
+        internal ICommand TextToSpeech => _textToSpeech ?? (_textToSpeech = new SimpleCommand(async param => await AudioHandler.Toggle()));
+        private void Reload_ArticleView(object sender, RoutedEventArgs e) => OpenInArticleView(true);
         private async void AppBar_Click(object sender, RoutedEventArgs e)
         {
             var tag = sender is Control c ? c?.Tag?.ToString()?.ToLower() : sender is string s ? s : "";
@@ -106,39 +98,39 @@ namespace PocketX.Controls
             {
                 case "favorite":
                     await ToggleFavoriteArticleAsync(Article);
-                    OnPropertyChanged(nameof(FavLabel));
+                    Article.IsFavorite = !Article.IsFavorite;
+                    OnPropertyChanged(nameof(Article));
                     break;
                 case "share":
                     DataTransferManager.ShowShareUI();
                     break;
                 case "archive":
-                    await ToggleArchiveArticleAsync(Article);
-                    OnPropertyChanged(nameof(ArchiveLabel));
+                    await ToggleArchiveArticleAsync(Article, IsArchive);
+                    IsArchive = !IsArchive;
+                    OnPropertyChanged(nameof(IsArchive));
                     break;
                 case "copy":
                     Utils.CopyToClipboard(Article?.Uri?.AbsoluteUri);
                     NotificationHandler.InAppNotification("Copied", 2000);
                     break;
-                case "webview":
-                    WebViewBtn.Tag = "articleView";
-                    WebViewBtn.Content = "Open in ArticleView";
-
-                    FindName(nameof(WebView));
-                    WebView.Visibility = Visibility.Visible;
-                    MarkdownGrid.Visibility = Visibility.Collapsed;
-                    if (ErrorView != null) ErrorView.Visibility = Visibility.Collapsed;
-
-                    if (Article?.Uri != null) WebView.Navigate(Article.Uri);
-                    break;
-                case "articleview":
-                    WebViewBtn.Tag = "webView";
-                    WebViewBtn.Content = "Open in WebView";
-
-                    MarkdownGrid.Visibility = Visibility.Visible;
-                    if (ErrorView != null) ErrorView.Visibility = Visibility.Collapsed;
-                    if (WebView != null) WebView.Visibility = Visibility.Collapsed;
-
-                    OpenInArticleView(true);
+                case "view":
+                    if (IsInWebView)
+                    {
+                        MarkdownGrid.Visibility = Visibility.Visible;
+                        if (ErrorView != null) ErrorView.Visibility = Visibility.Collapsed;
+                        if (WebView != null) WebView.Visibility = Visibility.Collapsed;
+                        OpenInArticleView(true);
+                    }
+                    else
+                    {
+                        FindName(nameof(WebView));
+                        WebView.Visibility = Visibility.Visible;
+                        MarkdownGrid.Visibility = Visibility.Collapsed;
+                        if (ErrorView != null) ErrorView.Visibility = Visibility.Collapsed;
+                        if (Article?.Uri != null) WebView.Navigate(Article.Uri);
+                    }
+                    IsInWebView = !IsInWebView;
+                    OnPropertyChanged(nameof(IsInWebView));
                     break;
                 case "delete":
                     await DeleteArticleAsync(Article);
@@ -165,8 +157,6 @@ namespace PocketX.Controls
                 var content = await PocketHandler.GetInstance().Read(Article?.Uri, force);
                 MarkdownCtrl.UriPrefix = Article?.Uri?.AbsoluteUri;
                 MarkdownText = content;
-                WebViewBtn.Tag = "webView";
-                WebViewBtn.Content = "Open in WebView";
                 MarkdownAppBar.Visibility = Visibility.Visible;
             }
             catch

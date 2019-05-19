@@ -231,9 +231,9 @@
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="720"/>
                     </VisualState.StateTriggers>
-                    <VisualState.Setters>
+                    <!--<VisualState.Setters>
                         <Setter Target="SplitView.IsPaneOpen" Value="True"/>
-                    </VisualState.Setters>
+                    </VisualState.Setters>-->
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>

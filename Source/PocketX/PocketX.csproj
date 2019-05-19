@@ -108,6 +108,8 @@
     <Compile Include="Controls\TagsListControl.xaml.cs">
       <DependentUpon>TagsListControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converter\BooleanToCustomStringConverter.cs" />
+    <Compile Include="Converter\BooleanToVisibilityConverter.cs" />
     <Compile Include="Handlers\AudioHandler.cs" />
     <Compile Include="Handlers\NotificationHandler.cs" />
     <Compile Include="Handlers\Keys.cs" />

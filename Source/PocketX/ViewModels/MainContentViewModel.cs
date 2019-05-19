@@ -93,22 +93,22 @@ namespace PocketX.ViewModels
             request.Data.SetText(PocketHandler?.CurrentPocketItem?.Uri?.ToString() ?? "");
             request.Data.Properties.Title = "Shared by PocketX";
         }
-        public async Task ToggleArchiveArticleAsync(PocketItem pocketItem)
+        public async Task ToggleArchiveArticleAsync(PocketItem pocketItem, bool IsArchive)
         {
             if (pocketItem == null) return;
             try
             {
-                if (pocketItem.IsArchive)
+                if (IsArchive) // Want to add
                 {
                     await PocketHandler.Client.Unarchive(pocketItem);
                     NotificationHandler.InAppNotification("Added", 2000);
-                    ArticlesList.Insert(0, pocketItem);
+                    if (ArticlesList.Count > 0 && ArticlesList[0] != pocketItem) ArticlesList.Insert(0, pocketItem);
                     ArchivesList.Remove(pocketItem);
                 }
-                else
+                else // Want to Archive
                 {
                     await PocketHandler.Client.Archive(pocketItem);
-                    ArchivesList.Insert(0, pocketItem);
+                    if (ArchivesList.Count > 0 && ArchivesList[0] != pocketItem) ArchivesList.Insert(0, pocketItem);
                     ArticlesList.Remove(pocketItem);
                     NotificationHandler.InAppNotification("Archived", 2000);
                 }
@@ -134,7 +134,7 @@ namespace PocketX.ViewModels
             else
             {
                 await PocketHandler.GetInstance().Client.Favorite(pocketItem);
-                if(FavoritesList.Count!=0) FavoritesList.Add(pocketItem);
+                if (FavoritesList.Count != 0) FavoritesList.Add(pocketItem);
                 NotificationHandler.InAppNotification("Saved as Favorite", 2000);
             }
         }
@@ -160,7 +160,7 @@ namespace PocketX.ViewModels
                 Text = item?.IsArchive ?? false ? "Add" : "Archive",
                 Icon = new SymbolIcon(item?.IsArchive ?? false ? Symbol.Add : Symbol.Accept)
             };
-            el.Click += async (sen, ee) => await ToggleArchiveArticleAsync(item);
+            el.Click += async (sen, ee) => await ToggleArchiveArticleAsync(item, item.IsArchive);
             flyout?.Items?.Insert(0, el);
             if (sender is StackPanel parent) flyout.ShowAt(parent, e.GetPosition(parent));
         }
