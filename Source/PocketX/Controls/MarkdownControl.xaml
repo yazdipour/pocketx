@@ -51,27 +51,29 @@
         </ScrollViewer>
         <!--LoadingControl-->
         <controls:Loading x:Name="MarkdownLoading" 
-                                      HorizontalContentAlignment="Center" 
-                                      VerticalContentAlignment="Center"
-                                      Background="#5f111111">
+                          HorizontalContentAlignment="Center" 
+                          VerticalContentAlignment="Center"
+                          Background="#5f111111">
             <ProgressBar Width="130" 
                              IsIndeterminate="True" 
                              Foreground="White" />
         </controls:Loading>
         <!--webView-->
         <WebView 
+            x:Load="False"
+            Visibility="Collapsed"
             ScrollViewer.HorizontalScrollMode="Disabled" 
-            x:Name="WebView" 
-            x:Load="False" />
+            x:Name="WebView"/>
         <!--errorView-->
-        <StackPanel 
+        <StackPanel
             x:Name="ErrorView" 
+            Visibility="Collapsed"
             x:Load="False"
             HorizontalAlignment="Center" 
             VerticalAlignment="Center">
             <controls:HeaderedTextBlock FontFamily="Segoe UI Symbol"
                                 Header=" Could not get the article"
-                                Text="Try again or Open it in webview"
+                                Text="Try again or Open it in WebView"
                                 HorizontalAlignment="Center" 
                                 VerticalAlignment="Center" />
             <StackPanel Orientation="Horizontal" Margin="0 8" HorizontalAlignment="Center">

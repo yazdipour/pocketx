@@ -128,13 +128,13 @@ namespace PocketX.ViewModels
             if (pocketItem.IsFavorite)
             {
                 await PocketHandler.GetInstance().Client.Unfavorite(pocketItem);
-                FavoritesList.Remove(pocketItem);
+                if (FavoritesList.Count != 0) FavoritesList.Remove(pocketItem);
                 MainContent.Notifier.Show("Remove from Favorite", 2000);
             }
             else
             {
                 await PocketHandler.GetInstance().Client.Favorite(pocketItem);
-                FavoritesList.Add(pocketItem);
+                if(FavoritesList.Count!=0) FavoritesList.Add(pocketItem);
                 MainContent.Notifier.Show("Saved as Favorite", 2000);
             }
         }

@@ -122,13 +122,22 @@ namespace PocketX.Controls
                 case "webview":
                     WebViewBtn.Tag = "articleView";
                     WebViewBtn.Content = "Open in ArticleView";
-                    HandleViewVisibilities(nameof(WebView));
-                    if (Article?.Uri != null) WebView.Navigate(Article?.Uri);
+
+                    FindName(nameof(WebView));
+                    WebView.Visibility = Visibility.Visible;
+                    MarkdownGrid.Visibility = Visibility.Collapsed;
+                    if (ErrorView != null) ErrorView.Visibility = Visibility.Collapsed;
+
+                    if (Article?.Uri != null) WebView.Navigate(Article.Uri);
                     break;
                 case "articleview":
                     WebViewBtn.Tag = "webView";
                     WebViewBtn.Content = "Open in WebView";
-                    HandleViewVisibilities(nameof(WebView));
+
+                    MarkdownGrid.Visibility = Visibility.Visible;
+                    if (ErrorView != null) ErrorView.Visibility = Visibility.Collapsed;
+                    if (WebView != null) WebView.Visibility = Visibility.Collapsed;
+
                     OpenInArticleView(true);
                     break;
                 case "delete":
@@ -140,45 +149,21 @@ namespace PocketX.Controls
             }
         }
 
-        private void HandleViewVisibilities(string theOne)
-        {
-            FindName(theOne);
-            try
-            {
-                switch (theOne)
-                {
-                    case nameof(WebView):
-                        WebView.Visibility = Visibility.Visible;
-                        MarkdownGrid.Visibility = Visibility.Collapsed;
-                        ErrorView.Visibility = Visibility.Collapsed;
-                        break;
-                    case nameof(MarkdownGrid):
-                        FindName(nameof(MarkdownCtrl));
-                        MarkdownGrid.Visibility = Visibility.Visible;
-                        ErrorView.Visibility = Visibility.Collapsed;
-                        WebView.Visibility = Visibility.Collapsed;
-                        break;
-                    case nameof(ErrorView):
-                        MarkdownGrid.Visibility = Visibility.Collapsed;
-                        WebView.Visibility = Visibility.Collapsed;
-                        break;
-                }
-            }
-            catch { }
-        }
-
         public async void OpenInArticleView(bool force = false)
         {
             if (Article == null) return;
-            MarkdownLoading.IsLoading = true;
-            MarkdownAppBar.Visibility = Visibility.Collapsed;
             try
             {
+                MarkdownLoading.IsLoading = true;
+                MarkdownAppBar.Visibility = Visibility.Collapsed;
                 MarkdownText = "";
-                HandleViewVisibilities(nameof(MarkdownGrid));
-                var content = await PocketHandler.GetInstance().Read(Article.Uri, force);
-                //if (item.ID != Article?.ID) return;
-                MarkdownCtrl.UriPrefix = Article.Uri?.AbsoluteUri;
+
+                MarkdownGrid.Visibility = Visibility.Visible;
+                if (ErrorView != null) ErrorView.Visibility = Visibility.Collapsed;
+                if (WebView != null) WebView.Visibility = Visibility.Collapsed;
+
+                var content = await PocketHandler.GetInstance().Read(Article?.Uri, force);
+                MarkdownCtrl.UriPrefix = Article?.Uri?.AbsoluteUri;
                 MarkdownText = content;
                 WebViewBtn.Tag = "webView";
                 WebViewBtn.Content = "Open in WebView";
@@ -186,7 +171,10 @@ namespace PocketX.Controls
             }
             catch
             {
-                HandleViewVisibilities(nameof(ErrorView));
+                MarkdownGrid.Visibility = Visibility.Collapsed;
+                FindName(nameof(ErrorView));
+                ErrorView.Visibility = Visibility.Visible;
+                if (WebView != null) WebView.Visibility = Visibility.Collapsed;
             }
             MarkdownLoading.IsLoading = false;
         }
