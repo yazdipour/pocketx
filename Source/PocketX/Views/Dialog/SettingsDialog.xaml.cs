@@ -20,10 +20,9 @@ namespace PocketX.Views.Dialog
             new Settings { AppTheme = ElementTheme.Dark,ReaderBg = "#111111",ReaderTheme = ElementTheme.Dark,Thumbnail = "/Assets/ReadTheme/theme5.png"},
         };
         
-        public SettingsDialog(int pivotIndex)
+        public SettingsDialog()
         {
             InitializeComponent();
-            pivot.SelectedIndex = pivotIndex;
             comboBox2.ItemsSource = Utils.GetAllFonts();
         }
 

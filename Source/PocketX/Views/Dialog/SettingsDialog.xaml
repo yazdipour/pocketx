@@ -11,7 +11,7 @@
     Closed="ContentDialog_Closed"
     CornerRadius="4">
     <Grid>
-        <Pivot x:Name="pivot">
+        <Pivot>
             <!--Pivot Header-->
             <Pivot.HeaderTemplate>
                 <DataTemplate>
@@ -19,7 +19,7 @@
                 </DataTemplate>
             </Pivot.HeaderTemplate>
             <!--Settings-->
-            <PivotItem Header="Account" RequestedTheme="Light">
+            <!--<PivotItem Header="Account" RequestedTheme="Light">
                 <Grid>
                     <controls:DropShadowPanel Margin="42" HorizontalAlignment="Center" VerticalAlignment="Center" ShadowOpacity=".2" OffsetY="3">
                         <StackPanel Background="White" CornerRadius="8" Padding="16 8 6 8" Orientation="Horizontal"
@@ -37,13 +37,10 @@
                                           Style="{ThemeResource AppBarButtonRevealStyle}"/>
                         </StackPanel>
                     </controls:DropShadowPanel>
-                    <Button HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                            Content="Click to Clear Cache" Click="ClearCache_Click" 
-                            Style="{ThemeResource TextBlockButtonStyle}"/>
                 </Grid>
-            </PivotItem>
+            </PivotItem>-->
             <!--Reading Settings-->
-            <PivotItem Header="Themes">
+            <PivotItem Header="Settings">
                 <StackPanel Spacing="8">
                     <TextBlock Text="Theme"/>
                     <GridView IsItemClickEnabled="True" 
@@ -52,9 +49,10 @@
                               ItemClick="GridView_ItemClick">
                         <GridView.ItemTemplate>
                             <DataTemplate x:DataType="model:Settings">
-                                <controls:ImageEx CornerRadius="8" 
+                                <controls:ImageEx CornerRadius="6" 
                                                       Source="{x:Bind Thumbnail}"
                                                       Height="92"
+                                                      BorderThickness="2"
                                                       BorderBrush="{ThemeResource AccentColor}"/>
                             </DataTemplate>
                         </GridView.ItemTemplate>
@@ -73,6 +71,14 @@
                         <x:String>24</x:String>
                         <x:String>30</x:String>
                     </ComboBox>
+                    <AppBarButton Icon="ContactPresence"  
+                                  Label="Log Out" 
+                                  Click="Logout_Click" 
+                                  Height="48"
+                                  Style="{ThemeResource AppBarButtonRevealStyle}"/>
+                    <Button Content="Click to Clear Cache" 
+                            Click="ClearCache_Click" 
+                            Style="{ThemeResource TextBlockButtonStyle}"/>
                 </StackPanel>
             </PivotItem>
             <!--About-->

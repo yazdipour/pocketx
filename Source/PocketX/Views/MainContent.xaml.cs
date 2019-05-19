@@ -62,7 +62,7 @@ namespace PocketX.Views
 
         private async void TopAppBarClick(object sender, RoutedEventArgs e)
         {
-            var dialog = new SettingsDialog(0);
+            var dialog = new SettingsDialog();
             await dialog.ShowAsync();
             if (dialog.Tag?.ToString() == Keys.Logout)
             {
