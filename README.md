@@ -1,13 +1,10 @@
 # Pocket✘
 
-Unofficial Pocket Client for Windows (Modern with Fluent Design)
+Unofficial Pocket Client for Universal Windows Platform (Modern with Fluent Design)
 
-[🌐 Website](https://yazdipour.github.io/)
-| [❄ Other Apps](https://yazdipour.github.io/apps)
+## Install
 
 [![MS Store](./Assets/msstore.png)](https://www.microsoft.com/store/apps/9NDT5N34SR2P?ocid=badge)
-
-[![Build status](https://build.appcenter.ms/v0.1/apps/5dc566ec-33b7-43a2-9f2f-a767502f3282/branches/master/badge)](https://appcenter.ms)
 
 ## Features
 
@@ -18,6 +15,10 @@ Unofficial Pocket Client for Windows (Modern with Fluent Design)
 * Text to Speech
 
 ![Screenshot](./Assets/Screenshot.png)
+
+* Add URL to Pocket using Terminal
+
+![Add Pocket](./Assets/cl.png)
 
 ## Donate
 

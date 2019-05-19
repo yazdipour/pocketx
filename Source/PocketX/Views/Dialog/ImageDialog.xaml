@@ -1,0 +1,42 @@
+﻿<ContentDialog
+    x:Class="PocketX.Views.Dialog.ImageDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PocketX.Views.Dialog"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    mc:Ignorable="d" 
+    RequestedTheme="Dark"
+    BorderBrush="Transparent"
+    Background="Transparent">
+    <ContentDialog.Resources>
+        <Thickness x:Key="ContentDialogPadding">0,0,0,0</Thickness>
+        <Style TargetType="Button">
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+        </Style>
+    </ContentDialog.Resources>
+    <Grid>
+        <controls:ImageEx Source="{x:Bind Uri}" 
+                          HorizontalAlignment="Stretch"
+                          Tapped="ImageTapped"
+                          Margin="16"/>
+        <StackPanel Orientation="Horizontal"
+                    Spacing="8"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom">
+            <!--Save-->
+            <Button Click="AppBar_Click"
+                    Tag="Save"
+                    Content=""
+                    Width="52"
+                    Background="DeepSkyBlue"/>
+            <!--Share-->
+            <Button Tag="Share" 
+                    Click="AppBar_Click" 
+                    Width="52"
+                    Content="" 
+                    Background="DarkOrange"/>
+        </StackPanel>
+    </Grid>
+</ContentDialog>

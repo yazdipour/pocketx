@@ -1,0 +1,23 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--  palette/nl  -->
+    <Color x:Key="Sunflower">#FFC312&quot;</Color>
+    <Color x:Key="Energos">#C4E538&quot;</Color>
+    <Color x:Key="BlueMartina">#12CBC4&quot;</Color>
+    <Color x:Key="LavenderRose">#FDA7DF&quot;</Color>
+    <Color x:Key="BaraRed">#ED4C67&quot;</Color>
+    <Color x:Key="RadiantYellow">#F79F1F&quot;</Color>
+    <Color x:Key="AndroidGreen">#A3CB38&quot;</Color>
+    <Color x:Key="MediterraneanSea">#1289A7&quot;</Color>
+    <Color x:Key="LavenderTea">#D980FA&quot;</Color>
+    <Color x:Key="VeryBerry">#B53471&quot;</Color>
+    <Color x:Key="PuffinsBill">#EE5A24&quot;</Color>
+    <Color x:Key="PixelatedGrass">#009432&quot;</Color>
+    <Color x:Key="MerchantMarineBlue">#0652DD&quot;</Color>
+    <Color x:Key="ForgottenPurple">#9980FA&quot;</Color>
+    <Color x:Key="Hollyhock">#833471&quot;</Color>
+    <Color x:Key="RedPigment">#EA2027&quot;</Color>
+    <Color x:Key="TurkishAqua">#006266&quot;</Color>
+    <Color x:Key="LeaguesUndertheSea">#1B1464&quot;</Color>
+    <Color x:Key="CircumorbitalRing">#5758BB&quot;</Color>
+    <Color x:Key="MagentaPurple">#6F1E51&quot;</Color>
+</ResourceDictionary>
