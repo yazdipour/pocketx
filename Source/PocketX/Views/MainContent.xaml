@@ -212,16 +212,11 @@
         <controls:InAppNotification x:Name="InAppNotifier" 
                                     Content="Error!" 
                                     RequestedTheme="Dark"
+                                    Visibility="Visible"
+                                    Height="78"
                                     AnimationDuration="00:00:00.1000000"
-                                    VerticalOffset="100" BorderThickness="0"
-                                    HorizontalOffset="0">
-            <controls:InAppNotification.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="#A1051D" />
-                    <GradientStop Color="#F5515F" Offset="1" />
-                </LinearGradientBrush>
-            </controls:InAppNotification.Background>
-        </controls:InAppNotification>
+                                    VerticalOffset="100"
+                                    HorizontalOffset="0"/>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="mobile">

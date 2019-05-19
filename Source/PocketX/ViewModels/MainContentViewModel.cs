@@ -101,7 +101,7 @@ namespace PocketX.ViewModels
                 if (pocketItem.IsArchive)
                 {
                     await PocketHandler.Client.Unarchive(pocketItem);
-                    MainContent.Notifier.Show("Added", 2000);
+                    NotificationHandler.InAppNotification("Added", 2000);
                     ArticlesList.Insert(0, pocketItem);
                     ArchivesList.Remove(pocketItem);
                 }
@@ -110,17 +110,17 @@ namespace PocketX.ViewModels
                     await PocketHandler.Client.Archive(pocketItem);
                     ArchivesList.Insert(0, pocketItem);
                     ArticlesList.Remove(pocketItem);
-                    MainContent.Notifier.Show("Archived", 2000);
+                    NotificationHandler.InAppNotification("Archived", 2000);
                 }
             }
-            catch (Exception e) { MainContent.Notifier.Show(e.Message, 2000); }
+            catch (Exception e) { NotificationHandler.InAppNotification(e.Message, 2000); }
         }
         public async Task DeleteArticleAsync(PocketItem pocketItem)
         {
             if (pocketItem == null) return;
             await PocketHandler.Delete(pocketItem);
             CurrentList()?.Remove(pocketItem);
-            MainContent.Notifier?.Show("Deleted", 2000);
+            NotificationHandler.InAppNotification("Deleted", 2000);
         }
         public async Task ToggleFavoriteArticleAsync(PocketItem pocketItem)
         {
@@ -129,13 +129,13 @@ namespace PocketX.ViewModels
             {
                 await PocketHandler.GetInstance().Client.Unfavorite(pocketItem);
                 if (FavoritesList.Count != 0) FavoritesList.Remove(pocketItem);
-                MainContent.Notifier.Show("Remove from Favorite", 2000);
+                NotificationHandler.InAppNotification("Remove from Favorite", 2000);
             }
             else
             {
                 await PocketHandler.GetInstance().Client.Favorite(pocketItem);
                 if(FavoritesList.Count!=0) FavoritesList.Add(pocketItem);
-                MainContent.Notifier.Show("Saved as Favorite", 2000);
+                NotificationHandler.InAppNotification("Saved as Favorite", 2000);
             }
         }
         public void ItemRightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)
@@ -146,7 +146,7 @@ namespace PocketX.ViewModels
             el.Click += (sen, ee) =>
             {
                 Utils.CopyToClipboard(item?.Uri?.AbsoluteUri);
-                MainContent.Notifier.Show("Copied", 2000);
+                NotificationHandler.InAppNotification("Copied", 2000);
             };
             flyout?.Items?.Add(el);
             el = new MenuFlyoutItem { Text = "Open in browser", Icon = new SymbolIcon(Symbol.World) };

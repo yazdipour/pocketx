@@ -117,7 +117,7 @@ namespace PocketX.Controls
                     break;
                 case "copy":
                     Utils.CopyToClipboard(Article?.Uri?.AbsoluteUri);
-                    MainContent.Notifier.Show("Copied", 2000);
+                    NotificationHandler.InAppNotification("Copied", 2000);
                     break;
                 case "webview":
                     WebViewBtn.Tag = "articleView";

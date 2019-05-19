@@ -14,13 +14,11 @@ namespace PocketX.Views
 {
     public sealed partial class MainContent : Page
     {
-        public static Microsoft.Toolkit.Uwp.UI.Controls.InAppNotification Notifier;
         private readonly MainContentViewModel _vm;
         private static bool IsSmallWidth(double width) => width < 720;
         public MainContent()
         {
             InitializeComponent();
-            Notifier = InAppNotifier;
             _vm = new MainContentViewModel();
             var uiUtils = new UiUtils();
             uiUtils.TitleBarVisibility(false, MarkdownCtrl.WindowBorder);
@@ -34,6 +32,8 @@ namespace PocketX.Views
                 await _vm.PocketHandler.FetchTagsAsync();
                 Logger.Logger.InitOnlineLogger(Keys.AppCenter);
                 Logger.Logger.SetDebugMode(App.DEBUGMODE);
+                FindName(nameof(InAppNotifier));
+                NotificationHandler.InAppNotificationControl = InAppNotifier;
             };
             MarkdownCtrl.DeleteArticleAsync = _vm.DeleteArticleAsync;
             MarkdownCtrl.ToggleArchiveArticleAsync = _vm.ToggleArchiveArticleAsync;
