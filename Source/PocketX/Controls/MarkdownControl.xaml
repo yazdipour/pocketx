@@ -137,7 +137,7 @@
                               Icon="Paste" />
                 <AppBarButton Click="AppBar_Click"
                               Tag="view"
-                              Label="{x:Bind IsInWebView, Mode=OneWay, Converter={StaticResource BoolToStr}, ConverterParameter='Open in TextView|Open in WebView'}"
+                              Label="{x:Bind IsInTextView, Mode=OneWay, Converter={StaticResource BoolToStr}, ConverterParameter='Open in WebView|Open in TextView'}"
                               Icon="View" />
                 <AppBarButton Tag="Delete"
                               Label="Delete"

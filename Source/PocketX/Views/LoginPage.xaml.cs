@@ -29,5 +29,16 @@ namespace PocketX.Views
                 await dialog.ShowAsync();
             }
         }
+
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            var dialog = new MessageDialog("If you login to your Pocket with Google Account, \nYou may " +
+                                           "trouble login in due to problems Google has with Windows Auth " +
+                                           "panel (IE Engine).\n\nWe encourage you to go to (https://getpocket.com/changeuser) " +
+                                           "and choose a username for your account and then login with your " +
+                                           "UserName and Password.");
+            dialog.Commands.Add(new UICommand("Ok!"));
+            await dialog.ShowAsync();
+        }
     }
 }

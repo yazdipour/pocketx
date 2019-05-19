@@ -17,13 +17,17 @@ namespace PocketX.Controls
         public MarkdownControl()
         {
             InitializeComponent();
-            MarkdownHandler = new MarkdownHandler(MarkdownCtrl);
+            new MarkdownHandler(MarkdownCtrl);
             AudioHandler = new AudioHandler(Media, PocketHandler.GetInstance().TextProviderForAudioPlayer)
             {
                 MediaStartAction = () => { MarkdownAppBar.MaxWidth = 48; },
                 MediaEndAction = () => { MarkdownAppBar.MaxWidth = 500; }
             };
-            MarkdownCtrl.Loaded += async (s, e) => MarkdownText = await Utils.TextFromAssets(@"Assets\Icons\Home.md");
+            MarkdownCtrl.Loaded += async (s, e) =>
+            {
+                if (string.IsNullOrEmpty(MarkdownText))
+                    MarkdownText = await Utils.TextFromAssets(@"Assets\Icons\Home.md");
+            };
         }
 
         #region PropertyChanged
@@ -32,13 +36,12 @@ namespace PocketX.Controls
         #endregion
 
         #region Parameters
-        internal Settings Settings => SettingsHandler.Settings;
-        internal MarkdownHandler MarkdownHandler { get; set; }
+        private Settings Settings => SettingsHandler.Settings;
         private AudioHandler AudioHandler { get; }
         private ICommand _textToSpeech;
         private string _markdownText;
         private bool IsArchive { get; set; }
-        private bool IsInWebView { get; set; }
+        private bool IsInTextView { get; set; } = true;
         public string MarkdownText
         {
             get => _markdownText;
@@ -56,7 +59,7 @@ namespace PocketX.Controls
                 if (value == null) return;
                 SetValue(ArticleProperty, value);
                 IsArchive = value?.IsArchive ?? false;
-                IsInWebView = false;
+                IsInTextView = false; // AppBar_Click action based on IsInTextView
                 AppBar_Click("view", null);
                 Bindings.Update();
             }
@@ -114,14 +117,7 @@ namespace PocketX.Controls
                     NotificationHandler.InAppNotification("Copied", 2000);
                     break;
                 case "view":
-                    if (IsInWebView)
-                    {
-                        MarkdownGrid.Visibility = Visibility.Visible;
-                        if (ErrorView != null) ErrorView.Visibility = Visibility.Collapsed;
-                        if (WebView != null) WebView.Visibility = Visibility.Collapsed;
-                        OpenInArticleView(true);
-                    }
-                    else
+                    if (IsInTextView)
                     {
                         FindName(nameof(WebView));
                         WebView.Visibility = Visibility.Visible;
@@ -129,8 +125,16 @@ namespace PocketX.Controls
                         if (ErrorView != null) ErrorView.Visibility = Visibility.Collapsed;
                         if (Article?.Uri != null) WebView.Navigate(Article.Uri);
                     }
-                    IsInWebView = !IsInWebView;
-                    OnPropertyChanged(nameof(IsInWebView));
+                    else
+                    {
+                        MarkdownGrid.Visibility = Visibility.Visible;
+                        if (ErrorView != null) ErrorView.Visibility = Visibility.Collapsed;
+                        if (WebView != null) WebView.Visibility = Visibility.Collapsed;
+                        OpenInArticleView(true);
+                    }
+
+                    IsInTextView = !IsInTextView;
+                    OnPropertyChanged(nameof(IsInTextView));
                     break;
                 case "delete":
                     await DeleteArticleAsync(Article);
@@ -140,7 +144,6 @@ namespace PocketX.Controls
                     break;
             }
         }
-
         public async void OpenInArticleView(bool force = false)
         {
             if (Article == null) return;
@@ -166,8 +169,10 @@ namespace PocketX.Controls
                 ErrorView.Visibility = Visibility.Visible;
                 if (WebView != null) WebView.Visibility = Visibility.Collapsed;
             }
-            MarkdownLoading.IsLoading = false;
+            finally
+            {
+                MarkdownLoading.IsLoading = false;
+            }
         }
-
     }
 }

@@ -4,6 +4,7 @@ using Windows.UI.Xaml.Controls;
 using PocketX.Models;
 using Windows.UI.Popups;
 using System;
+using System.Collections.Generic;
 using Windows.ApplicationModel;
 
 namespace PocketX.Views.Dialog
@@ -11,21 +12,15 @@ namespace PocketX.Views.Dialog
     public sealed partial class SettingsDialog : ContentDialog
     {
         private Settings Settings => SettingsHandler.Settings;
-        private PocketHandler PocketHandler => PocketHandler.GetInstance();
         private readonly string _versionString = $"Version {Package.Current.Id.Version.Major}.{Package.Current.Id.Version.Minor}.{Package.Current.Id.Version.Build}";
-
+        private List<string> FontsList => Utils.GetAllFonts();
         private readonly Settings[] _themes = {
             new Settings { AppTheme = ElementTheme.Light,ReaderBg = "#FEFEFE",ReaderTheme = ElementTheme.Light,Thumbnail = "/Assets/ReadTheme/theme1.png"},
             new Settings { AppTheme = ElementTheme.Dark,ReaderBg = "#454545",ReaderTheme = ElementTheme.Dark,Thumbnail = "/Assets/ReadTheme/theme4.png"},
             new Settings { AppTheme = ElementTheme.Dark,ReaderBg = "#111111",ReaderTheme = ElementTheme.Dark,Thumbnail = "/Assets/ReadTheme/theme5.png"},
         };
-        
-        public SettingsDialog()
-        {
-            InitializeComponent();
-            comboBox2.ItemsSource = Utils.GetAllFonts();
-        }
 
+        public SettingsDialog() => InitializeComponent();
         private void Close_Click(object sender, RoutedEventArgs e) => Hide();
         private async void Logout_Click(object sender, RoutedEventArgs e)
         {
@@ -50,7 +45,6 @@ namespace PocketX.Views.Dialog
             Settings.ReaderBg = theme.ReaderBg;
             Settings.ReaderTheme = theme.ReaderTheme;
         }
-
         private void ContentDialog_Closed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
             Settings.ReaderFontSize = int.Parse(comboBox.SelectedValue?.ToString());

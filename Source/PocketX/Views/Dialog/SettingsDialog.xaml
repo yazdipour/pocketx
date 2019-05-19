@@ -59,7 +59,7 @@
                     </GridView>
                     <!--<ToggleSwitch x:Name="tg_app" OffContent="Dark" OnContent="Light"/>-->
                     <TextBlock Text="Text Font"/>
-                    <ComboBox x:Name="comboBox2" SelectedValue="{x:Bind Settings.ReaderFontFamily,Mode=TwoWay}"/>
+                    <ComboBox ItemsSource="{x:Bind FontsList}" SelectedValue="{x:Bind Settings.ReaderFontFamily,Mode=TwoWay}"/>
                     <TextBlock Text="Text Size"/>
                     <ComboBox x:Name="comboBox" SelectedValue="{x:Bind Settings.ReaderFontSize.ToString()}">
                         <x:String>12</x:String>
