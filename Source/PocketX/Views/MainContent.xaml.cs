@@ -26,14 +26,14 @@ namespace PocketX.Views
             DataTransferManager.GetForCurrentView().DataRequested += _vm.ShareArticle;
             Loaded += async (s, e) =>
             {
+                // TODO move this stuff to repository
                 if (!Microsoft.Toolkit.Uwp.Connectivity.NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
                     foreach (var pocketItem in await _vm.PocketHandler.GetItemsCache())
                         _vm.ArticlesList.Add(pocketItem);
-                await _vm.PocketHandler.FetchTagsAsync();
                 Logger.Logger.InitOnlineLogger(Keys.AppCenter);
                 Logger.Logger.SetDebugMode(App.DEBUGMODE);
-                FindName(nameof(InAppNotifier));
                 NotificationHandler.InAppNotificationControl = InAppNotifier;
+                await _vm.PocketHandler.FetchTagsAsync();
             };
             MarkdownCtrl.DeleteArticleAsync = _vm.DeleteArticleAsync;
             MarkdownCtrl.ToggleArchiveArticleAsync = _vm.ToggleArchiveArticleAsync;

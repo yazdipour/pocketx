@@ -191,6 +191,14 @@
                             <TextBlock Text="Loading your pocket" VerticalAlignment="Center"/>
                         </StackPanel>
                     </controls:Loading>
+                    <!--InAppNotification-->
+                    <controls:InAppNotification x:Name="InAppNotifier" 
+                                                Content="Error!" 
+                                                RequestedTheme="Dark"
+                                                Grid.Row="1"
+                                                Margin="2 8"
+                                                AnimationDuration="00:00:00.1000000"
+                                                HorizontalOffset="0"/>
                 </Grid>
             </SplitView.Pane>
             <!--Main Body-->
@@ -209,14 +217,6 @@
                 FontFamily="Segoe MDL2 Assets" 
                 CornerRadius="0 0 12 0"
                 Click="{x:Bind _vm.PinBtnClicked}"/>-->
-        <controls:InAppNotification x:Name="InAppNotifier" 
-                                    Content="Error!" 
-                                    RequestedTheme="Dark"
-                                    Visibility="Visible"
-                                    Height="78"
-                                    AnimationDuration="00:00:00.1000000"
-                                    VerticalOffset="100"
-                                    HorizontalOffset="0"/>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="mobile">
