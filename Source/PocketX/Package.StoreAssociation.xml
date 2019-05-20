@@ -366,27 +366,62 @@
     </ReservedNames>
   </ProductReservedInfo>
   <AccountPackageIdentityNames>
-    <MainPackageIdentityName>3783mindprojects.BitconLottery</MainPackageIdentityName>
     <MainPackageIdentityName>3783mindprojects.BlackReader</MainPackageIdentityName>
     <MainPackageIdentityName>3783mindprojects.ColorLibrary</MainPackageIdentityName>
     <MainPackageIdentityName>3783mindprojects.githublibrary</MainPackageIdentityName>
     <MainPackageIdentityName>3783mindprojects.GithubX</MainPackageIdentityName>
     <MainPackageIdentityName>3783mindprojects.InfixPrefixPostfix</MainPackageIdentityName>
-    <MainPackageIdentityName>3783mindprojects.InstagramPro</MainPackageIdentityName>
     <MainPackageIdentityName>3783mindprojects.iTehran</MainPackageIdentityName>
     <MainPackageIdentityName>3783mindprojects.KharazmiUniversityBlogs</MainPackageIdentityName>
-    <MainPackageIdentityName>3783mindprojects.Lyricer</MainPackageIdentityName>
     <MainPackageIdentityName>3783mindprojects.Schema</MainPackageIdentityName>
     <MainPackageIdentityName>3783mindprojects.SegaStore</MainPackageIdentityName>
     <MainPackageIdentityName>3783MINDPROJECTS.SUBTITLER</MainPackageIdentityName>
     <MainPackageIdentityName>3783mindprojects.TelegramStore</MainPackageIdentityName>
-    <MainPackageIdentityName>3783mindprojects.TodoX</MainPackageIdentityName>
-    <MainPackageIdentityName>3783mindprojects.wakaX</MainPackageIdentityName>
-    <MainPackageIdentityName>3783mindprojects.Windos</MainPackageIdentityName>
+    <MainPackageIdentityName>3783mindprojects.TwitterX</MainPackageIdentityName>
+    <MainPackageIdentityName>3783mindprojects.38069ACD6F7CF</MainPackageIdentityName>
     <MainPackageIdentityName>3783mindprojects.YDM</MainPackageIdentityName>
+    <MainPackageIdentityName>3783mindprojects.YoutubeX</MainPackageIdentityName>
     <MainPackageIdentityName>3783mindprojects.52602C4675F0A</MainPackageIdentityName>
     <MainPackageIdentityName>3783mindprojects.53420548E01F3</MainPackageIdentityName>
     <MainPackageIdentityName>3783mindprojects.6550439DC5047</MainPackageIdentityName>
   </AccountPackageIdentityNames>
-  <PackageInfoList LandingUrl="https://developer.microsoft.com/dashboard/Application?appId=9NDT5N34SR2P" />
+  <PackageInfoList LandingUrl="https://developer.microsoft.com/dashboard/Application?appId=9NDT5N34SR2P">
+    <BundleInfo>
+      <PackageInfo>
+        <OsMinVersion>0.0.0.0</OsMinVersion>
+        <PackageArchitecture>X86</PackageArchitecture>
+        <PackageMaxArchitectureVersion>1.4.6.0</PackageMaxArchitectureVersion>
+      </PackageInfo>
+      <PackageInfo>
+        <OsMinVersion>0.0.0.0</OsMinVersion>
+        <PackageArchitecture>X64</PackageArchitecture>
+        <PackageMaxArchitectureVersion>1.4.6.0</PackageMaxArchitectureVersion>
+      </PackageInfo>
+      <PackageInfo>
+        <OsMinVersion>0.0.0.0</OsMinVersion>
+        <PackageArchitecture>Arm</PackageArchitecture>
+        <PackageMaxArchitectureVersion>1.4.6.0</PackageMaxArchitectureVersion>
+      </PackageInfo>
+      <PackageInfo>
+        <OsMinVersion>0.0.0.0</OsMinVersion>
+        <PackageArchitecture>Neutral</PackageArchitecture>
+        <PackageMaxArchitectureVersion>1.4.6.0</PackageMaxArchitectureVersion>
+      </PackageInfo>
+      <PackageInfo>
+        <OsMinVersion>0.0.0.0</OsMinVersion>
+        <PackageArchitecture>Neutral</PackageArchitecture>
+        <PackageMaxArchitectureVersion>1.4.6.0</PackageMaxArchitectureVersion>
+      </PackageInfo>
+      <PackageInfo>
+        <OsMinVersion>0.0.0.0</OsMinVersion>
+        <PackageArchitecture>Neutral</PackageArchitecture>
+        <PackageMaxArchitectureVersion>1.4.6.0</PackageMaxArchitectureVersion>
+      </PackageInfo>
+      <PackageInfo>
+        <OsMinVersion>0.0.0.0</OsMinVersion>
+        <PackageArchitecture>Neutral</PackageArchitecture>
+        <PackageMaxArchitectureVersion>1.4.6.0</PackageMaxArchitectureVersion>
+      </PackageInfo>
+    </BundleInfo>
+  </PackageInfoList>
 </StoreAssociation>

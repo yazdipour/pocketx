@@ -43,7 +43,7 @@ namespace PocketX.Handlers
             var cache = new LocalObjectStorageHelper().Read(Keys.PocketClientCache, "");
             Client = cache == "" ? null : new PocketClient(Keys.Pocket, cache);
             try { if (Client != null) User = await Client.GetUser(); }
-            catch{ }
+            catch { }
         }
 
         private void SaveCacheUser(PocketUser user)
@@ -109,13 +109,13 @@ namespace PocketX.Handlers
                        domain: null, since: null,
                        count: count, offset: offset);
 
-                if (offset == 0) await SetItemsCache(pocketItems);
+                if (tag == null && search == null && offset == 0)
+                    await SetItemsCache(pocketItems);
                 return pocketItems;
             }
             catch
             {
-                if (offset == 0) return await GetItemsCache();
-                else return null;
+                return favorite == null && tag == null && search == null && offset == 0 ? await GetItemsCache() : null;
             }
         }
 
@@ -184,23 +184,30 @@ namespace PocketX.Handlers
         {
             try
             {
-                if (Tags?.Count > 0) return;
-                var offlineTags = await BlobCache.LocalMachine.GetObject<ObservableCollection<string>>("tags");
-                if (offlineTags != null)
-                    foreach (var t in offlineTags)
-                        Tags?.Add(t);
-                var tags = (await Client.GetTags()).ToList().Select(o => o.Name);
-                var enumerable = tags as string[] ?? tags.ToArray();
-                if (enumerable.Length < 1) return;
+                var tags = (await Client.GetTags()).ToArray().Select(o => o.Name).ToArray();
+                if (!tags.Any()) return;
                 Tags.Clear();
-                foreach (var t in enumerable) Tags?.Add(t);
+                foreach (var t in tags) Tags?.Add(t);
                 await BlobCache.LocalMachine.InsertObject("tags", Tags);
             }
-            catch { }
-            finally
+            catch (Exception e)
+            {
+                Logger.Logger.E(e);
+            }
+            if (Tags?.Count > 0)
             {
                 OnPropertyChanged(nameof(Tags));
+                return;
             }
+            try
+            {
+                foreach (var t in await BlobCache.LocalMachine.GetObject<IEnumerable<string>>("tags")) Tags?.Add(t);
+            }
+            catch (Exception e)
+            {
+                Logger.Logger.E(e);
+            }
+            OnPropertyChanged(nameof(Tags));
         }
 
         internal async Task Delete(PocketItem pocketItem)

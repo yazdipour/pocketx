@@ -7,7 +7,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:converter="using:PocketX.Converter"
-    Background="{x:Bind Settings.ReaderBg,Mode=OneWay}" 
     RequestedTheme="{x:Bind Settings.ReaderTheme,Mode=OneWay}"
     mc:Ignorable="d">
     <UserControl.Resources>
@@ -119,13 +118,17 @@
                         <!--Icon="{x:Bind ArchiveIcon,Mode=OneWay}"-->
                 </AppBarButton.Icon>
             </AppBarButton>
-            <AppBarButton Tag="Share" 
-                          Icon="Share" 
-                          Label="Share" 
-                          Click="AppBar_Click" />
             <AppBarButton Icon="Volume"
                           Label="Read"
                           Command="{x:Bind TextToSpeech}"/>
+            
+            <AppBarButton Tag="Share" 
+                          Icon="Share" 
+                          Label="Share" 
+                          LabelPosition="Collapsed"
+                          Width="48"
+                          Margin="0 2 0 0"
+                          Click="AppBar_Click" />
             <CommandBar.SecondaryCommands>
                 <AppBarButton Click="AppBar_Click"
                               Tag="Favorite"

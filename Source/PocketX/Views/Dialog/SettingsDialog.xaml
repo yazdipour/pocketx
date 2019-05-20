@@ -52,7 +52,7 @@
                                 <controls:ImageEx CornerRadius="6" 
                                                       Source="{x:Bind Thumbnail}"
                                                       Height="92"
-                                                      BorderThickness="2"
+                                                      BorderThickness="1"
                                                       BorderBrush="{ThemeResource AccentColor}"/>
                             </DataTemplate>
                         </GridView.ItemTemplate>

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using PocketSharp.Models;
 
 using PocketX.Handlers;
@@ -73,5 +75,7 @@ namespace PocketX.Views
             }
             Bindings.Update();
         }
+        public static string ConvertTagsToString(IEnumerable<PocketTag> tags)
+            => tags == null ? "" : "#" + string.Join(" #", tags.Select(_ => _.Name).ToArray());
     }
 }
