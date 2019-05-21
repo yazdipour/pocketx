@@ -109,13 +109,13 @@ namespace PocketX.Handlers
                        domain: null, since: null,
                        count: count, offset: offset);
 
-                if (tag == null && search == null && offset == 0)
+                if (state == State.unread && tag == null && search == null && offset == 0)
                     await SetItemsCache(pocketItems);
                 return pocketItems;
             }
             catch
             {
-                return favorite == null && tag == null && search == null && offset == 0 ? await GetItemsCache() : null;
+                return state == State.unread && tag == null && search == null && offset == 0 ? await GetItemsCache() : null;
             }
         }
 
