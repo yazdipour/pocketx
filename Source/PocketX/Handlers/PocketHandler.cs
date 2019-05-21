@@ -9,7 +9,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using static Logger.Logger;
 
@@ -18,11 +17,12 @@ namespace PocketX.Handlers
     internal class PocketHandler : INotifyPropertyChanged
     {
         public PocketClient Client;
+        public PocketUser User { get; set; }
         private static PocketHandler _pocketHandler;
         private PocketItem _currentPocketItem;
         public ObservableCollection<string> Tags { set; get; } = new ObservableCollection<string>();
         public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected virtual void OnPropertyChanged(string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         public PocketItem CurrentPocketItem
         {
             get => _currentPocketItem;
@@ -32,50 +32,39 @@ namespace PocketX.Handlers
                 OnPropertyChanged(nameof(CurrentPocketItem));
             }
         }
-
-        public PocketUser User { get; set; }
-
-        #region Login\Logout
-
         public static PocketHandler GetInstance() => _pocketHandler ?? (_pocketHandler = new PocketHandler());
 
-        public async void LoadCacheClient()
+        #region Login\Logout
+        public void LoadCacheClient()
         {
             var cache = new LocalObjectStorageHelper().Read(Keys.PocketClientCache, "");
             Client = cache == "" ? null : new PocketClient(Keys.Pocket, cache);
-            try
-            {
-                if (Client != null) User = await Client.GetUser();
-            }
-            catch (Exception e)
-            {
-                E(e);
-            }
+            User = new LocalObjectStorageHelper().Read<PocketUser>(Keys.PocketClientCache + "user");
         }
-
-        private void SaveCacheUser(PocketUser user)
-            => new LocalObjectStorageHelper().Save(Keys.PocketClientCache, user.Code);
 
         internal void Logout()
         {
             L("Logout");
             Client = null;
+            User = null;
             _pocketHandler = null;
             SettingsHandler.Clear();
             BlobCache.LocalMachine.InvalidateAll();
             BlobCache.LocalMachine.Vacuum();
             new LocalObjectStorageHelper().Save(Keys.PocketClientCache, "");
+            new LocalObjectStorageHelper().Save(Keys.PocketClientCache + "user", "");
         }
 
-        internal async Task<bool> LoginAsync()
+        public async Task<bool> LoginAsync()
         {
             User = await Client.GetUser();
             if (User == null) return false;
-            SaveCacheUser(User);
+            new LocalObjectStorageHelper().Save(Keys.PocketClientCache, User.Code);
+            new LocalObjectStorageHelper().Save(Keys.PocketClientCache + "user", User);
             return true;
         }
 
-        internal async Task<Uri> LoginUriAsync()
+        public async Task<Uri> LoginUriAsync()
         {
             Client = new PocketClient(Keys.Pocket, callbackUri: App.Protocol);
             await Client.GetRequestCode();
@@ -184,23 +173,23 @@ namespace PocketX.Handlers
             await BlobCache.LocalMachine.InsertObject("plain_" + url?.AbsoluteUri, r?.PlainContent);
             return content;
         }
-        
+
         internal async Task<(string, string)> AddFromShare(Uri url)
         {
-            var SUCCESS = "Successfully Saved to Pocket";
-            var FAILED = "FAILED (Be Sure You Are Logged In)";
+            const string success = "Successfully Saved to Pocket";
+            const string failed = "FAILED (Be Sure You Are Logged In)";
             if (Client != null)
             {
                 await Client.Add(url);
-                return (SUCCESS, url.AbsoluteUri);
+                return (success, url.AbsoluteUri);
             }
             try
             {
                 _pocketHandler.LoadCacheClient();
                 await _pocketHandler.Client.Add(url);
-                return (SUCCESS, url.AbsoluteUri);
+                return (success, url.AbsoluteUri);
             }
-            catch (Exception e) { return (FAILED, e.Message); }
+            catch (Exception e) { return (failed, e.Message); }
         }
 
         internal async Task<IEnumerable<PocketItem>> GetListAsync(
