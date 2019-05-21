@@ -59,13 +59,16 @@
                                    HorizontalAlignment="Left"
                                    TextTrimming="WordEllipsis"
                                    Style="{ThemeResource BaseTextBlockStyle}" />
-                        <TextBlock Text="{x:Bind Uri.Host}" Style="{ThemeResource CaptionTextBlockStyle}" />
+                        <TextBlock Text="{x:Bind Uri.Host}" 
+                                   x:Phase="9"
+                                   Style="{ThemeResource CaptionTextBlockStyle}" />
                         <TextBlock
                             Text="{x:Bind local:MainContent.ConvertTagsToString(Tags)}"
-                                   FontSize="11"
-                                   Width="220"
-                                   TextTrimming="WordEllipsis"
-                                   Foreground="{ThemeResource AccentColor}"/>
+                            FontSize="11"
+                            x:Phase="11"
+                            Width="220"
+                            TextTrimming="WordEllipsis"
+                            Foreground="{ThemeResource AccentColor}"/>
                     </StackPanel>
                 </StackPanel>
             </SwipeControl>
