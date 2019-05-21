@@ -40,7 +40,6 @@
         <uap:Extension Category="windows.shareTarget" Executable="$targetnametoken$.exe" EntryPoint="PocketX.App">
           <uap:ShareTarget Description="Add URL to your Pocket">
             <uap:DataFormat>Uri</uap:DataFormat>
-            <uap:SupportedFileTypes/>
           </uap:ShareTarget>
         </uap:Extension>
 				<uap5:Extension

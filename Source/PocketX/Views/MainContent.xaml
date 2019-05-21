@@ -13,7 +13,7 @@
     Background="{ThemeResource SystemControlAcrylicWindowBrush}"
     mc:Ignorable="d">
     <Page.Resources>
-        <converter:ArrayToStringConverter x:Key="ArrToStr" />
+        <converter:HideIfEmptyConverter x:Key="HideIfEmpty" />
         <FontIconSource x:Key="Delete" Glyph="&#xE107;" />
         <FontIconSource x:Key="Add" Glyph="" />
         <FontIconSource x:Key="Archive" Glyph="&#xE15D;" />
@@ -67,6 +67,7 @@
                             FontSize="11"
                             x:Phase="11"
                             Width="220"
+                            Visibility="{x:Bind Tags, Converter={StaticResource HideIfEmpty}}"
                             TextTrimming="WordEllipsis"
                             Foreground="{ThemeResource AccentColor}"/>
                     </StackPanel>
