@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using static Logger.Logger;
 
 namespace PocketX.Handlers
 {
@@ -42,8 +43,14 @@ namespace PocketX.Handlers
         {
             var cache = new LocalObjectStorageHelper().Read(Keys.PocketClientCache, "");
             Client = cache == "" ? null : new PocketClient(Keys.Pocket, cache);
-            try { if (Client != null) User = await Client.GetUser(); }
-            catch { }
+            try
+            {
+                if (Client != null) User = await Client.GetUser();
+            }
+            catch (Exception e)
+            {
+                E(e);
+            }
         }
 
         private void SaveCacheUser(PocketUser user)
@@ -51,7 +58,7 @@ namespace PocketX.Handlers
 
         internal void Logout()
         {
-            Logger.Logger.L("Logout");
+            L("Logout");
             Client = null;
             _pocketHandler = null;
             SettingsHandler.Clear();
@@ -76,48 +83,6 @@ namespace PocketX.Handlers
         }
 
         #endregion Login\Logout
-
-        internal async Task<(string, string)> AddFromShare(Uri url)
-        {
-            var SUCCESS = "Successfully Saved to Pocket";
-            var FAILED = "FAILED (Be Sure You Are Logged In)";
-            if (Client != null)
-            {
-                await Client.Add(url);
-                return (SUCCESS, url.AbsoluteUri);
-            }
-            try
-            {
-                _pocketHandler.LoadCacheClient();
-                await _pocketHandler.Client.Add(url);
-                return (SUCCESS, url.AbsoluteUri);
-            }
-            catch (Exception e) { return (FAILED, e.Message); }
-        }
-
-        internal async Task<IEnumerable<PocketItem>> GetListAsync(
-            State state, bool? favorite, string tag, string search, int count, int offset)
-        {
-            try
-            {
-                if (!Microsoft.Toolkit.Uwp.Connectivity.NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
-                    throw new Exception();
-                var pocketItems = await Client.Get(
-                       state: state, favorite: favorite,
-                       tag: tag, contentType: null,
-                       sort: Sort.newest, search: search,
-                       domain: null, since: null,
-                       count: count, offset: offset);
-
-                if (state == State.unread && tag == null && search == null && offset == 0)
-                    await SetItemsCache(pocketItems);
-                return pocketItems;
-            }
-            catch
-            {
-                return state == State.unread && tag == null && search == null && offset == 0 ? await GetItemsCache() : null;
-            }
-        }
 
         #region Cache Items
 
@@ -165,6 +130,46 @@ namespace PocketX.Handlers
 
         #endregion Cache Items
 
+        #region Tags
+        public async Task FetchOnlineTagsAsync()
+        {
+            var tags = (await Client.GetTags()).ToArray().Select(o => o.Name).ToArray();
+            if (!tags.Any()) return;
+            Tags.Clear();
+            foreach (var t in tags) Tags?.Add(t);
+            if (Tags?.Count > 0)
+            {
+                OnPropertyChanged(nameof(Tags));
+                await BlobCache.LocalMachine.InsertObject("tags", Tags);
+            }
+        }
+        public async Task FetchOfflineTagsAsync()
+        {
+            foreach (var t in await BlobCache.LocalMachine.GetObject<IEnumerable<string>>("tags")) Tags?.Add(t);
+            if (Tags?.Count > 0) OnPropertyChanged(nameof(Tags));
+        }
+        public async Task FetchTagsAsync()
+        {
+            if (Tags.Count > 0) return;
+            try
+            {
+                await FetchOfflineTagsAsync();
+            }
+            catch (Exception e)
+            {
+                E(e);
+            }
+            try
+            {
+                await FetchOnlineTagsAsync();
+            }
+            catch (Exception e)
+            {
+                E(e);
+            }
+        }
+        #endregion
+
         internal async Task<string> Read(Uri url, bool force)
         {
             var cache = await BlobCache.LocalMachine.GetObject<string>(url?.AbsoluteUri)
@@ -179,35 +184,47 @@ namespace PocketX.Handlers
             await BlobCache.LocalMachine.InsertObject("plain_" + url?.AbsoluteUri, r?.PlainContent);
             return content;
         }
+        
+        internal async Task<(string, string)> AddFromShare(Uri url)
+        {
+            var SUCCESS = "Successfully Saved to Pocket";
+            var FAILED = "FAILED (Be Sure You Are Logged In)";
+            if (Client != null)
+            {
+                await Client.Add(url);
+                return (SUCCESS, url.AbsoluteUri);
+            }
+            try
+            {
+                _pocketHandler.LoadCacheClient();
+                await _pocketHandler.Client.Add(url);
+                return (SUCCESS, url.AbsoluteUri);
+            }
+            catch (Exception e) { return (FAILED, e.Message); }
+        }
 
-        internal async Task FetchTagsAsync()
+        internal async Task<IEnumerable<PocketItem>> GetListAsync(
+            State state, bool? favorite, string tag, string search, int count, int offset)
         {
             try
             {
-                var tags = (await Client.GetTags()).ToArray().Select(o => o.Name).ToArray();
-                if (!tags.Any()) return;
-                Tags.Clear();
-                foreach (var t in tags) Tags?.Add(t);
-                await BlobCache.LocalMachine.InsertObject("tags", Tags);
+                if (!Microsoft.Toolkit.Uwp.Connectivity.NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
+                    throw new Exception();
+                var pocketItems = await Client.Get(
+                    state: state, favorite: favorite,
+                    tag: tag, contentType: null,
+                    sort: Sort.newest, search: search,
+                    domain: null, since: null,
+                    count: count, offset: offset);
+
+                if (state == State.unread && tag == null && search == null && offset == 0)
+                    await SetItemsCache(pocketItems);
+                return pocketItems;
             }
-            catch (Exception e)
+            catch
             {
-                Logger.Logger.E(e);
+                return state == State.unread && tag == null && search == null && offset == 0 ? await GetItemsCache() : null;
             }
-            if (Tags?.Count > 0)
-            {
-                OnPropertyChanged(nameof(Tags));
-                return;
-            }
-            try
-            {
-                foreach (var t in await BlobCache.LocalMachine.GetObject<IEnumerable<string>>("tags")) Tags?.Add(t);
-            }
-            catch (Exception e)
-            {
-                Logger.Logger.E(e);
-            }
-            OnPropertyChanged(nameof(Tags));
         }
 
         internal async Task Delete(PocketItem pocketItem)
@@ -220,7 +237,7 @@ namespace PocketX.Handlers
             }
             catch (Exception e)
             {
-                Logger.Logger.E(e);
+                E(e);
             }
         }
 
