@@ -81,8 +81,7 @@
                                 VerticalAlignment="Center" />
             <StackPanel Orientation="Horizontal" Margin="0 8" HorizontalAlignment="Center">
                 <Button Content="Reload ArticleView" Click="Reload_ArticleView" />
-                <Button Margin="8 0" Content="Open WebView" Tag="webView"
-                                    Click="AppBar_Click" />
+                <Button Margin="8 0" Content="Open WebView" Tag="error" Click="AppBar_Click" />
             </StackPanel>
         </StackPanel>
         <!--Audio Player-->
