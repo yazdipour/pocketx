@@ -214,9 +214,9 @@ namespace PocketX.Handlers
         {
             try
             {
-                await Client.Delete(pocketItem);
                 await BlobCache.LocalMachine.Invalidate(pocketItem.Uri.AbsoluteUri);
                 await BlobCache.LocalMachine.Invalidate("plain_" + pocketItem.Uri.AbsoluteUri);
+                await Client.Delete(pocketItem);
             }
             catch (Exception e)
             {
