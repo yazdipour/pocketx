@@ -116,6 +116,10 @@ namespace PocketX.Controls
                     Utils.CopyToClipboard(Article?.Uri?.AbsoluteUri);
                     NotificationHandler.InAppNotification("Copied", 2000);
                     break;
+                case "error":
+                    IsInTextView = true;
+                    AppBar_Click("view", null);
+                    break;
                 case "view":
                     if (IsInTextView)
                     {

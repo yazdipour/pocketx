@@ -22,7 +22,7 @@
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>88B0404ADE7DA5D3EEE3654671D060758C49C839</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>8DE482F59938C692B4568B9CBFC7EAC5EC95C4A7</PackageCertificateThumbprint>
     <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
   </PropertyGroup>
@@ -105,11 +105,10 @@
     <Compile Include="Controls\MarkdownControl.xaml.cs">
       <DependentUpon>MarkdownControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\TagsListControl.xaml.cs">
-      <DependentUpon>TagsListControl.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Converter\ArrayToStringConverter.cs" />
     <Compile Include="Converter\BooleanToCustomStringConverter.cs" />
     <Compile Include="Converter\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converter\HideIfEmptyConverter.cs" />
     <Compile Include="Handlers\AudioHandler.cs" />
     <Compile Include="Handlers\NotificationHandler.cs" />
     <Compile Include="Handlers\Keys.cs" />
@@ -215,6 +214,7 @@
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <None Include="PocketX_StoreKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -222,10 +222,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="Controls\MarkdownControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\TagsListControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

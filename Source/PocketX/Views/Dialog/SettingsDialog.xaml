@@ -7,9 +7,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:converter="using:PocketX.Converter"
     mc:Ignorable="d" 
+    Loaded="ContentDialog_Loaded"
     Closed="ContentDialog_Closed"
     CornerRadius="4">
+    <ContentDialog.Resources>
+        <converter:HideIfEmptyConverter x:Key="HideIfEmpty" />
+    </ContentDialog.Resources>
     <Grid>
         <Pivot>
             <!--Pivot Header-->
@@ -18,28 +23,7 @@
                     <TextBlock Text="{Binding}" FontWeight="Light" FontSize="16"/>
                 </DataTemplate>
             </Pivot.HeaderTemplate>
-            <!--Settings-->
-            <!--<PivotItem Header="Account" RequestedTheme="Light">
-                <Grid>
-                    <controls:DropShadowPanel Margin="42" HorizontalAlignment="Center" VerticalAlignment="Center" ShadowOpacity=".2" OffsetY="3">
-                        <StackPanel Background="White" CornerRadius="8" Padding="16 8 6 8" Orientation="Horizontal"
-                                    HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <PersonPicture ProfilePicture="{x:Bind PocketHandler.User.Avatar.AbsoluteUri}" 
-                                           DisplayName="Jane Doe" Height="62"/>
-                            <controls:HeaderedContentControl Header="{x:Bind PocketHandler.User.Username}"
-                                                             Margin="12 0"
-                                                             VerticalAlignment="Center">
-                                <TextBlock FontSize="12" Text="Jane Doe"/>
-                            </controls:HeaderedContentControl>
-                            <AppBarButton Icon="ContactPresence"  Label="Log Out" 
-                                          Click="Logout_Click" 
-                                          Height="48" VerticalAlignment="Center"
-                                          Style="{ThemeResource AppBarButtonRevealStyle}"/>
-                        </StackPanel>
-                    </controls:DropShadowPanel>
-                </Grid>
-            </PivotItem>-->
-            <!--Reading Settings-->
+            <!--#region Reading Settings-->
             <PivotItem Header="Settings">
                 <StackPanel Spacing="8">
                     <TextBlock Text="Theme"/>
@@ -52,7 +36,7 @@
                                 <controls:ImageEx CornerRadius="6" 
                                                       Source="{x:Bind Thumbnail}"
                                                       Height="92"
-                                                      BorderThickness="2"
+                                                      BorderThickness="1"
                                                       BorderBrush="{ThemeResource AccentColor}"/>
                             </DataTemplate>
                         </GridView.ItemTemplate>
@@ -71,17 +55,79 @@
                         <x:String>24</x:String>
                         <x:String>30</x:String>
                     </ComboBox>
-                    <AppBarButton Icon="ContactPresence"  
-                                  Label="Log Out" 
-                                  Click="Logout_Click" 
-                                  Height="48"
-                                  Style="{ThemeResource AppBarButtonRevealStyle}"/>
                     <Button Content="Click to Clear Cache" 
                             Click="ClearCache_Click" 
                             Style="{ThemeResource TextBlockButtonStyle}"/>
                 </StackPanel>
             </PivotItem>
-            <!--About-->
+            <!--#endregion-->
+            <!--#region Account-->
+            <PivotItem Header="Account" RequestedTheme="Light" Visibility="{x:Bind User, Converter={StaticResource HideIfEmpty}}">
+                <Grid HorizontalAlignment="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                    <controls:DropShadowPanel 
+                        Margin="12" 
+                        HorizontalAlignment="Center" 
+                        VerticalAlignment="Center" 
+                        ShadowOpacity=".2" 
+                        OffsetY="3" 
+                        Grid.Row="0" 
+                        Grid.ColumnSpan="2">
+                        <Grid Background="White" 
+                            CornerRadius="8" 
+                            Padding="16 8 6 8" 
+                            Width="360">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <PersonPicture ProfilePicture="{x:Bind User.Avatar.AbsoluteUri}" 
+                                           DisplayName="Jane Doe" 
+                                           Height="62"
+                                           Grid.Column="0"/>
+                            <controls:HeaderedContentControl
+                                Header="{x:Bind User.Username}"
+                                Grid.Column="1"
+                                Margin="12 0"
+                                VerticalAlignment="Center">
+                                <TextBlock FontSize="12" Text="{x:Bind User.Email}"/>
+                            </controls:HeaderedContentControl>
+                            <AppBarButton Icon="ContactPresence"  
+                            Label="Log Out" 
+                                          Click="Logout_Click" 
+                        Grid.Column="2"
+                                          Height="48" VerticalAlignment="Center"
+                                          Style="{ThemeResource AppBarButtonRevealStyle}"/>
+                        </Grid>
+                    </controls:DropShadowPanel>
+                    <controls:RadialProgressBar
+                        x:Name="RadialProgressBarControl"
+                        Grid.Column="0"
+                        Grid.Row="1"
+                        Thickness="16"
+                        Width="80"
+                        HorizontalAlignment="Right"
+                        Height="80"
+                        Outline="LightGray" />
+                    <controls:HeaderedTextBlock 
+                        x:Name="StatisticsCtrl"
+                        Grid.Column="1"
+                        Grid.Row="1"
+                        HorizontalAlignment="Left"
+                        Margin="8"
+                        VerticalAlignment="Center"/>
+                </Grid>
+            </PivotItem>
+            <!--#endregion-->
+            <!--#region About-->
             <PivotItem Header="About">
                 <StackPanel>
                     <Image Source="ms-appx:///Assets/Icons/Logo.png" Height="84" Margin="0 24 0 0"/>
@@ -116,6 +162,7 @@
                     </HyperlinkButton>
                 </StackPanel>
             </PivotItem>
+            <!--#endregion-->
         </Pivot>
         <!--Close Windows Control-->
         <Button Content="Close" Click="Close_Click" HorizontalAlignment="Right"

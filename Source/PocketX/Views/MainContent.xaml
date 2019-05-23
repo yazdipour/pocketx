@@ -7,10 +7,13 @@
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:pocket="using:PocketSharp.Models"
     xmlns:ctrl="using:PocketX.Controls"
+    xmlns:converter="using:PocketX.Converter"
+    xmlns:local="using:PocketX.Views"
     RequestedTheme="{x:Bind _vm.Settings.AppTheme,Mode=OneWay}"
     Background="{ThemeResource SystemControlAcrylicWindowBrush}"
     mc:Ignorable="d">
     <Page.Resources>
+        <converter:HideIfEmptyConverter x:Key="HideIfEmpty" />
         <FontIconSource x:Key="Delete" Glyph="&#xE107;" />
         <FontIconSource x:Key="Add" Glyph="" />
         <FontIconSource x:Key="Archive" Glyph="&#xE15D;" />
@@ -35,7 +38,7 @@
         <DataTemplate x:DataType="pocket:PocketItem" x:Key="ArticleTemplate">
             <SwipeControl RightItems="{StaticResource SwipeItemsRight}" Margin="-10 2">
                 <StackPanel Orientation="Horizontal"
-                            Height="64"
+                            Height="70"
                             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                             CornerRadius="2"
                             HorizontalAlignment="Stretch"
@@ -51,10 +54,22 @@
                                       BorderThickness="0 0 .5 0"/>
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                         <TextBlock Text="{x:Bind Title}"
-                                   Width="200"
+                                   Width="220"
                                    MaxLines="1"
+                                   HorizontalAlignment="Left"
+                                   TextTrimming="WordEllipsis"
                                    Style="{ThemeResource BaseTextBlockStyle}" />
-                        <TextBlock Text="{x:Bind Uri.Host}" Style="{ThemeResource CaptionTextBlockStyle}" />
+                        <TextBlock Text="{x:Bind Uri.Host}" 
+                                   x:Phase="9"
+                                   Style="{ThemeResource CaptionTextBlockStyle}" />
+                        <TextBlock
+                            Text="{x:Bind local:MainContent.ConvertTagsToString(Tags)}"
+                            FontSize="11"
+                            x:Phase="11"
+                            Width="220"
+                            Visibility="{x:Bind Tags, Converter={StaticResource HideIfEmpty}}"
+                            TextTrimming="WordEllipsis"
+                            Foreground="{ThemeResource AccentColor}"/>
                     </StackPanel>
                 </StackPanel>
             </SwipeControl>
@@ -150,13 +165,6 @@
                             <ListView ItemsSource="{x:Bind _vm.PocketHandler.Tags, Mode=OneWay}" 
                                       IsItemClickEnabled="True" 
                                       ItemClick="TagItemClick"/>
-                                <!--<GridView.ItemTemplate>
-                                    <DataTemplate>
-                                        <uwpChipsX:Chip Content="{Binding}" 
-                                                        CloseButtonVisiblity="Collapsed"/>
-                                    </DataTemplate>
-                                </GridView.ItemTemplate>
-                            </GridView>-->
                         </PivotItem>
                     </Pivot>
                     <!--AddLink Button-->
@@ -165,7 +173,6 @@
                                           BlurRadius="35"
                                           HorizontalAlignment="Center"
                                           VerticalAlignment="Bottom">
-                        <!-- ReSharper disable once Xaml.InvalidResourceType -->
                         <Button  CornerRadius="16"
                              Content="ADD LINK"
                              Foreground="White"
