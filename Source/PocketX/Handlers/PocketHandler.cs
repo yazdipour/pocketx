@@ -159,7 +159,9 @@ namespace PocketX.Handlers
         }
         #endregion
 
-        internal async Task<string> Read(Uri url, bool force)
+        public async Task<PocketStatistics> UserStatistics() => await Client.GetUserStatistics();
+
+        public async Task<string> Read(Uri url, bool force)
         {
             var cache = await BlobCache.LocalMachine.GetObject<string>(url?.AbsoluteUri)
                 .Catch(Observable.Return(""));
@@ -174,7 +176,7 @@ namespace PocketX.Handlers
             return content;
         }
 
-        internal async Task<(string, string)> AddFromShare(Uri url)
+        public async Task<(string, string)> AddFromShare(Uri url)
         {
             const string success = "Successfully Saved to Pocket";
             const string failed = "FAILED (Be Sure You Are Logged In)";
@@ -192,7 +194,7 @@ namespace PocketX.Handlers
             catch (Exception e) { return (failed, e.Message); }
         }
 
-        internal async Task<IEnumerable<PocketItem>> GetListAsync(
+        public async Task<IEnumerable<PocketItem>> GetListAsync(
             State state, bool? favorite, string tag, string search, int count, int offset)
         {
             try
@@ -216,7 +218,7 @@ namespace PocketX.Handlers
             }
         }
 
-        internal async Task Delete(PocketItem pocketItem)
+        public async Task Delete(PocketItem pocketItem)
         {
             try
             {

@@ -165,13 +165,6 @@
                             <ListView ItemsSource="{x:Bind _vm.PocketHandler.Tags, Mode=OneWay}" 
                                       IsItemClickEnabled="True" 
                                       ItemClick="TagItemClick"/>
-                                <!--<GridView.ItemTemplate>
-                                    <DataTemplate>
-                                        <uwpChipsX:Chip Content="{Binding}" 
-                                                        CloseButtonVisiblity="Collapsed"/>
-                                    </DataTemplate>
-                                </GridView.ItemTemplate>
-                            </GridView>-->
                         </PivotItem>
                     </Pivot>
                     <!--AddLink Button-->
@@ -180,7 +173,6 @@
                                           BlurRadius="35"
                                           HorizontalAlignment="Center"
                                           VerticalAlignment="Bottom">
-                        <!-- ReSharper disable once Xaml.InvalidResourceType -->
                         <Button  CornerRadius="16"
                              Content="ADD LINK"
                              Foreground="White"
