@@ -163,8 +163,16 @@
                         </PivotItem>
                         <PivotItem Header="Tags">
                             <ListView ItemsSource="{x:Bind _vm.PocketHandler.Tags, Mode=OneWay}" 
-                                      IsItemClickEnabled="True" 
-                                      ItemClick="TagItemClick"/>
+                                      IsItemClickEnabled="True">
+                                <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid HorizontalAlignment="Stretch">
+                                        <TextBlock Text="{Binding}" Margin="0 0 40 0" Tapped="Tag_Tapped"/>
+                                        <SymbolIcon Symbol="Delete" HorizontalAlignment="Right" Tapped="SymbolIcon_Tapped"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            </ListView>
                         </PivotItem>
                     </Pivot>
                     <!--AddLink Button-->
