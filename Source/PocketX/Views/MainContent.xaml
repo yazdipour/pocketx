@@ -19,7 +19,7 @@
         <FontIconSource x:Key="Archive" Glyph="&#xE15D;" />
         <SwipeItems x:Key="SwipeItemsRight" Mode="Execute" >
             <SwipeItem Text="Delete" 
-                       IconSource="{StaticResource Add}"
+                       IconSource="{StaticResource Delete}"
                        BehaviorOnInvoked="Close"
                        Invoked="SwipeItem_Invoked"
                        Background="#e74c3c"
