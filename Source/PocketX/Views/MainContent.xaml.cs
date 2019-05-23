@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using PocketSharp.Models;
-
 using PocketX.Handlers;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -29,7 +27,7 @@ namespace PocketX.Views
             Loaded += async (s, e) =>
             {
                 // TODO move this stuff to repository
-                if (!Microsoft.Toolkit.Uwp.Connectivity.NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
+                if (!Utils.HasInternet)
                     foreach (var pocketItem in await _vm.PocketHandler.GetItemsCache())
                         _vm.ArticlesList.Add(pocketItem);
                 Logger.Logger.InitOnlineLogger(Keys.AppCenter);

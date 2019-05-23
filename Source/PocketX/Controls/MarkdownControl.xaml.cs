@@ -9,6 +9,7 @@ using PocketSharp.Models;
 using PocketX.Handlers;
 using PocketX.Models;
 using PocketX.Views;
+using PocketX.Views.Dialog;
 
 namespace PocketX.Controls
 {
@@ -99,6 +100,14 @@ namespace PocketX.Controls
             var tag = sender is Control c ? c?.Tag?.ToString()?.ToLower() : sender is string s ? s : "";
             switch (tag)
             {
+                case "tag":
+                    if (Utils.HasInternet)
+                    {
+                        await new AddDialog { PrimaryBtnText = "Save" }.ShowAsync();
+                        OnPropertyChanged(nameof(Article));
+                    }
+                    else await UiUtils.ShowDialogAsync("You need to connect to the internet first");
+                    break;
                 case "favorite":
                     await ToggleFavoriteArticleAsync(Article);
                     Article.IsFavorite = !Article.IsFavorite;

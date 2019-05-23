@@ -77,16 +77,16 @@ namespace PocketX.ViewModels
         internal ICommand AddArticle =>
             _addArticle ?? (_addArticle = new SimpleCommand(async param =>
             {
-                if (Microsoft.Toolkit.Uwp.Connectivity.NetworkHelper.Instance.ConnectionInformation
-                    .IsInternetAvailable)
+                if (!Utils.HasInternet)
                 {
-                    var dialog = new AddDialog(Settings.AppTheme);
-                    await dialog?.ShowAsync();
-                    if (dialog.PocketItem == null) return;
-                    ArticlesList.Insert(0, dialog.PocketItem);
-                    await PocketHandler.SetItemCache(0, dialog.PocketItem);
+                    await UiUtils.ShowDialogAsync("You need to connect to the internet first");
+                    return;
                 }
-                else await UiUtils.ShowDialogAsync("You need to connect to the internet first");
+                var dialog = new AddDialog();
+                await dialog?.ShowAsync();
+                if (dialog.PocketItem == null) return;
+                ArticlesList.Insert(0, dialog.PocketItem);
+                await PocketHandler.SetItemCache(0, dialog.PocketItem);
             }));
         internal async void PinBtnClicked() => await new UiUtils().PinAppWindow(520, 400);
         internal void ShareArticle(DataTransferManager sender, DataRequestedEventArgs args)

@@ -171,8 +171,7 @@ namespace PocketX.Handlers
             }
             var r = await new Reader().Read(url, new ReadOptions { PrettyPrint = true, PreferHTMLEncoding = false });
             var content = BFound.HtmlToMarkdown.MarkDownDocument.FromHtml(r?.Content);
-            //Fix Medium Images
-            content = content.Replace(".medium.com/freeze/max/60/", ".medium.com/freeze/max/360/");
+            content = content.Replace(".medium.com/freeze/max/60/", ".medium.com/freeze/max/360/"); //Fix Medium Images
             if (!(r?.Content?.Length > 0)) return content;
             await BlobCache.LocalMachine.InsertObject(url?.AbsoluteUri, content);
             await BlobCache.LocalMachine.InsertObject("plain_" + url?.AbsoluteUri, r?.PlainContent);
@@ -202,7 +201,7 @@ namespace PocketX.Handlers
         {
             try
             {
-                if (!Microsoft.Toolkit.Uwp.Connectivity.NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
+                if (!Utils.HasInternet)
                     throw new Exception();
                 var pocketItems = await Client.Get(
                     state: state, favorite: favorite,

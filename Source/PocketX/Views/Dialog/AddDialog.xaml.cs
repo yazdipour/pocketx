@@ -1,40 +1,57 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-
 using PocketX.Handlers;
-
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using PocketSharp.Models;
 
 namespace PocketX.Views.Dialog
 {
     public sealed partial class AddDialog : ContentDialog
     {
-        private IEnumerable<string> _selectedOptions = new string[0];
+        //private ObservableCollection<string> _selectedOptions = new ObservableCollection<string>();
+        public string PrimaryBtnText { get; set; } = "Add";
         public PocketSharp.Models.PocketItem PocketItem { get; set; }
-
-        public AddDialog(ElementTheme appTheme)
+        private static PocketHandler PocketHandler => PocketHandler.GetInstance();
+        public AddDialog() => InitializeComponent();
+        private void ContentDialog_Loaded(object sender, RoutedEventArgs e)
         {
-            InitializeComponent();
-            RequestedTheme = appTheme;
+            ChipsList.AvailableChips = PocketHandler.Tags;
+            if (PrimaryBtnText != "Save") return;
+            UrlTextBox.Visibility = Visibility.Collapsed;
+            if (PocketHandler?.CurrentPocketItem?.Tags == null) return;
+            //foreach (var tag in PocketHandler.CurrentPocketItem.Tags) sl.Add(tag.Name);
+            ChipsList.SelectedChips = PocketHandler.CurrentPocketItem.Tags.Select(t => t.Name);
+            //Bindings.Update();
         }
 
-        private void Close_Click(object sender, RoutedEventArgs e) => Hide();
-
-        private async void Add_Click(object sender, RoutedEventArgs e)
+        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            if (PrimaryBtnText == "Save")
+            {
+                try
+                {
+                    if (!await PocketHandler.Client.ReplaceTags(PocketHandler.CurrentPocketItem, ChipsList.SelectedChips.ToArray())
+                        .ConfigureAwait(true))
+                        return;
+                    NotificationHandler.InAppNotification("Tags get updated", 2000);
+                    PocketHandler.CurrentPocketItem.Tags =
+                        ChipsList.SelectedChips.Select(chip => new PocketTag { Name = chip });
+                    Hide();
+                }
+                catch { }
+                return;
+            }
+
             try
             {
-                var foo = PocketHandler.GetInstance().Client.Add(new Uri(urlTextBox.Text.Trim()), _selectedOptions.Cast<string>().ToArray());
-                PocketItem = await foo;
-                foo.Wait();
+                var foo = PocketHandler.Client.Add(new Uri(UrlTextBox.Text.Trim()), ChipsList.SelectedChips.ToArray());
+                PocketItem = await foo.ConfigureAwait(true);
                 Hide();
             }
-            catch { urlTextBox.Background = UiUtils.HexColorToSolidColor("#5fED243B"); }
+            catch { }
         }
-
-        private void ContentDialog_Loaded(object sender, RoutedEventArgs e)
-            => chipsList.AvailableChips = PocketHandler.GetInstance().Tags;
     }
 }
