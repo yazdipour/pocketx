@@ -163,9 +163,12 @@ namespace PocketX.Handlers
 
         public async Task<string> Read(Uri url, bool force)
         {
-            var cache = await BlobCache.LocalMachine.GetObject<string>(url?.AbsoluteUri)
-                .Catch(Observable.Return(""));
-            if (!force && cache?.Trim()?.Length > 0) return cache;
+            if (!force)
+            {
+                var cache = await BlobCache.LocalMachine.GetObject<string>(url?.AbsoluteUri)
+                    .Catch(Observable.Return(""));
+                if (cache?.Trim()?.Length > 0) return cache;
+            }
             var r = await new Reader().Read(url, new ReadOptions { PrettyPrint = true, PreferHTMLEncoding = false });
             var content = BFound.HtmlToMarkdown.MarkDownDocument.FromHtml(r?.Content);
             //Fix Medium Images
