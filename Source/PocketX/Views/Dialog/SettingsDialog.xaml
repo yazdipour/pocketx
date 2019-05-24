@@ -2,49 +2,54 @@
     x:Class="PocketX.Views.Dialog.SettingsDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:PocketX.Views.Dialog"
-    xmlns:model="using:PocketX.Models"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:converter="using:PocketX.Converter"
-    mc:Ignorable="d" 
-    Loaded="ContentDialog_Loaded"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:PocketX.Views.Dialog"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:model="using:PocketX.Models"
     Closed="ContentDialog_Closed"
-    CornerRadius="4">
+    CornerRadius="4"
+    Loaded="ContentDialog_Loaded"
+    mc:Ignorable="d">
     <ContentDialog.Resources>
         <converter:HideIfEmptyConverter x:Key="HideIfEmpty" />
     </ContentDialog.Resources>
     <Grid>
         <Pivot>
-            <!--Pivot Header-->
+            <!--  Pivot Header  -->
             <Pivot.HeaderTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding}" FontWeight="Light" FontSize="16"/>
+                    <TextBlock
+                        FontSize="16"
+                        FontWeight="Light"
+                        Text="{Binding}" />
                 </DataTemplate>
             </Pivot.HeaderTemplate>
             <!--#region Reading Settings-->
             <PivotItem Header="Settings">
                 <StackPanel Spacing="8">
-                    <TextBlock Text="Theme"/>
-                    <GridView IsItemClickEnabled="True" 
-                              SelectionMode="Single"
-                              ItemsSource="{x:Bind _themes}"
-                              ItemClick="GridView_ItemClick">
+                    <TextBlock Text="Theme" />
+                    <GridView
+                        IsItemClickEnabled="True"
+                        ItemClick="GridView_ItemClick"
+                        ItemsSource="{x:Bind _themes}"
+                        SelectionMode="Single">
                         <GridView.ItemTemplate>
                             <DataTemplate x:DataType="model:Settings">
-                                <controls:ImageEx CornerRadius="6" 
-                                                      Source="{x:Bind Thumbnail}"
-                                                      Height="92"
-                                                      BorderThickness="1"
-                                                      BorderBrush="{ThemeResource AccentColor}"/>
+                                <controls:ImageEx
+                                    Height="92"
+                                    BorderBrush="{ThemeResource AccentColor}"
+                                    BorderThickness="1"
+                                    CornerRadius="6"
+                                    Source="{x:Bind Thumbnail}" />
                             </DataTemplate>
                         </GridView.ItemTemplate>
                     </GridView>
                     <!--<ToggleSwitch x:Name="tg_app" OffContent="Dark" OnContent="Light"/>-->
-                    <TextBlock Text="Text Font"/>
-                    <ComboBox ItemsSource="{x:Bind FontsList}" SelectedValue="{x:Bind Settings.ReaderFontFamily,Mode=TwoWay}"/>
-                    <TextBlock Text="Text Size"/>
+                    <TextBlock Text="Text Font" />
+                    <ComboBox ItemsSource="{x:Bind FontsList}" SelectedValue="{x:Bind Settings.ReaderFontFamily, Mode=TwoWay}" />
+                    <TextBlock Text="Text Size" />
                     <ComboBox x:Name="comboBox" SelectedValue="{x:Bind Settings.ReaderFontSize.ToString()}">
                         <x:String>12</x:String>
                         <x:String>14</x:String>
@@ -55,117 +60,135 @@
                         <x:String>24</x:String>
                         <x:String>30</x:String>
                     </ComboBox>
-                    <Button Content="Click to Clear Cache" 
-                            Click="ClearCache_Click" 
-                            Style="{ThemeResource TextBlockButtonStyle}"/>
+                    <Button
+                        Click="ClearCache_Click"
+                        Content="Click to Clear Cache"
+                        Style="{ThemeResource TextBlockButtonStyle}" />
                 </StackPanel>
             </PivotItem>
             <!--#endregion-->
             <!--#region Account-->
-            <PivotItem Header="Account" RequestedTheme="Light" Visibility="{x:Bind User, Converter={StaticResource HideIfEmpty}}">
+            <PivotItem
+                Header="Account"
+                RequestedTheme="Light"
+                Visibility="{x:Bind User, Converter={StaticResource HideIfEmpty}}">
                 <Grid HorizontalAlignment="Center">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                    <controls:DropShadowPanel 
-                        Margin="12" 
-                        HorizontalAlignment="Center" 
-                        VerticalAlignment="Center" 
-                        ShadowOpacity=".2" 
-                        OffsetY="3" 
-                        Grid.Row="0" 
-                        Grid.ColumnSpan="2">
-                        <Grid Background="White" 
-                            CornerRadius="8" 
-                            Padding="16 8 6 8" 
-                            Width="360">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <controls:DropShadowPanel
+                        Grid.Row="0"
+                        Grid.ColumnSpan="2"
+                        Margin="12"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        OffsetY="3"
+                        ShadowOpacity=".2">
+                        <Grid
+                            Width="360"
+                            Padding="16,8,6,8"
+                            Background="White"
+                            CornerRadius="8">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <PersonPicture ProfilePicture="{x:Bind User.Avatar.AbsoluteUri}" 
-                                           DisplayName="Jane Doe" 
-                                           Height="62"
-                                           Grid.Column="0"/>
+                            <PersonPicture
+                                Grid.Column="0"
+                                Height="62"
+                                DisplayName="Jane Doe"
+                                ProfilePicture="{x:Bind User.Avatar.AbsoluteUri}" />
                             <controls:HeaderedContentControl
-                                Header="{x:Bind User.Username}"
                                 Grid.Column="1"
-                                Margin="12 0"
-                                VerticalAlignment="Center">
-                                <TextBlock FontSize="12" Text="{x:Bind User.Email}"/>
+                                Margin="12,0"
+                                VerticalAlignment="Center"
+                                Header="{x:Bind User.Username}">
+                                <TextBlock FontSize="12" Text="{x:Bind User.Email}" />
                             </controls:HeaderedContentControl>
-                            <AppBarButton Icon="ContactPresence"  
-                            Label="Log Out" 
-                                          Click="Logout_Click" 
-                        Grid.Column="2"
-                                          Height="48" VerticalAlignment="Center"
-                                          Style="{ThemeResource AppBarButtonRevealStyle}"/>
+                            <AppBarButton
+                                Grid.Column="2"
+                                Height="48"
+                                VerticalAlignment="Center"
+                                Click="Logout_Click"
+                                Icon="ContactPresence"
+                                Label="Log Out"
+                                Style="{ThemeResource AppBarButtonRevealStyle}" />
                         </Grid>
                     </controls:DropShadowPanel>
                     <controls:RadialProgressBar
                         x:Name="RadialProgressBarControl"
+                        Grid.Row="1"
                         Grid.Column="0"
-                        Grid.Row="1"
-                        Thickness="16"
                         Width="80"
-                        HorizontalAlignment="Right"
                         Height="80"
-                        Outline="LightGray" />
-                    <controls:HeaderedTextBlock 
+                        HorizontalAlignment="Right"
+                        Outline="LightGray"
+                        Thickness="16" />
+                    <controls:HeaderedTextBlock
                         x:Name="StatisticsCtrl"
-                        Grid.Column="1"
                         Grid.Row="1"
-                        HorizontalAlignment="Left"
+                        Grid.Column="1"
                         Margin="8"
-                        VerticalAlignment="Center"/>
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center" />
                 </Grid>
             </PivotItem>
             <!--#endregion-->
             <!--#region About-->
             <PivotItem Header="About">
                 <StackPanel>
-                    <Image Source="ms-appx:///Assets/Icons/Logo.png" Height="84" Margin="0 24 0 0"/>
-                    <RichTextBlock Margin="16" IsTextSelectionEnabled="False" TextAlignment="Center">
+                    <Image
+                        Height="84"
+                        Margin="0,24,0,0"
+                        Source="ms-appx:///Assets/Icons/Logo.png" />
+                    <RichTextBlock
+                        Margin="16"
+                        IsTextSelectionEnabled="False"
+                        TextAlignment="Center">
                         <Paragraph>
-                            <Run FontWeight="Bold" Text="Pocket✘"/>
-                            <LineBreak/>
-                            <Run Text="{x:Bind _versionString}" FontSize="12"/>
-                            <LineBreak/>
-                            <Run Text="Unofficial Pocket Client"/>
-                            <LineBreak/>
-                            <Run Text="Developed by "/>
+                            <Run FontWeight="Bold" Text="Pocket✘" />
+                            <LineBreak />
+                            <Run FontSize="12" Text="{x:Bind _versionString}" />
+                            <LineBreak />
+                            <Run Text="Unofficial Pocket Client" />
+                            <LineBreak />
+                            <Run Text="Developed by " />
                             <Hyperlink Foreground="#7baaf7" NavigateUri="https://yazdipour.github.io/">Shahriar 👦🏻</Hyperlink>
-                            <LineBreak/>
-                            <LineBreak/>
+                            <LineBreak />
+                            <LineBreak />
                             <Hyperlink NavigateUri="mailto:shahriar.yazdipour@outlook.com?subject=PocketX_FeedBack">
                                 📜 Send a Feedback (Email)
                             </Hyperlink>
-                            <LineBreak/>
+                            <LineBreak />
                             <Hyperlink NavigateUri="https://github.com/yazdipour/pocketx/issues">
                                 🐞 Report Bugs
                             </Hyperlink>
-                            <LineBreak/>
-                            <LineBreak/>
-                            <Hyperlink NavigateUri="ms-windows-store:REVIEW?PFN=3783mindprojects.PocketX_6c8ydbw054cyy"
-                                           FontFamily="Segoe UI Emoji">⭐⭐RATE⭐⭐</Hyperlink>
-                            <LineBreak/>
+                            <LineBreak />
+                            <LineBreak />
+                            <Hyperlink FontFamily="Segoe UI Emoji" NavigateUri="ms-windows-store:REVIEW?PFN=3783mindprojects.PocketX_6c8ydbw054cyy">⭐⭐RATE⭐⭐</Hyperlink>
+                            <LineBreak />
                         </Paragraph>
                     </RichTextBlock>
-                    <HyperlinkButton NavigateUri="https://buymeacoff.ee/XrTW5YQDy" HorizontalAlignment="Center">
-                        <Image Source="https://camo.githubusercontent.com/031fc5a134cdca5ae3460822aba371e63f794233/68747470733a2f2f7777772e6275796d6561636f666665652e636f6d2f6173736574732f696d672f637573746f6d5f696d616765732f6f72616e67655f696d672e706e67" Stretch="None"/>
+                    <HyperlinkButton HorizontalAlignment="Center" NavigateUri="https://buymeacoff.ee/XrTW5YQDy">
+                        <Image Source="https://camo.githubusercontent.com/031fc5a134cdca5ae3460822aba371e63f794233/68747470733a2f2f7777772e6275796d6561636f666665652e636f6d2f6173736574732f696d672f637573746f6d5f696d616765732f6f72616e67655f696d672e706e67" Stretch="None" />
                     </HyperlinkButton>
                 </StackPanel>
             </PivotItem>
             <!--#endregion-->
         </Pivot>
-        <!--Close Windows Control-->
-        <Button Content="Close" Click="Close_Click" HorizontalAlignment="Right"
-                Margin="0 12 0 0" VerticalAlignment="Top" Style="{ThemeResource CommandBarFlyoutEllipsisButtonStyle}"/>
+        <!--  Close Windows Control  -->
+        <Button
+            Margin="0,12,0,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Click="Close_Click"
+            Content="Close"
+            Style="{ThemeResource CommandBarFlyoutEllipsisButtonStyle}" />
     </Grid>
 </ContentDialog>

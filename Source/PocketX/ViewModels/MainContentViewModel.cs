@@ -88,19 +88,19 @@ namespace PocketX.ViewModels
                 ArticlesList.Insert(0, dialog.PocketItem);
                 await PocketHandler.SetItemCache(0, dialog.PocketItem);
             }));
-        internal async void PinBtnClicked() => await new UiUtils().PinAppWindow(520, 400);
+        //internal async void PinBtnClicked() => await new UiUtils().PinAppWindow(520, 400);
         internal void ShareArticle(DataTransferManager sender, DataRequestedEventArgs args)
         {
             var request = args.Request;
             request.Data.SetText(PocketHandler?.CurrentPocketItem?.Uri?.ToString() ?? "");
             request.Data.Properties.Title = "Shared by PocketX";
         }
-        public async Task ToggleArchiveArticleAsync(PocketItem pocketItem, bool IsArchive)
+        public async Task ToggleArchiveArticleAsync(PocketItem pocketItem, bool isArchive)
         {
             if (pocketItem == null) return;
             try
             {
-                if (IsArchive) // Want to add
+                if (isArchive) // Want to add
                 {
                     await PocketHandler.Client.Unarchive(pocketItem);
                     NotificationHandler.InAppNotification("Added", 2000);

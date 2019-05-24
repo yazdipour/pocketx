@@ -2,44 +2,53 @@
     x:Class="PocketX.Views.LoginPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:PocketX.Views"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    mc:Ignorable="d"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:PocketX.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="{ThemeResource BlackAcrylicBackgroundBrush60}"
     Loaded="Page_Loaded"
-    Background="{ThemeResource BlackAcrylicBackgroundBrush60}">
+    mc:Ignorable="d">
 
-    <controls:DropShadowPanel BlurRadius="35"
-                              RequestedTheme="Dark"
-                              VerticalAlignment="Center"
-                              HorizontalAlignment="Center">
-        <StackPanel HorizontalAlignment="Center" 
-                VerticalAlignment="Center"
-                Padding="36"
-                CornerRadius="36"
-                Background="#111">
-        <Image Source="ms-appx:///Assets/Icons/Logo.png" Height="84" Width="84"/>
-        <RichTextBlock Margin="16" IsTextSelectionEnabled="False"
-                       TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}">
-            <Paragraph FontWeight="Bold">
-                Pocket✘
-            </Paragraph>
-            <Paragraph>
-                Unofficial UWP Pocket Client
-            </Paragraph>
-        </RichTextBlock>
-            <Button  CornerRadius="16"
-                     Content="LOGIN"
-                     HorizontalAlignment="Center"
-                     Foreground="White"
-                     Height="42"
-                     Width="142"
-                     Click="Login_Clicked"
-                     FontFamily="Calibri"
-                     FontWeight="Bold"
-                     FontSize="18"
-                     Background="{ThemeResource AccentColor}" />
+    <controls:DropShadowPanel
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        BlurRadius="35"
+        RequestedTheme="Dark">
+        <StackPanel
+            Padding="36"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Background="#111"
+            CornerRadius="36">
+            <Image
+                Width="84"
+                Height="84"
+                Source="ms-appx:///Assets/Icons/Logo.png" />
+            <RichTextBlock
+                Margin="16"
+                IsTextSelectionEnabled="False"
+                Style="{ThemeResource BodyRichTextBlockStyle}"
+                TextAlignment="Center">
+                <Paragraph FontWeight="Bold">
+                    Pocket✘
+                </Paragraph>
+                <Paragraph>
+                    Unofficial UWP Pocket Client
+                </Paragraph>
+            </RichTextBlock>
+            <Button
+                Width="142"
+                Height="42"
+                HorizontalAlignment="Center"
+                Background="{ThemeResource AccentColor}"
+                Click="Login_Clicked"
+                Content="LOGIN"
+                CornerRadius="16"
+                FontFamily="Calibri"
+                FontSize="18"
+                FontWeight="Bold"
+                Foreground="White" />
         </StackPanel>
-        </controls:DropShadowPanel>
+    </controls:DropShadowPanel>
 </Page>
