@@ -64,9 +64,7 @@ namespace PocketX.Views
             _vm.PocketHandler.Tags.Remove(tag);
             await _vm.PocketHandler.Client.DeleteTag(tag);
         }
-
         private void PivotList_SelectionChanged(object sender, SelectionChangedEventArgs e) => _vm.ListIsLoading = false;
-
         private async void TopAppBarClick(object sender, RoutedEventArgs e)
         {
             var dialog = new SettingsDialog();
@@ -80,7 +78,5 @@ namespace PocketX.Views
             }
             Bindings.Update();
         }
-        public static string ConvertTagsToString(IEnumerable<PocketTag> tags)
-            => tags == null ? "" : "#" + string.Join(" #", tags.Select(_ => _.Name).ToArray());
     }
 }

@@ -7,7 +7,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:PocketX.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:views="using:PocketX.Views"
     RequestedTheme="{x:Bind Settings.ReaderTheme, Mode=OneWay}"
     mc:Ignorable="d">
     <UserControl.Resources>
@@ -46,7 +45,7 @@
                     <TextBlock
                         FontSize="14"
                         Foreground="{ThemeResource AccentColor}"
-                        Text="{x:Bind views:MainContent.ConvertTagsToString(Article.Tags), Mode=OneWay}"
+                        Text="{x:Bind converter:ArrayToStringConverter.ConvertTagsToString(Article.Tags), Mode=OneWay}"
                         TextAlignment="Center"
                         TextTrimming="WordEllipsis" />
                 </StackPanel>

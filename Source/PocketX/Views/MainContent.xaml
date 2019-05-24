@@ -74,7 +74,7 @@
                             x:Phase="11"
                             FontSize="11"
                             Foreground="{ThemeResource AccentColor}"
-                            Text="{x:Bind local:MainContent.ConvertTagsToString(Tags)}"
+                            Text="{x:Bind converter:ArrayToStringConverter.ConvertTagsToString(Tags)}"
                             TextTrimming="WordEllipsis"
                             Visibility="{x:Bind Tags, Converter={StaticResource HideIfEmpty}}" />
                     </StackPanel>
