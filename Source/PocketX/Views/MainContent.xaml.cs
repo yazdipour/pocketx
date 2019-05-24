@@ -41,12 +41,12 @@ namespace PocketX.Views
         }
         private async void AutoSuggestBox_OnQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args) => await _vm.SearchCommand(sender?.Text);
         private void HeadAppBarClicked(object sender, RoutedEventArgs e) => PivotList.SelectedIndex = ((AppBarButton)sender)?.Tag?.ToString() == "Find" ? 3 : 4;
-        private void ItemClick(object sender, ItemClickEventArgs e)
+        private async void ItemClick(object sender, ItemClickEventArgs e)
         {
             if (!(e?.ClickedItem is PocketItem item)) return;
             if (SplitView.IsPaneOpen && IsSmallWidth(ActualWidth)) SplitView.IsPaneOpen = false;
             _vm.PocketHandler.CurrentPocketItem = item;
-            MarkdownCtrl.OpenInArticleView();
+            await MarkdownCtrl.OpenInArticleView();
         }
         private async void SwipeItem_Invoked(SwipeItem sender, SwipeItemInvokedEventArgs args) => await _vm.SwipeItem_Invoked(sender, args);
         private void ItemRightTapped(object sender, RightTappedRoutedEventArgs e) => _vm.ItemRightTapped(sender, e);

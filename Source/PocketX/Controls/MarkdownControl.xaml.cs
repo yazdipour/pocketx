@@ -94,7 +94,7 @@ namespace PocketX.Controls
         #endregion
 
         internal ICommand TextToSpeech => _textToSpeech ?? (_textToSpeech = new SimpleCommand(async param => await AudioHandler.Toggle()));
-        private void Reload_ArticleView(object sender, RoutedEventArgs e) => OpenInArticleView(true);
+        private async void Reload_ArticleView(object sender, RoutedEventArgs e) => await OpenInArticleView(true);
         private async void AppBar_Click(object sender, RoutedEventArgs e)
         {
             var tag = sender is Control c ? c?.Tag?.ToString()?.ToLower() : sender is string s ? s : "";
@@ -143,7 +143,7 @@ namespace PocketX.Controls
                         MarkdownGrid.Visibility = Visibility.Visible;
                         if (ErrorView != null) ErrorView.Visibility = Visibility.Collapsed;
                         if (WebView != null) WebView.Visibility = Visibility.Collapsed;
-                        OpenInArticleView(true);
+                        await OpenInArticleView(true);
                     }
 
                     IsInTextView = !IsInTextView;
@@ -157,7 +157,7 @@ namespace PocketX.Controls
                     break;
             }
         }
-        public async void OpenInArticleView(bool force = false)
+        public async Task OpenInArticleView(bool force = false)
         {
             if (Article == null) return;
             try
