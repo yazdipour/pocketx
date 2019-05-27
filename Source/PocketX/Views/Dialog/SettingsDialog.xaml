@@ -70,7 +70,6 @@
             <!--#region Account-->
             <PivotItem
                 Header="Account"
-                RequestedTheme="Light"
                 Visibility="{x:Bind User, Converter={StaticResource HideIfEmpty}}">
                 <Grid HorizontalAlignment="Center">
                     <Grid.RowDefinitions>
@@ -88,6 +87,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         OffsetY="3"
+                        RequestedTheme="Light"
                         ShadowOpacity=".2">
                         <Grid
                             Width="360"
