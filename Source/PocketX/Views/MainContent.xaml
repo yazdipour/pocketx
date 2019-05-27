@@ -4,11 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:converter="using:PocketX.Converter"
-    xmlns:ctrl="using:PocketX.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:PocketX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pocket="using:PocketSharp.Models"
+    xmlns:ctrl="using:PocketX.Views.Controls"
     Background="{ThemeResource SystemControlAcrylicWindowBrush}"
     RequestedTheme="{x:Bind _vm.Settings.AppTheme, Mode=OneWay}"
     mc:Ignorable="d">

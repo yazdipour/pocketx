@@ -102,7 +102,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\MarkdownControl.xaml.cs">
+    <Compile Include="Views\Controls\MarkdownControl.xaml.cs">
       <DependentUpon>MarkdownControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converter\ArrayToStringConverter.cs" />
@@ -218,7 +218,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\MarkdownControl.xaml">
+    <Page Include="Views\Controls\MarkdownControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

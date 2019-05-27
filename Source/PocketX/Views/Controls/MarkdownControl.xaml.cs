@@ -8,10 +8,9 @@ using Windows.UI.Xaml.Controls;
 using PocketSharp.Models;
 using PocketX.Handlers;
 using PocketX.Models;
-using PocketX.Views;
 using PocketX.Views.Dialog;
 
-namespace PocketX.Controls
+namespace PocketX.Views.Controls
 {
     public sealed partial class MarkdownControl : UserControl, INotifyPropertyChanged
     {
