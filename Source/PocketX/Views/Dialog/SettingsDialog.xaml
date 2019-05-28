@@ -23,6 +23,7 @@
                     <TextBlock
                         FontSize="16"
                         FontWeight="Light"
+                        FontFamily="{StaticResource GothamPro}"
                         Text="{Binding}" />
                 </DataTemplate>
             </Pivot.HeaderTemplate>
@@ -48,11 +49,14 @@
                     </GridView>
                     <!--<ToggleSwitch x:Name="tg_app" OffContent="Dark" OnContent="Light"/>-->
                     <TextBlock Text="Text Font" />
-                    <ComboBox ItemsSource="{x:Bind FontsList}" SelectedValue="{x:Bind Settings.ReaderFontFamily, Mode=TwoWay}" />
+                    <ComboBox ItemsSource="{x:Bind FontsList}" 
+                              SelectedValue="{x:Bind Settings.ReaderFontFamily, Mode=TwoWay}" />
                     <TextBlock Text="Text Size" />
                     <ComboBox x:Name="comboBox" SelectedValue="{x:Bind Settings.ReaderFontSize.ToString()}">
                         <x:String>12</x:String>
+                        <x:String>13</x:String>
                         <x:String>14</x:String>
+                        <x:String>15</x:String>
                         <x:String>16</x:String>
                         <x:String>18</x:String>
                         <x:String>20</x:String>

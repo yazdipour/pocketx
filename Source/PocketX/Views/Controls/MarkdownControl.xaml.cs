@@ -56,12 +56,13 @@ namespace PocketX.Views.Controls
             get => (GetValue(ArticleProperty) is PocketItem i) ? i : null;
             set
             {
-                if (value == null) return;
+                if (value == null || value == Article) return;
                 SetValue(ArticleProperty, value);
                 IsArchive = value?.IsArchive ?? false;
                 IsInTextView = false; // AppBar_Click action based on IsInTextView
                 AppBar_Click("view", null);
                 Bindings.Update();
+                WebView.NavigateToString("");
             }
         }
 
@@ -131,7 +132,6 @@ namespace PocketX.Views.Controls
                 case "view":
                     if (IsInTextView)
                     {
-                        FindName(nameof(WebView));
                         WebView.Visibility = Visibility.Visible;
                         MarkdownGrid.Visibility = Visibility.Collapsed;
                         if (ErrorView != null) ErrorView.Visibility = Visibility.Collapsed;

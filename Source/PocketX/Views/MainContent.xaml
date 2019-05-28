@@ -4,11 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:converter="using:PocketX.Converter"
+    xmlns:ctrl="using:PocketX.Views.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:PocketX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pocket="using:PocketSharp.Models"
-    xmlns:ctrl="using:PocketX.Views.Controls"
     Background="{ThemeResource SystemControlAcrylicWindowBrush}"
     RequestedTheme="{x:Bind _vm.Settings.AppTheme, Mode=OneWay}"
     mc:Ignorable="d">
@@ -41,7 +41,7 @@
         <DataTemplate x:Key="ArticleTemplate" x:DataType="pocket:PocketItem">
             <SwipeControl Margin="-10,2" RightItems="{StaticResource SwipeItemsRight}">
                 <StackPanel
-                    Height="70"
+                    Height="72"
                     HorizontalAlignment="Stretch"
                     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                     CornerRadius="2"
@@ -52,11 +52,10 @@
                         Margin="0,0,8,0"
                         x:Phase="10"
                         BorderBrush="#eee"
-                        BorderThickness="0,0,.5,0"
                         CornerRadius="2 0 0 2"
-                        PlaceholderSource="ms-appx:///Assets/Square44x44Logo.png"
+                        PlaceholderSource="/Assets/Icons/Thumbnail.png"
                         Source="{x:Bind LeadImage.Uri}"
-                        Stretch="UniformToFill" />
+                        Stretch="UniformToFill"/>
                     <StackPanel VerticalAlignment="Center" Orientation="Vertical">
                         <TextBlock
                             Width="220"
@@ -115,6 +114,7 @@
                         <TextBlock
                             Margin="10,0"
                             VerticalAlignment="Center"
+                            FontFamily="{StaticResource GothamPro}"
                             FontSize="22"
                             FontWeight="Medium"
                             Text="Pocket✘" />
@@ -140,6 +140,7 @@
                         <Pivot.Resources>
                             <Style TargetType="PivotHeaderItem">
                                 <Setter Property="FontSize" Value="16" />
+                                <Setter Property="FontFamily" Value="{StaticResource GothamPro}" />
                             </Style>
                         </Pivot.Resources>
                         <PivotItem Header="Home">
@@ -211,11 +212,10 @@
                             Height="40"
                             Background="{ThemeResource AccentColor}"
                             Command="{x:Bind _vm.AddArticle}"
-                            Content="ADD LINK"
+                            Content="Add Link"
                             CornerRadius="16"
-                            FontFamily="Calibri"
+                            FontFamily="{StaticResource GothamPro}"
                             FontSize="18"
-                            FontWeight="Bold"
                             Foreground="White" />
                     </controls:DropShadowPanel>
                     <!--  LoadingControl  -->

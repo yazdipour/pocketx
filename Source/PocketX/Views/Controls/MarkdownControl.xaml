@@ -24,12 +24,12 @@
                 </Grid.RowDefinitions>
                 <StackPanel
                     Grid.Row="0"
-                    Padding="16,16,16,4"
+                    Padding="24,16,24,4"
                     HorizontalAlignment="Stretch">
                     <!--  x:Name="HeaderTitle"  -->
                     <TextBlock
-                        FontFamily="Calibri"
-                        Style="{ThemeResource SubtitleTextBlockStyle}"
+                        FontFamily="{StaticResource GothamPro}"
+                        Style="{ThemeResource TitleTextBlockStyle}"
                         Text="{x:Bind Article.Title, Mode=OneWay, FallbackValue='PocketX'}"
                         TextAlignment="Center" />
                     <HyperlinkButton
@@ -77,7 +77,6 @@
         <!--  webView  -->
         <WebView
             x:Name="WebView"
-            x:Load="False"
             ScrollViewer.HorizontalScrollMode="Disabled"
             Visibility="Collapsed" />
         <!--  errorView  -->
@@ -146,20 +145,17 @@
                 Icon="Volume"
                 Label="Read" />
 
-            <AppBarButton
-                Width="48"
-                Margin="0,2,0,0"
-                Click="AppBar_Click"
-                Icon="Share"
-                Label="Share"
-                LabelPosition="Collapsed"
-                Tag="Share" />
             <CommandBar.SecondaryCommands>
                 <AppBarButton
                     Click="AppBar_Click"
                     Icon="Favorite"
                     Label="{x:Bind Article.IsFavorite, Mode=OneWay, Converter={StaticResource BoolToStr}, ConverterParameter='Un-favorite|Favorite'}"
                     Tag="Favorite" />
+                <AppBarButton
+                    Click="AppBar_Click"
+                    Icon="Share"
+                    Label="Share"
+                    Tag="Share" />
                 <AppBarButton
                     Click="AppBar_Click"
                     Icon="Paste"

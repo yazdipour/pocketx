@@ -58,7 +58,7 @@ namespace PocketX.Views.Dialog
             RadialProgressBarControl.Maximum = userStatistics.CountAll;
             RadialProgressBarControl.Value = userStatistics.CountRead;
             StatisticsCtrl.Header = $"{userStatistics.CountAll} Articles";
-            StatisticsCtrl.Text = $"Unread {userStatistics.CountUnread} Articles";
+            StatisticsCtrl.Text = $"{userStatistics.CountUnread} Unread Articles";
         }
     }
 }
