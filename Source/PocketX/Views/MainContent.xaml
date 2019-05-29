@@ -24,7 +24,7 @@
                 Foreground="White"
                 IconSource="{StaticResource Delete}"
                 Invoked="SwipeItem_Invoked"
-                Text="Delete" />
+                Text="DeleteArticle" />
         </SwipeItems>
         <SwipeItems
             x:Key="SwipeItemsLeft"

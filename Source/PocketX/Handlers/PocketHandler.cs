@@ -220,13 +220,37 @@ namespace PocketX.Handlers
             }
         }
 
-        public async Task Delete(PocketItem pocketItem)
+        public async Task DeleteArticle(PocketItem pocketItem)
+        {
+            try
+            {
+                await ClearArticleCache(pocketItem);
+                await Client.Delete(pocketItem);
+            }
+            catch (Exception e)
+            {
+                E(e);
+            }
+        }
+
+        public async Task ArchiveArticle(PocketItem pocketItem)
+        {
+            try
+            {
+                await ClearArticleCache(pocketItem);
+                await Client.Archive(pocketItem);
+            }
+            catch (Exception e)
+            {
+                E(e);
+            }
+        }
+        public async Task ClearArticleCache(PocketItem pocketItem)
         {
             try
             {
                 await BlobCache.LocalMachine.Invalidate(pocketItem.Uri.AbsoluteUri);
                 await BlobCache.LocalMachine.Invalidate("plain_" + pocketItem.Uri.AbsoluteUri);
-                await Client.Delete(pocketItem);
             }
             catch (Exception e)
             {

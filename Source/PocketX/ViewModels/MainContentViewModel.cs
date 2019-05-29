@@ -109,7 +109,7 @@ namespace PocketX.ViewModels
                 }
                 else // Want to Archive
                 {
-                    await PocketHandler.Client.Archive(pocketItem);
+                    await PocketHandler.ArchiveArticle(pocketItem);
                     if (ArchivesList.Count > 0 && ArchivesList[0] != pocketItem) ArchivesList.Insert(0, pocketItem);
                     ArticlesList.Remove(pocketItem);
                     NotificationHandler.InAppNotification("Archived", 2000);
@@ -120,7 +120,7 @@ namespace PocketX.ViewModels
         public async Task DeleteArticleAsync(PocketItem pocketItem)
         {
             if (pocketItem == null) return;
-            await PocketHandler.Delete(pocketItem);
+            await PocketHandler.DeleteArticle(pocketItem);
             CurrentList()?.Remove(pocketItem);
             NotificationHandler.InAppNotification("Deleted", 2000);
         }
@@ -154,7 +154,7 @@ namespace PocketX.ViewModels
             el = new MenuFlyoutItem { Text = "Open in browser", Icon = new SymbolIcon(Symbol.World) };
             el.Click += async (sen, ee) => await Launcher.LaunchUriAsync(item?.Uri);
             flyout?.Items?.Add(el);
-            el = new MenuFlyoutItem { Text = "Delete", Icon = new SymbolIcon(Symbol.Delete) };
+            el = new MenuFlyoutItem { Text = "DeleteArticle", Icon = new SymbolIcon(Symbol.Delete) };
             el.Click += async (sen, ee) => await DeleteArticleAsync(item);
             flyout?.Items?.Add(el);
             el = new MenuFlyoutItem
@@ -169,7 +169,7 @@ namespace PocketX.ViewModels
         public async Task SwipeItem_Invoked(SwipeItem sender, SwipeItemInvokedEventArgs args)
         {
             var item = args.SwipeControl?.DataContext as PocketItem;
-            if (sender.Text == "Delete")
+            if (sender.Text == "DeleteArticle")
                 await DeleteArticleAsync(item);
         }
     }
