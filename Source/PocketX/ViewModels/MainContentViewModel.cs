@@ -13,7 +13,6 @@ using Microsoft.Toolkit.Uwp;
 using PocketSharp.Models;
 using PocketX.Handlers;
 using PocketX.Models;
-using PocketX.Views;
 using PocketX.Views.Dialog;
 
 namespace PocketX.ViewModels
@@ -154,7 +153,7 @@ namespace PocketX.ViewModels
             el = new MenuFlyoutItem { Text = "Open in browser", Icon = new SymbolIcon(Symbol.World) };
             el.Click += async (sen, ee) => await Launcher.LaunchUriAsync(item?.Uri);
             flyout?.Items?.Add(el);
-            el = new MenuFlyoutItem { Text = "DeleteArticle", Icon = new SymbolIcon(Symbol.Delete) };
+            el = new MenuFlyoutItem { Text = "Delete", Icon = new SymbolIcon(Symbol.Delete) };
             el.Click += async (sen, ee) => await DeleteArticleAsync(item);
             flyout?.Items?.Add(el);
             el = new MenuFlyoutItem
@@ -169,7 +168,7 @@ namespace PocketX.ViewModels
         public async Task SwipeItem_Invoked(SwipeItem sender, SwipeItemInvokedEventArgs args)
         {
             var item = args.SwipeControl?.DataContext as PocketItem;
-            if (sender.Text == "DeleteArticle")
+            if (sender.Text == "Delete")
                 await DeleteArticleAsync(item);
         }
     }

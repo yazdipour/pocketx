@@ -26,7 +26,7 @@ namespace PocketX.Views.Controls
             MarkdownCtrl.Loaded += async (s, e) =>
             {
                 if (string.IsNullOrEmpty(MarkdownText))
-                    MarkdownText = await Utils.TextFromAssets(@"Assets\Icons\Home.md");
+                    MarkdownText = await Utils.TextFromAssets(@"Assets\Markdown\Home.md");
             };
         }
 

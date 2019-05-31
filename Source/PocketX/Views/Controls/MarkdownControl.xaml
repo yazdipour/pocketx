@@ -173,9 +173,9 @@
                     Tag="Tag" />
                 <AppBarButton
                     Click="AppBar_Click"
-                    Icon="DeleteArticle"
-                    Label="DeleteArticle"
-                    Tag="DeleteArticle" />
+                    Icon="Delete"
+                    Label="Delete"
+                    Tag="Delete" />
             </CommandBar.SecondaryCommands>
         </CommandBar>
         <!--  Window Controller  -->
