@@ -53,9 +53,10 @@
                         x:Phase="10"
                         BorderBrush="#eee"
                         CornerRadius="2 0 0 2"
-                        PlaceholderSource="/Assets/Icons/Thumbnail.png"
+                        PlaceholderSource="ms-appx:///Assets/Icons/Thumbnail.png"
+                        PlaceholderStretch="Uniform"
                         Source="{x:Bind LeadImage.Uri}"
-                        Stretch="UniformToFill"/>
+                        Stretch="UniformToFill" />
                     <StackPanel VerticalAlignment="Center" Orientation="Vertical">
                         <TextBlock
                             Width="220"
