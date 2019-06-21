@@ -16,7 +16,7 @@ namespace CacheManager
 
         public static void Put(K key, V valueTuple) => _lruCache.Put(key, valueTuple);
 
-        public static V Get(K key) => _lruCache.Get(key);
+        public static V Get(K key) => _lruCache.TryGet(key);
 
     }
 }
