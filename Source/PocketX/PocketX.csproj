@@ -255,9 +255,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="akavache">
-      <Version>6.5.1</Version>
-    </PackageReference>
     <PackageReference Include="BFound.HtmlToMarkdown">
       <Version>0.0.5</Version>
     </PackageReference>
@@ -288,6 +285,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\CacheManager\CacheManager.csproj">
+      <Project>{00a36bbd-1b69-4449-8ec5-82d2db0110ad}</Project>
+      <Name>CacheManager</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Logger\Logger.csproj">
       <Project>{743a9933-e226-479e-be20-190b02caeaaa}</Project>
       <Name>Logger</Name>

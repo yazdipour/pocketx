@@ -85,7 +85,7 @@ namespace PocketX.ViewModels
                 await dialog?.ShowAsync();
                 if (dialog.PocketItem == null) return;
                 ArticlesList.Insert(0, dialog.PocketItem);
-                await PocketHandler.SetItemCache(0, dialog.PocketItem);
+                await PocketHandler.PutItemInCache(0, dialog.PocketItem);
             }));
         //internal async void PinBtnClicked() => await new UiUtils().PinAppWindow(520, 400);
         internal void ShareArticle(DataTransferManager sender, DataRequestedEventArgs args)

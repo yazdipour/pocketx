@@ -168,8 +168,7 @@ namespace PocketX.Views.Controls
                 MarkdownGrid.Visibility = Visibility.Visible;
                 if (ErrorView != null) ErrorView.Visibility = Visibility.Collapsed;
                 if (WebView != null) WebView.Visibility = Visibility.Collapsed;
-
-                var content = await PocketHandler.GetInstance().Read(Article?.Uri, force);
+                var content = await PocketHandler.GetInstance().Read(Article?.ID, Article?.Uri);
                 MarkdownCtrl.UriPrefix = Article?.Uri?.AbsoluteUri;
                 MarkdownText = content;
                 MarkdownAppBar.Visibility = Visibility.Visible;
