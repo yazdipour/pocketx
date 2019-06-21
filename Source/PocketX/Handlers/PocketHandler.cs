@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using static Logger.Logger;
 using Cache = CacheManager.CacheManager;
@@ -22,11 +23,10 @@ namespace PocketX.Handlers
         public event PropertyChangedEventHandler PropertyChanged;
         private static PocketHandler _pocketHandler;
         private PocketItem _currentPocketItem;
-        private readonly Reader _reader = new Reader();
+        private Reader _reader;
         private const string LruKey = "ArticlesContent";
         private const int LruCapacity = 20;
         private readonly LocalObjectStorageHelper _localCache = new LocalObjectStorageHelper();
-
         protected virtual void OnPropertyChanged(string propertyName = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
@@ -108,7 +108,7 @@ namespace PocketX.Handlers
             return pls;
         }
 
-        private async Task PutItemsInCache(IEnumerable<PocketItem> get)
+        private static async Task PutItemsInCache(IEnumerable<PocketItem> get)
         {
             var ls = new List<string[]>();
             var lsget = get.ToList();
@@ -181,18 +181,26 @@ namespace PocketX.Handlers
 
         public async Task<PocketStatistics> UserStatistics() => await Client.GetUserStatistics();
 
-        public async Task<string> Read(string id, Uri url)
+        public async Task<string> Read(string id, Uri url, CancellationTokenSource cancellationSource)
         {
             if (!Lru.IsOpen)
             {
-                var old = await Cache.GetObject<Dictionary<string, CacheManager.Node<string, (string, string)>>>
-                    (LruKey, null);
+                var old = await Cache.GetObject<Dictionary<string, CacheManager.Node<string, string>>>(LruKey, null);
                 Lru.Init(LruCapacity, old);
             }
 
             var cacheContent = Lru.Get(id);
             if (cacheContent?.Length > 0) return HtmlToMarkdown(cacheContent);
-            var readContent = await _reader.Read(url, new ReadOptions { PrettyPrint = true, PreferHTMLEncoding = true });
+            if (_reader == null)
+            {
+                var options = HttpOptions.CreateDefault();
+                options.RequestTimeout = 60;
+                options.UseMobileUserAgent = true;
+                _reader = new Reader(options);
+            }
+            var readContent = await _reader.Read(url,
+                new ReadOptions { PrettyPrint = true, PreferHTMLEncoding = true, HasHeaderTags = false, UseDeepLinks = true },
+                cancellationSource.Token);
             //Fix Medium Images
             var content = readContent?.Content.Replace(".medium.com/freeze/max/60/", ".medium.com/freeze/max/360/");
             if (readContent?.Content?.Length < 1) return content;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.ApplicationModel.DataTransfer;
@@ -14,34 +15,8 @@ namespace PocketX.Views.Controls
 {
     public sealed partial class MarkdownControl : UserControl, INotifyPropertyChanged
     {
-        public MarkdownControl()
-        {
-            InitializeComponent();
-            new MarkdownHandler(MarkdownCtrl);
-            AudioHandler = new AudioHandler(Media, PocketHandler.GetInstance().TextProviderForAudioPlayer)
-            {
-                MediaStartAction = () => { MarkdownAppBar.MaxWidth = 48; },
-                MediaEndAction = () => { MarkdownAppBar.MaxWidth = 500; }
-            };
-            MarkdownCtrl.Loaded += async (s, e) =>
-            {
-                if (string.IsNullOrEmpty(MarkdownText))
-                    MarkdownText = await Utils.TextFromAssets(@"Assets\Markdown\Home.md");
-            };
-        }
-
-        #region PropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        #endregion
-
         #region Parameters
-        private Settings Settings => SettingsHandler.Settings;
-        private AudioHandler AudioHandler { get; }
-        private ICommand _textToSpeech;
-        private string _markdownText;
-        private bool IsArchive { get; set; }
-        private bool IsInTextView { get; set; } = true;
+
         public string MarkdownText
         {
             get => _markdownText;
@@ -51,6 +26,7 @@ namespace PocketX.Views.Controls
                 OnPropertyChanged(nameof(MarkdownText));
             }
         }
+
         public PocketItem Article
         {
             get => (GetValue(ArticleProperty) is PocketItem i) ? i : null;
@@ -75,9 +51,43 @@ namespace PocketX.Views.Controls
         public Func<PocketItem, bool, Task> ToggleArchiveArticleAsync { get; set; }
         public Func<PocketItem, Task> DeleteArticleAsync { get; set; }
         public Func<PocketItem, Task> ToggleFavoriteArticleAsync { get; set; }
+        private CancellationTokenSource _cancellationSource;
+        private Settings Settings => SettingsHandler.Settings;
+        private AudioHandler AudioHandler { get; }
+        private ICommand _textToSpeech;
+        private string _markdownText;
+        private bool IsArchive { get; set; }
+        private bool IsInTextView { get; set; } = true;
+
+        #endregion
+
+        public MarkdownControl()
+        {
+            InitializeComponent();
+            new MarkdownHandler(MarkdownCtrl);
+            AudioHandler = new AudioHandler(Media, PocketHandler.GetInstance().TextProviderForAudioPlayer)
+            {
+                MediaStartAction = () => { MarkdownAppBar.MaxWidth = 48; },
+                MediaEndAction = () => { MarkdownAppBar.MaxWidth = 500; }
+            };
+            MarkdownCtrl.Loaded += async (s, e) =>
+            {
+                if (string.IsNullOrEmpty(MarkdownText))
+                    MarkdownText = await Utils.TextFromAssets(@"Assets\Markdown\Home.md");
+            };
+        }
+
+        #region PropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string propertyName = null) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
         #endregion
 
         #region SplitView
+
         public SplitView SplitView
         {
             get => (SplitView)GetValue(SplitViewProperty);
@@ -91,10 +101,15 @@ namespace PocketX.Views.Controls
                 , new PropertyMetadata(0));
 
         private void ToggleSplitView() => SplitView.IsPaneOpen = !SplitView.IsPaneOpen;
+
         #endregion
 
-        internal ICommand TextToSpeech => _textToSpeech ?? (_textToSpeech = new SimpleCommand(async param => await AudioHandler.Toggle()));
-        private async void Reload_ArticleView(object sender, RoutedEventArgs e) => await OpenInArticleView(true);
+        internal ICommand TextToSpeech => _textToSpeech ??
+                                          (_textToSpeech =
+                                              new SimpleCommand(async param => await AudioHandler.Toggle()));
+
+        private async void Reload_ArticleView(object sender, RoutedEventArgs e) => await OpenInArticleView();
+
         private async void AppBar_Click(object sender, RoutedEventArgs e)
         {
             var tag = sender is Control c ? c?.Tag?.ToString()?.ToLower() : sender is string s ? s : "";
@@ -107,6 +122,7 @@ namespace PocketX.Views.Controls
                         OnPropertyChanged(nameof(Article));
                     }
                     else await UiUtils.ShowDialogAsync("You need to connect to the internet first");
+
                     break;
                 case "favorite":
                     await ToggleFavoriteArticleAsync(Article);
@@ -142,7 +158,7 @@ namespace PocketX.Views.Controls
                         MarkdownGrid.Visibility = Visibility.Visible;
                         if (ErrorView != null) ErrorView.Visibility = Visibility.Collapsed;
                         if (WebView != null) WebView.Visibility = Visibility.Collapsed;
-                        await OpenInArticleView(true);
+                        await OpenInArticleView();
                     }
 
                     IsInTextView = !IsInTextView;
@@ -156,25 +172,29 @@ namespace PocketX.Views.Controls
                     break;
             }
         }
-        public async Task OpenInArticleView(bool force = false)
+
+        public async Task OpenInArticleView()
         {
             if (Article == null) return;
             try
             {
+                if (_cancellationSource != null && _cancellationSource.Token != CancellationToken.None)
+                    _cancellationSource.Cancel();
                 MarkdownLoading.IsLoading = true;
                 MarkdownAppBar.Visibility = Visibility.Collapsed;
                 MarkdownText = "";
-
                 MarkdownGrid.Visibility = Visibility.Visible;
                 if (ErrorView != null) ErrorView.Visibility = Visibility.Collapsed;
                 if (WebView != null) WebView.Visibility = Visibility.Collapsed;
-                var content = await PocketHandler.GetInstance().Read(Article?.ID, Article?.Uri);
+                _cancellationSource = new CancellationTokenSource();
+                var content = await PocketHandler.GetInstance().Read(Article?.ID, Article?.Uri, _cancellationSource);
                 MarkdownCtrl.UriPrefix = Article?.Uri?.AbsoluteUri;
                 MarkdownText = content;
                 MarkdownAppBar.Visibility = Visibility.Visible;
             }
-            catch
+            catch (Exception e)
             {
+                if (e is OperationCanceledException || e is TaskCanceledException) return;
                 MarkdownGrid.Visibility = Visibility.Collapsed;
                 FindName(nameof(ErrorView));
                 ErrorView.Visibility = Visibility.Visible;
@@ -183,6 +203,7 @@ namespace PocketX.Views.Controls
             finally
             {
                 MarkdownLoading.IsLoading = false;
+                _cancellationSource = null;
             }
         }
     }
