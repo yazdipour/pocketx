@@ -23,7 +23,7 @@ namespace CacheManager
 
         public IDictionary GetAll() => _memory;
 
-        public V TryGet(K key)
+        public V Get(K key)
         {
             if (!_memory.ContainsKey(key)) return default;
             var result = _memory[key];
