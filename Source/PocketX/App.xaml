@@ -17,6 +17,8 @@
                 <GradientStop Color="#FFFF2525" />
             </LinearGradientBrush>
 
+            <FontFamily x:Key="GothamPro">/Assets/Fonts/GothamPro.ttf#Gotham Pro</FontFamily>
+
             <Color x:Key="AccentColor">#ED243B</Color>
             <Color x:Key="AcrylicBrushTintColor1">#fefefe</Color>
             <Color x:Key="AcrylicBrushFallbackColor1">#eee</Color>

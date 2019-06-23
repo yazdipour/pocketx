@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -11,7 +10,7 @@ namespace PocketX.Handlers
     {
         private readonly MediaElement _media;
 
-        public AudioHandler(MediaElement media, Func<Task<string>> textProviderFunc)
+        public AudioHandler(MediaElement media, Func<string> textProviderFunc)
         {
             _media = media;
             _media.MediaFailed += OnMediaFailed;
@@ -37,7 +36,7 @@ namespace PocketX.Handlers
 
         public Action MediaEndAction { get; set; }
         public Action MediaStartAction { get; set; }
-        public Func<Task<string>> TextProvider { get; set; }
+        public Func<string> TextProvider { get; set; }
 
         public async Task Start(string text)
         {
@@ -57,7 +56,7 @@ namespace PocketX.Handlers
             if (_media.CurrentState == MediaElementState.Playing) _media.Stop();
             else
             {
-                var text = await TextProvider();
+                var text = TextProvider();
                 if (!string.IsNullOrEmpty(text)) await Start(text);
                 else await UiUtils.ShowDialogAsync("No Content to Read");
             }

@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using PocketSharp.Models;
-
 using PocketX.Handlers;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -29,7 +27,7 @@ namespace PocketX.Views
             Loaded += async (s, e) =>
             {
                 // TODO move this stuff to repository
-                if (!Microsoft.Toolkit.Uwp.Connectivity.NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
+                if (!Utils.HasInternet)
                     foreach (var pocketItem in await _vm.PocketHandler.GetItemsCache())
                         _vm.ArticlesList.Add(pocketItem);
                 Logger.Logger.InitOnlineLogger(Keys.AppCenter);
@@ -48,20 +46,24 @@ namespace PocketX.Views
             if (!(e?.ClickedItem is PocketItem item)) return;
             if (SplitView.IsPaneOpen && IsSmallWidth(ActualWidth)) SplitView.IsPaneOpen = false;
             _vm.PocketHandler.CurrentPocketItem = item;
-            MarkdownCtrl.OpenInArticleView();
         }
         private async void SwipeItem_Invoked(SwipeItem sender, SwipeItemInvokedEventArgs args) => await _vm.SwipeItem_Invoked(sender, args);
         private void ItemRightTapped(object sender, RightTappedRoutedEventArgs e) => _vm.ItemRightTapped(sender, e);
-        private async void TagItemClick(object sender, ItemClickEventArgs e)
+        private async void Tag_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (!(e?.ClickedItem is string tag)) return;
+            if (!(((TextBlock)sender).DataContext is string tag)) return;
             PivotList.SelectedIndex = 3;
             tag = '#' + tag;
             SearchBox.Text = tag;
             await _vm.SearchCommand(tag);
         }
+        private async void SymbolIcon_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (!(((SymbolIcon)sender).DataContext is string tag)) return;
+            _vm.PocketHandler.Tags.Remove(tag);
+            await _vm.PocketHandler.Client.DeleteTag(tag);
+        }
         private void PivotList_SelectionChanged(object sender, SelectionChangedEventArgs e) => _vm.ListIsLoading = false;
-
         private async void TopAppBarClick(object sender, RoutedEventArgs e)
         {
             var dialog = new SettingsDialog();

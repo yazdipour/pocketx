@@ -11,12 +11,12 @@ namespace PocketX.Handlers
         {
             try
             {
-                var temp = new LocalObjectStorageHelper().Read<Settings>(Handlers.Keys.Settings);
+                var temp = new LocalObjectStorageHelper().Read<Settings>(Keys.Settings);
                 if (temp != null) Settings = temp;
             }
             catch { }
         }
-        public static void Save() => new LocalObjectStorageHelper().Save(Handlers.Keys.Settings, Settings);
+        public static void Save() => new LocalObjectStorageHelper().Save(Keys.Settings, Settings);
 
         public static void Clear()
         {

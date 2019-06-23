@@ -13,7 +13,6 @@ using Microsoft.Toolkit.Uwp;
 using PocketSharp.Models;
 using PocketX.Handlers;
 using PocketX.Models;
-using PocketX.Views;
 using PocketX.Views.Dialog;
 
 namespace PocketX.ViewModels
@@ -77,30 +76,30 @@ namespace PocketX.ViewModels
         internal ICommand AddArticle =>
             _addArticle ?? (_addArticle = new SimpleCommand(async param =>
             {
-                if (Microsoft.Toolkit.Uwp.Connectivity.NetworkHelper.Instance.ConnectionInformation
-                    .IsInternetAvailable)
+                if (!Utils.HasInternet)
                 {
-                    var dialog = new AddDialog(Settings.AppTheme);
-                    await dialog?.ShowAsync();
-                    if (dialog.PocketItem == null) return;
-                    ArticlesList.Insert(0, dialog.PocketItem);
-                    await PocketHandler.SetItemCache(0, dialog.PocketItem);
+                    await UiUtils.ShowDialogAsync("You need to connect to the internet first");
+                    return;
                 }
-                else await UiUtils.ShowDialogAsync("You need to connect to the internet first");
+                var dialog = new AddDialog();
+                await dialog?.ShowAsync();
+                if (dialog.PocketItem == null) return;
+                ArticlesList.Insert(0, dialog.PocketItem);
+                await PocketHandler.PutItemInCache(0, dialog.PocketItem);
             }));
-        internal async void PinBtnClicked() => await new UiUtils().PinAppWindow(520, 400);
+        //internal async void PinBtnClicked() => await new UiUtils().PinAppWindow(520, 400);
         internal void ShareArticle(DataTransferManager sender, DataRequestedEventArgs args)
         {
             var request = args.Request;
             request.Data.SetText(PocketHandler?.CurrentPocketItem?.Uri?.ToString() ?? "");
             request.Data.Properties.Title = "Shared by PocketX";
         }
-        public async Task ToggleArchiveArticleAsync(PocketItem pocketItem, bool IsArchive)
+        public async Task ToggleArchiveArticleAsync(PocketItem pocketItem, bool isArchive)
         {
             if (pocketItem == null) return;
             try
             {
-                if (IsArchive) // Want to add
+                if (isArchive) // Want to add
                 {
                     await PocketHandler.Client.Unarchive(pocketItem);
                     NotificationHandler.InAppNotification("Added", 2000);
@@ -109,7 +108,7 @@ namespace PocketX.ViewModels
                 }
                 else // Want to Archive
                 {
-                    await PocketHandler.Client.Archive(pocketItem);
+                    await PocketHandler.ArchiveArticle(pocketItem);
                     if (ArchivesList.Count > 0 && ArchivesList[0] != pocketItem) ArchivesList.Insert(0, pocketItem);
                     ArticlesList.Remove(pocketItem);
                     NotificationHandler.InAppNotification("Archived", 2000);
@@ -120,7 +119,7 @@ namespace PocketX.ViewModels
         public async Task DeleteArticleAsync(PocketItem pocketItem)
         {
             if (pocketItem == null) return;
-            await PocketHandler.Delete(pocketItem);
+            await PocketHandler.DeleteArticle(pocketItem);
             CurrentList()?.Remove(pocketItem);
             NotificationHandler.InAppNotification("Deleted", 2000);
         }

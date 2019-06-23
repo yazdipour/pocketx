@@ -1,13 +1,13 @@
 ﻿using System;
-using Windows.UI.Xaml.Data;
+using System.Collections.Generic;
+using System.Linq;
+using PocketSharp.Models;
 
 namespace PocketX.Converter
 {
-    public class ArrayToStringConverter : IValueConverter
+    public class ArrayToStringConverter
     {
-        public object Convert(object value, Type targetType, object parameter, string language) =>
-            string.Join(parameter is string spl ? spl : " ", value);
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language) => value;
+        public static string ConvertTagsToString(IEnumerable<PocketTag> tags)
+            => tags == null ? "" : "#" + string.Join(" #", tags.Select(_ => _.Name).ToArray());
     }
 }

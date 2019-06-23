@@ -15,7 +15,7 @@ namespace PocketX.Views.Dialog
         public SettingsDialog() => InitializeComponent();
         private Settings Settings => SettingsHandler.Settings;
         private readonly string _versionString = $"Version {Package.Current.Id.Version.Major}.{Package.Current.Id.Version.Minor}.{Package.Current.Id.Version.Build}";
-        private List<string> FontsList => Utils.GetAllFonts();
+        private IEnumerable<string> FontsList => Utils.GetAllFonts();
         private readonly Settings[] _themes = {
             new Settings { AppTheme = ElementTheme.Light,ReaderBg = "#FEFEFE",ReaderTheme = ElementTheme.Light,Thumbnail = "/Assets/ReadTheme/theme1.png"},
             new Settings { AppTheme = ElementTheme.Dark,ReaderBg = "#454545",ReaderTheme = ElementTheme.Dark,Thumbnail = "/Assets/ReadTheme/theme4.png"},
@@ -58,7 +58,7 @@ namespace PocketX.Views.Dialog
             RadialProgressBarControl.Maximum = userStatistics.CountAll;
             RadialProgressBarControl.Value = userStatistics.CountRead;
             StatisticsCtrl.Header = $"{userStatistics.CountAll} Articles";
-            StatisticsCtrl.Text = $"Unread {userStatistics.CountUnread} Articles";
+            StatisticsCtrl.Text = $"{userStatistics.CountUnread} Unread Articles";
         }
     }
 }

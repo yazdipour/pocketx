@@ -1,5 +1,4 @@
-﻿using Akavache;
-using Microsoft.Toolkit.Uwp.Helpers;
+﻿using Microsoft.Toolkit.Uwp.Helpers;
 using PocketSharp;
 using PocketSharp.Models;
 using ReadSharp;
@@ -8,9 +7,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using static Logger.Logger;
+using Cache = CacheManager.CacheManager;
+using Lru = CacheManager.Lru<string, string>;
 
 namespace PocketX.Handlers
 {
@@ -18,11 +19,17 @@ namespace PocketX.Handlers
     {
         public PocketClient Client;
         public PocketUser User { get; set; }
-        private static PocketHandler _pocketHandler;
-        private PocketItem _currentPocketItem;
         public ObservableCollection<string> Tags { set; get; } = new ObservableCollection<string>();
         public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged(string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        private static PocketHandler _pocketHandler;
+        private PocketItem _currentPocketItem;
+        private Reader _reader;
+        private const string LruKey = "ArticlesContent";
+        private const int LruCapacity = 20;
+        private readonly LocalObjectStorageHelper _localCache = new LocalObjectStorageHelper();
+        protected virtual void OnPropertyChanged(string propertyName = null) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
         public PocketItem CurrentPocketItem
         {
             get => _currentPocketItem;
@@ -32,14 +39,16 @@ namespace PocketX.Handlers
                 OnPropertyChanged(nameof(CurrentPocketItem));
             }
         }
+
         public static PocketHandler GetInstance() => _pocketHandler ?? (_pocketHandler = new PocketHandler());
 
-        #region Login\Logout
+        #region Login-Logout
+
         public void LoadCacheClient()
         {
-            var cache = new LocalObjectStorageHelper().Read(Keys.PocketClientCache, "");
+            var cache = _localCache.Read(Keys.PocketClientCache, "");
             Client = cache == "" ? null : new PocketClient(Keys.Pocket, cache);
-            User = new LocalObjectStorageHelper().Read<PocketUser>(Keys.PocketClientCache + "user");
+            User = _localCache.Read<PocketUser>(Keys.PocketClientCache + "user");
         }
 
         internal void Logout()
@@ -49,18 +58,17 @@ namespace PocketX.Handlers
             User = null;
             _pocketHandler = null;
             SettingsHandler.Clear();
-            BlobCache.LocalMachine.InvalidateAll();
-            BlobCache.LocalMachine.Vacuum();
-            new LocalObjectStorageHelper().Save(Keys.PocketClientCache, "");
-            new LocalObjectStorageHelper().Save(Keys.PocketClientCache + "user", "");
+            Cache.Kill();
+            _localCache.Save(Keys.PocketClientCache, "");
+            _localCache.Save(Keys.PocketClientCache + "user", "");
         }
 
         public async Task<bool> LoginAsync()
         {
             User = await Client.GetUser();
             if (User == null) return false;
-            new LocalObjectStorageHelper().Save(Keys.PocketClientCache, User.Code);
-            new LocalObjectStorageHelper().Save(Keys.PocketClientCache + "user", User);
+            _localCache.Save(Keys.PocketClientCache, User.Code);
+            _localCache.Save(Keys.PocketClientCache + "user", User);
             return true;
         }
 
@@ -77,7 +85,7 @@ namespace PocketX.Handlers
 
         internal async Task<IEnumerable<PocketItem>> GetItemsCache()
         {
-            var ls = await BlobCache.LocalMachine.GetObject<List<string[]>>(Keys.MainList).Catch(Observable.Return(new List<string[]>()));
+            var ls = await Cache.GetObject(Keys.MainList, new List<string[]>());
             var pls = new List<PocketItem>();
             foreach (var item in ls)
             {
@@ -89,13 +97,18 @@ namespace PocketX.Handlers
                     pi.Title = item[2];
                     pi.LeadImage.Uri = new Uri(item[3]);
                 }
-                catch { }
+                catch (Exception e)
+                {
+                    E(e);
+                }
+
                 pls.Add(pi);
             }
+
             return pls;
         }
 
-        private async Task SetItemsCache(IEnumerable<PocketItem> get)
+        private static async Task PutItemsInCache(IEnumerable<PocketItem> get)
         {
             var ls = new List<string[]>();
             var lsget = get.ToList();
@@ -106,20 +119,21 @@ namespace PocketX.Handlers
                 if (i == 60) break;
             }
 
-            await BlobCache.LocalMachine.InsertObject(Keys.MainList, ls);
+            await Cache.InsertObject(Keys.MainList, ls);
         }
 
-        internal async Task SetItemCache(int index, PocketItem item)
+        internal async Task PutItemInCache(int index, PocketItem item)
         {
-            var ls = await BlobCache.LocalMachine.GetObject<List<string[]>>(Keys.MainList).Catch(Observable.Return(new List<string[]>()));
+            var ls = await Cache.GetObject(Keys.MainList, new List<string[]>());
             var itemGen = new[] { item.ID, item.Uri.AbsoluteUri, item.Title };
             ls.Insert(index, itemGen);
-            await BlobCache.LocalMachine.InsertObject(Keys.MainList, ls);
+            await Cache.InsertObject(Keys.MainList, ls);
         }
 
         #endregion Cache Items
 
         #region Tags
+
         public async Task FetchOnlineTagsAsync()
         {
             var tags = (await Client.GetTags()).ToArray().Select(o => o.Name).ToArray();
@@ -129,14 +143,18 @@ namespace PocketX.Handlers
             if (Tags?.Count > 0)
             {
                 OnPropertyChanged(nameof(Tags));
-                await BlobCache.LocalMachine.InsertObject("tags", Tags);
+                await Cache.InsertObject("tags", Tags);
             }
         }
+
         public async Task FetchOfflineTagsAsync()
         {
-            foreach (var t in await BlobCache.LocalMachine.GetObject<IEnumerable<string>>("tags")) Tags?.Add(t);
+            foreach (var t in await Cache.GetObject<IEnumerable<string>>("tags", null))
+                if (t != null)
+                    Tags?.Add(t);
             if (Tags?.Count > 0) OnPropertyChanged(nameof(Tags));
         }
+
         public async Task FetchTagsAsync()
         {
             if (Tags.Count > 0) return;
@@ -148,6 +166,7 @@ namespace PocketX.Handlers
             {
                 E(e);
             }
+
             try
             {
                 await FetchOnlineTagsAsync();
@@ -157,23 +176,37 @@ namespace PocketX.Handlers
                 E(e);
             }
         }
+
         #endregion
 
         public async Task<PocketStatistics> UserStatistics() => await Client.GetUserStatistics();
 
-        public async Task<string> Read(Uri url, bool force)
+        public async Task<string> Read(string id, Uri url, CancellationTokenSource cancellationSource)
         {
-            var cache = await BlobCache.LocalMachine.GetObject<string>(url?.AbsoluteUri)
-                .Catch(Observable.Return(""));
-            if (!force && cache?.Trim()?.Length > 0) return cache;
-            var r = await new Reader().Read(url, new ReadOptions { PrettyPrint = true, PreferHTMLEncoding = false });
-            var content = BFound.HtmlToMarkdown.MarkDownDocument.FromHtml(r?.Content);
+            if (!Lru.IsOpen)
+            {
+                var old = await Cache.GetObject<Dictionary<string, CacheManager.Node<string, string>>>(LruKey, null);
+                Lru.Init(LruCapacity, old);
+            }
+
+            var cacheContent = Lru.Get(id);
+            if (cacheContent?.Length > 0) return HtmlToMarkdown(cacheContent);
+            if (_reader == null)
+            {
+                var options = HttpOptions.CreateDefault();
+                options.RequestTimeout = 60;
+                options.UseMobileUserAgent = true;
+                _reader = new Reader(options);
+            }
+            var readContent = await _reader.Read(url,
+                new ReadOptions { PrettyPrint = true, PreferHTMLEncoding = true, HasHeaderTags = false, UseDeepLinks = true },
+                cancellationSource.Token);
             //Fix Medium Images
-            content = content.Replace(".medium.com/freeze/max/60/", ".medium.com/freeze/max/360/");
-            if (!(r?.Content?.Length > 0)) return content;
-            await BlobCache.LocalMachine.InsertObject(url?.AbsoluteUri, content);
-            await BlobCache.LocalMachine.InsertObject("plain_" + url?.AbsoluteUri, r?.PlainContent);
-            return content;
+            var content = readContent?.Content.Replace(".medium.com/freeze/max/60/", ".medium.com/freeze/max/360/");
+            if (readContent?.Content?.Length < 1) return content;
+            Lru.Put(id, content);
+            await Lru.SaveAllToCache(LruKey);
+            return HtmlToMarkdown(content);
         }
 
         public async Task<(string, string)> AddFromShare(Uri url)
@@ -185,13 +218,17 @@ namespace PocketX.Handlers
                 await Client.Add(url);
                 return (success, url.AbsoluteUri);
             }
+
             try
             {
                 _pocketHandler.LoadCacheClient();
                 await _pocketHandler.Client.Add(url);
                 return (success, url.AbsoluteUri);
             }
-            catch (Exception e) { return (failed, e.Message); }
+            catch (Exception e)
+            {
+                return (failed, e.Message);
+            }
         }
 
         public async Task<IEnumerable<PocketItem>> GetListAsync(
@@ -199,7 +236,7 @@ namespace PocketX.Handlers
         {
             try
             {
-                if (!Microsoft.Toolkit.Uwp.Connectivity.NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
+                if (!Utils.HasInternet)
                     throw new Exception();
                 var pocketItems = await Client.Get(
                     state: state, favorite: favorite,
@@ -209,21 +246,21 @@ namespace PocketX.Handlers
                     count: count, offset: offset);
 
                 if (state == State.unread && tag == null && search == null && offset == 0)
-                    await SetItemsCache(pocketItems);
+                    await PutItemsInCache(pocketItems);
                 return pocketItems;
             }
             catch
             {
-                return state == State.unread && tag == null && search == null && offset == 0 ? await GetItemsCache() : null;
+                return state == State.unread && tag == null && search == null && offset == 0
+                    ? await GetItemsCache()
+                    : null;
             }
         }
 
-        public async Task Delete(PocketItem pocketItem)
+        public async Task DeleteArticle(PocketItem pocketItem)
         {
             try
             {
-                await BlobCache.LocalMachine.Invalidate(pocketItem.Uri.AbsoluteUri);
-                await BlobCache.LocalMachine.Invalidate("plain_" + pocketItem.Uri.AbsoluteUri);
                 await Client.Delete(pocketItem);
             }
             catch (Exception e)
@@ -232,7 +269,22 @@ namespace PocketX.Handlers
             }
         }
 
-        public async Task<string> TextProviderForAudioPlayer()
-            => await BlobCache.LocalMachine.GetObject<string>("plain_" + CurrentPocketItem?.Uri?.AbsoluteUri).Catch(Observable.Return(""));
+        public async Task ArchiveArticle(PocketItem pocketItem)
+        {
+            try
+            {
+                await Client.Archive(pocketItem);
+            }
+            catch (Exception e)
+            {
+                E(e);
+            }
+        }
+
+        public string TextProviderForAudioPlayer() => HtmlToRaw(Lru.Get(CurrentPocketItem?.ID));
+
+        private static string HtmlToRaw(string html) => HtmlUtilities.ConvertToPlainText(html);
+
+        private static string HtmlToMarkdown(string html) => BFound.HtmlToMarkdown.MarkDownDocument.FromHtml(html);
     }
 }

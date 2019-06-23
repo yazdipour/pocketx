@@ -3,18 +3,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.Networking.BackgroundTransfer;
-using Windows.Networking.Connectivity;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Notifications;
 
 namespace PocketX.Handlers
 {
-    class Utils
+    internal class Utils
     {
         internal static int UnixTimeStamp() => (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
-        
-        internal static bool CheckConnection => NetworkInformation.GetInternetConnectionProfile() != null;
+
+        internal static bool HasInternet => Microsoft.Toolkit.Uwp.Connectivity.NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable;
 
         internal static async Task DownloadFile(string url, string name, StorageFolder folder)
         {
@@ -79,4 +78,5 @@ namespace PocketX.Handlers
             return FileIO.ReadTextAsync(sFile).AsTask().ConfigureAwait(false).GetAwaiter().GetResult();
         }
     }
+
 }

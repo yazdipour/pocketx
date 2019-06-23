@@ -21,7 +21,7 @@
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>8DE482F59938C692B4568B9CBFC7EAC5EC95C4A7</PackageCertificateThumbprint>
     <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
@@ -32,10 +32,12 @@
     <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>false</UseDotNetNativeToolchain>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -102,7 +104,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\MarkdownControl.xaml.cs">
+    <Compile Include="Views\Controls\MarkdownControl.xaml.cs">
       <DependentUpon>MarkdownControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converter\ArrayToStringConverter.cs" />
@@ -122,9 +124,6 @@
     <Compile Include="Handlers\SettingsHandler.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModels\MainContentViewModel.cs" />
-    <Compile Include="Views\Dialog\EditArticleTagsDialog.xaml.cs">
-      <DependentUpon>EditArticleTagsDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Dialog\ImageDialog.xaml.cs">
       <DependentUpon>ImageDialog.xaml</DependentUpon>
     </Compile>
@@ -146,10 +145,7 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <Content Include="Assets\Icons\Home.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Icons\ChangeLog.md">
+    <Content Include="Assets\Markdown\Home.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -160,6 +156,7 @@
     <Content Include="Assets\Icons\Settings.PNG" />
     <Content Include="Assets\Icons\Share.PNG" />
     <Content Include="Assets\Icons\Tag.PNG" />
+    <Content Include="Assets\Icons\Thumbnail.png" />
     <Content Include="Assets\Icons\WebView.PNG" />
     <Content Include="Assets\LargeTile.scale-100.png" />
     <Content Include="Assets\LargeTile.scale-125.png" />
@@ -206,6 +203,9 @@
     <Content Include="Assets\Wide310x150Logo.scale-125.png" />
     <Content Include="Assets\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
+    <Content Include="Assets\Fonts\GothamPro.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
@@ -221,7 +221,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\MarkdownControl.xaml">
+    <Page Include="Views\Controls\MarkdownControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -234,10 +234,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Page>
-    <Page Include="Views\Dialog\EditArticleTagsDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Dialog\ImageDialog.xaml">
       <SubType>Designer</SubType>
@@ -261,14 +257,11 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="akavache">
-      <Version>6.5.1</Version>
-    </PackageReference>
     <PackageReference Include="BFound.HtmlToMarkdown">
       <Version>0.0.5</Version>
     </PackageReference>
     <PackageReference Include="HtmlAgilityPack">
-      <Version>1.11.4</Version>
+      <Version>1.11.7</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.8</Version>
@@ -292,10 +285,12 @@
       <Version>1.0.3</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Assets\Fonts\" />
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\CacheManager\CacheManager.csproj">
+      <Project>{00a36bbd-1b69-4449-8ec5-82d2db0110ad}</Project>
+      <Name>CacheManager</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Logger\Logger.csproj">
       <Project>{743a9933-e226-479e-be20-190b02caeaaa}</Project>
       <Name>Logger</Name>
