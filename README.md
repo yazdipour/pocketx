@@ -20,6 +20,25 @@ Unofficial Pocket Client for Universal Windows Platform (Modern with Fluent Desi
 
 ![Add Pocket](./Assets/cl.png)
 
+## Development setup
+
+Fill these properties in `PocketX/Handlers/Keys.cs` file with your tokens.
+
+```CS
+internal static readonly string Pocket = "POCKET_TOKEN";
+internal static readonly string AppCenter = "APPCENTER_TOKEN"; //OPTIONAL
+```
+
+Repo Structure:
+
+```
+-> Source
+    -> PocketX          # Application It Self
+    -> PocketX.UnitTest # Not Impl Yet 😓
+    -> Logger           # Logging + Appcenter
+    -> CacheManager     # LruCache + Akavache
+```
+
 ## Donate
 
 [![Donate](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://buymeacoff.ee/XrTW5YQDy)
