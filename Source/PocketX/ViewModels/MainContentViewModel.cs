@@ -65,8 +65,8 @@ namespace PocketX.ViewModels
             q = Uri.EscapeUriString(q);
             SearchList.Clear();
             var task = q[0] == '#'
-                ? PocketHandler.GetListAsync(state: State.all, favorite: null, tag: q.Substring(1), search: null, count: 40, 0)
-                : PocketHandler.GetListAsync(state: State.all, favorite: null, tag: null, search: q, count: 40, offset: 0);
+                ? PocketHandler.GetListAsync(State.all, null, q.Substring(1), null, 40, 0)
+                : PocketHandler.GetListAsync(State.all, null, null, q, 40, 0);
             ListIsLoading = true;
             foreach (var pocketItem in await task)
                 SearchList.Add(pocketItem);
