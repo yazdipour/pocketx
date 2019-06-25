@@ -2,7 +2,7 @@
 {
     internal interface ILru<K, V>
     {
-        V TryToGet(K key);
+        V TryGetValue(K key);
         void Put(K key, V value);
         void InsertAtHead(Node<K, V> node);
         void MoveToHead(Node<K, V> node);

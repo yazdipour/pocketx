@@ -1,4 +1,5 @@
-﻿using System.Reactive.Linq;
+﻿using System;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Akavache;
 using static Akavache.BlobCache;
@@ -7,6 +8,8 @@ namespace CacheManager
 {
     public static class CacheManager
     {
+        public static void Init(Type type) => ApplicationName = type.Namespace;
+
         public static void Kill()
         {
             LocalMachine.InvalidateAll();

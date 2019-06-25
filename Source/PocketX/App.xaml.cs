@@ -14,20 +14,20 @@ namespace PocketX
     sealed partial class App : Application
     {
         internal static string Protocol = "pocketx://auth";
-        internal static readonly bool DEBUGMODE = System.Diagnostics.Debugger.IsAttached;
+        internal static readonly bool DebugMode = System.Diagnostics.Debugger.IsAttached;
 
         public App()
         {
             InitializeComponent();
             Suspending += OnSuspending;
-            Akavache.BlobCache.ApplicationName = typeof(App).Namespace;
+            CacheManager.CacheManager.Init(typeof(App));
             SettingsHandler.Load();
             RequestedTheme = SettingsHandler.Settings.AppTheme == ElementTheme.Dark ? ApplicationTheme.Dark : ApplicationTheme.Light;
         }
 
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            if (!(Window.Current.Content is Frame rootFrame))
+            if (!(Window.Current?.Content is Frame rootFrame))
             {
                 rootFrame = new Frame();
                 rootFrame.NavigationFailed += OnNavigationFailed;

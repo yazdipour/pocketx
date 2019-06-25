@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using PocketSharp.Models;
 using PocketX.Handlers;
 using Windows.ApplicationModel.DataTransfer;
@@ -31,7 +29,7 @@ namespace PocketX.Views
                     foreach (var pocketItem in await _vm.PocketHandler.GetItemsCache())
                         _vm.ArticlesList.Add(pocketItem);
                 Logger.Logger.InitOnlineLogger(Keys.AppCenter);
-                Logger.Logger.SetDebugMode(App.DEBUGMODE);
+                Logger.Logger.SetDebugMode(App.DebugMode);
                 NotificationHandler.InAppNotificationControl = InAppNotifier;
                 await _vm.PocketHandler.FetchTagsAsync();
             };
