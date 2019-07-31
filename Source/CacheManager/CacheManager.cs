@@ -8,7 +8,11 @@ namespace CacheManager
 {
     public static class CacheManager
     {
-        public static void Init(Type type) => ApplicationName = type.Namespace;
+        public static void Init(Type type)
+        {
+            ApplicationName = type.Namespace;
+            //Akavache.Sqlite3.Registrations.Start(type.Namespace, SQLitePCL.Batteries_V2.Init);
+        }
 
         public static void Kill()
         {

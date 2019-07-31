@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CacheManager
@@ -9,7 +9,12 @@ namespace CacheManager
 
         public static bool IsOpen => _lruCache != null;
 
-        public static void Init(int capacity, IDictionary oldDictionary) => _lruCache = new LruCache<K, V>(capacity, oldDictionary);
+        public static async Task Init(int capacity, string lruKey)
+        {
+            if (IsOpen) return;
+            var oldDictionary = await CacheManager.GetObject<Dictionary<K, Node<K, V>>>(lruKey, null);
+            _lruCache = new LruCache<K, V>(capacity, oldDictionary);
+        }
 
         public static async Task SaveAllToCache(string key)
             => await CacheManager.InsertObject(key, _lruCache.GetAll());
