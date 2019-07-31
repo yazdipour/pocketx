@@ -1,5 +1,7 @@
 # Pocket✘
 
+![PocketX Icon](./Assets/icon_v2/Square44x44Logo.scale-400.png)
+
 Unofficial Pocket Client for Universal Windows Platform (Modern with Fluent Design)
 
 ## Install
@@ -41,6 +43,4 @@ Repo Structure:
 
 ## Donate
 
-[![Donate](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://buymeacoff.ee/XrTW5YQDy)
-
-[![Donate RIAL.IR](https://img.shields.io/badge/donate-IRAN-blue.svg)](https://www.payping.ir/yazdipour)
+[![Donate](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://yazdipour.github.io/donate/)
