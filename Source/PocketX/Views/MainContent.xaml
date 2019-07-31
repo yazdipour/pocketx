@@ -17,7 +17,7 @@
         <FontIconSource x:Key="Delete" Glyph="&#xE107;" />
         <FontIconSource x:Key="Add" Glyph="" />
         <FontIconSource x:Key="Archive" Glyph="&#xE15D;" />
-        <SwipeItems x:Key="SwipeItemsRight" Mode="Execute">
+        <!--<SwipeItems x:Key="SwipeItemsRight" Mode="Execute">
             <SwipeItem
                 Background="#e74c3c"
                 BehaviorOnInvoked="Close"
@@ -37,49 +37,49 @@
                 IconSource="{StaticResource Add}"
                 Invoked="SwipeItem_Invoked"
                 Text="Add" />
-        </SwipeItems>
+        </SwipeItems>-->
         <DataTemplate x:Key="ArticleTemplate" x:DataType="pocket:PocketItem">
-            <SwipeControl Margin="-10,2" RightItems="{StaticResource SwipeItemsRight}">
-                <StackPanel
-                    Height="72"
-                    HorizontalAlignment="Stretch"
-                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                    CornerRadius="2"
-                    Orientation="Horizontal"
-                    RightTapped="ItemRightTapped">
-                    <controls:ImageEx
-                        Width="100"
-                        Margin="0,0,8,0"
-                        x:Phase="10"
-                        BorderBrush="#eee"
-                        CornerRadius="2 0 0 2"
-                        PlaceholderSource="ms-appx:///Assets/Icons/Thumbnail.png"
-                        PlaceholderStretch="Uniform"
-                        Source="{x:Bind LeadImage.Uri}"
-                        Stretch="UniformToFill" />
-                    <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-                        <TextBlock
-                            Width="220"
-                            HorizontalAlignment="Left"
-                            MaxLines="1"
-                            Style="{ThemeResource BaseTextBlockStyle}"
-                            Text="{x:Bind Title}"
-                            TextTrimming="WordEllipsis" />
-                        <TextBlock
-                            x:Phase="9"
-                            Style="{ThemeResource CaptionTextBlockStyle}"
-                            Text="{x:Bind Uri.Host}" />
-                        <TextBlock
-                            Width="220"
-                            x:Phase="11"
-                            FontSize="11"
-                            Foreground="{ThemeResource AccentColor}"
-                            Text="{x:Bind converter:ArrayToStringConverter.ConvertTagsToString(Tags)}"
-                            TextTrimming="WordEllipsis"
-                            Visibility="{x:Bind Tags, Converter={StaticResource HideIfEmpty}}" />
-                    </StackPanel>
+            <!--<SwipeControl Margin="-10,2" RightItems="{StaticResource SwipeItemsRight}">-->
+            <StackPanel
+                Height="72"
+                Margin="-10,2"
+                HorizontalAlignment="Stretch"
+                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                CornerRadius="2"
+                Orientation="Horizontal"
+                RightTapped="ItemRightTapped">
+                <controls:ImageEx
+                    Width="100"
+                    Margin="0,0,8,0"
+                    x:Phase="10"
+                    BorderBrush="#eee"
+                    CornerRadius="2 0 0 2"
+                    PlaceholderSource="ms-appx:///Assets/Icons/Thumbnail.png"
+                    PlaceholderStretch="Uniform"
+                    Source="{x:Bind LeadImage.Uri}"
+                    Stretch="UniformToFill" />
+                <StackPanel VerticalAlignment="Center" Orientation="Vertical">
+                    <TextBlock
+                        Width="220"
+                        HorizontalAlignment="Left"
+                        MaxLines="1"
+                        Style="{ThemeResource BaseTextBlockStyle}"
+                        Text="{x:Bind Title}"
+                        TextTrimming="WordEllipsis" />
+                    <TextBlock
+                        x:Phase="9"
+                        Style="{ThemeResource CaptionTextBlockStyle}"
+                        Text="{x:Bind Uri.Host}" />
+                    <TextBlock
+                        Width="220"
+                        x:Phase="11"
+                        FontSize="11"
+                        Foreground="{ThemeResource AccentColor}"
+                        Text="{x:Bind converter:ArrayToStringConverter.ConvertTagsToString(Tags)}"
+                        TextTrimming="WordEllipsis"
+                        Visibility="{x:Bind Tags, Converter={StaticResource HideIfEmpty}}" />
                 </StackPanel>
-            </SwipeControl>
+            </StackPanel>
         </DataTemplate>
         <Style x:Key="PocketTemplate" TargetType="ListView">
             <Setter Property="SelectionMode" Value="Single" />
