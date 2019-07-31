@@ -29,6 +29,7 @@
           </uap:ShowNameOnTiles>
         </uap:DefaultTile>
         <uap:SplashScreen uap5:Optional="true" Image="Assets\SplashScreen.png" BackgroundColor="#600000"/>
+        <uap:LockScreen BadgeLogo="Assets\BadgeLogo.png" Notification="badgeAndTileText"/>
       </uap:VisualElements>
       <Extensions>
         <uap:Extension Category="windows.protocol">
@@ -40,7 +41,6 @@
         <uap:Extension Category="windows.shareTarget" Executable="$targetnametoken$.exe" EntryPoint="PocketX.App">
           <uap:ShareTarget Description="Add URL to your Pocket">
             <uap:DataFormat>Uri</uap:DataFormat>
-            <uap:SupportedFileTypes/>
           </uap:ShareTarget>
         </uap:Extension>
 				<uap5:Extension
