@@ -1,6 +1,6 @@
 # Pocket✘
 
-![PocketX Icon](./Assets/icon_v2/Square44x44Logo.scale-400.png)
+![PocketX Icon](./Assets/icon_v2/pocketx_icon.png)
 
 Unofficial Pocket Client for Universal Windows Platform (Modern with Fluent Design)
 
