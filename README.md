@@ -1,12 +1,16 @@
 # Pocket✘
 
-![PocketX Icon](./Assets/icon_v2/pocketx_icon.png)
+<img src="./Assets/icon_v2/pocketx_icon.png" height="120"/>
 
 Unofficial Pocket Client for Universal Windows Platform (Modern with Fluent Design)
 
-## Install
+### Install
 
 [![MS Store](./Assets/msstore.png)](https://www.microsoft.com/store/apps/9NDT5N34SR2P?ocid=badge)
+
+### Donate
+
+[![Donate](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://yazdipour.github.io/donate/)
 
 ## Features
 
@@ -40,7 +44,3 @@ Repo Structure:
     -> Logger           # Logging + Appcenter
     -> CacheManager     # LruCache + Akavache
 ```
-
-## Donate
-
-[![Donate](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://yazdipour.github.io/donate/)
