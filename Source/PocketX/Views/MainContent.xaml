@@ -125,7 +125,6 @@
                             Click="HeadAppBarClicked"
                             Icon="Find"
                             Tag="Find" />
-                        <!--<AppBarButton  Click="HeadAppBarClicked" Width="40" Icon="Tag"/>-->
                         <AppBarButton
                             Grid.Column="2"
                             Width="40"
@@ -136,6 +135,7 @@
                         x:Name="PivotList"
                         Grid.Row="1"
                         VerticalContentAlignment="Stretch"
+                        ManipulationMode="None"
                         SelectedIndex="{x:Bind _vm.PivotListSelectedIndex, Mode=TwoWay}"
                         SelectionChanged="PivotList_SelectionChanged">
                         <Pivot.Resources>
@@ -144,25 +144,37 @@
                                 <Setter Property="FontFamily" Value="{StaticResource GothamPro}" />
                             </Style>
                         </Pivot.Resources>
-                        <PivotItem Header="Home">
+                        <PivotItem>
+                            <PivotItem.Header>
+                                <ctrl:TabHeader Glyph="&#xE10F;" Label="Home" />
+                            </PivotItem.Header>
                             <ListView
                                 ItemClick="ItemClick"
                                 ItemsSource="{x:Bind _vm.ArticlesList, Mode=OneWay}"
                                 Style="{StaticResource PocketTemplate}" />
                         </PivotItem>
-                        <PivotItem Header="Favorite">
+                        <PivotItem>
+                            <PivotItem.Header>
+                                <ctrl:TabHeader Glyph="&#xE113;" Label="Favorite" />
+                            </PivotItem.Header>
                             <ListView
                                 ItemClick="ItemClick"
                                 ItemsSource="{x:Bind _vm.FavoritesList, Mode=OneWay}"
                                 Style="{StaticResource PocketTemplate}" />
                         </PivotItem>
-                        <PivotItem Header="Archive">
+                        <PivotItem>
+                            <PivotItem.Header>
+                                <ctrl:TabHeader Glyph="&#xE10B;" Label="Archive" />
+                            </PivotItem.Header>
                             <ListView
                                 ItemClick="ItemClick"
                                 ItemsSource="{x:Bind _vm.ArchivesList, Mode=OneWay}"
                                 Style="{StaticResource PocketTemplate}" />
                         </PivotItem>
-                        <PivotItem Header="Search">
+                        <PivotItem>
+                            <PivotItem.Header>
+                                <ctrl:TabHeader Glyph="&#xE11A;" Label="Search" />
+                            </PivotItem.Header>
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
@@ -182,7 +194,10 @@
                                     Style="{StaticResource PocketTemplate}" />
                             </Grid>
                         </PivotItem>
-                        <PivotItem Header="Tags">
+                        <PivotItem>
+                            <PivotItem.Header>
+                                <ctrl:TabHeader Glyph="&#xE1CB;" Label="Tags" />
+                            </PivotItem.Header>
                             <ListView IsItemClickEnabled="True" ItemsSource="{x:Bind _vm.PocketHandler.Tags, Mode=OneWay}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>

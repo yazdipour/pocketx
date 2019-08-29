@@ -1,0 +1,54 @@
+﻿<UserControl
+    x:Class="PocketX.Views.Controls.TabHeader"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:PocketX.Views.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    mc:Ignorable="d">
+
+    <Grid>
+        <RelativePanel x:Name="RelativePanel">
+            <FontIcon
+                x:Name="Icon"
+                Margin="0,12,0,0"
+                HorizontalAlignment="Center"
+                FontFamily="Segoe MDL2 Assets"
+                FontSize="16"
+                Glyph="{Binding Glyph}" />
+            <TextBlock
+                x:Name="LabelText"
+                Margin="4"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                Text="{Binding Label}" />
+        </RelativePanel>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Narrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="Icon.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True" />
+                        <Setter Target="LabelText.(RelativePanel.Below)" Value="Icon" />
+                        <Setter Target="LabelText.(RelativePanel.AlignHorizontalCenterWith)" Value="Icon" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Wide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="500" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="Icon.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True" />
+                        <Setter Target="LabelText.(RelativePanel.RightOf)" Value="Icon" />
+                        <Setter Target="LabelText.(RelativePanel.AlignVerticalCenterWith)" Value="Icon" />
+                        <Setter Target="RelativePanel.Margin" Value="0,0,12,0" />
+                        <Setter Target="Icon.Margin" Value="0,0,0,0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
+</UserControl>
