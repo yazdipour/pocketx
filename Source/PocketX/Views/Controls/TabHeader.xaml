@@ -21,6 +21,7 @@
             <TextBlock
                 x:Name="LabelText"
                 Margin="4"
+                FontFamily="{StaticResource GothamPro}"
                 Style="{StaticResource CaptionTextBlockStyle}"
                 Text="{Binding Label}" />
         </RelativePanel>
