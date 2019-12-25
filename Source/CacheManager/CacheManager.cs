@@ -1,4 +1,5 @@
-﻿using System.Reactive.Linq;
+﻿using System;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Akavache;
 using static Akavache.BlobCache;
@@ -7,6 +8,12 @@ namespace CacheManager
 {
     public static class CacheManager
     {
+        public static void Init(Type type)
+        {
+            ApplicationName = type.Namespace;
+            //Akavache.Sqlite3.Registrations.Start(type.Namespace, SQLitePCL.Batteries_V2.Init);
+        }
+
         public static void Kill()
         {
             LocalMachine.InvalidateAll();

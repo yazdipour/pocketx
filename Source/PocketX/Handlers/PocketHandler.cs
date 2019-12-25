@@ -40,7 +40,8 @@ namespace PocketX.Handlers
             }
         }
 
-        public static PocketHandler GetInstance() => _pocketHandler ?? (_pocketHandler = new PocketHandler());
+        public static PocketHandler GetInstance() => 
+            _pocketHandler ?? (_pocketHandler = new PocketHandler());
 
         #region Login-Logout
 
@@ -179,16 +180,12 @@ namespace PocketX.Handlers
 
         #endregion
 
-        public async Task<PocketStatistics> UserStatistics() => await Client.GetUserStatistics();
+        public async Task<PocketStatistics> UserStatistics() => 
+            await Client.GetUserStatistics();
 
         public async Task<string> Read(string id, Uri url, CancellationTokenSource cancellationSource)
         {
-            if (!Lru.IsOpen)
-            {
-                var old = await Cache.GetObject<Dictionary<string, CacheManager.Node<string, string>>>(LruKey, null);
-                Lru.Init(LruCapacity, old);
-            }
-
+            await Lru.Init(LruCapacity, LruKey);
             var cacheContent = Lru.Get(id);
             if (cacheContent?.Length > 0) return HtmlToMarkdown(cacheContent);
             if (_reader == null)
@@ -204,8 +201,15 @@ namespace PocketX.Handlers
             //Fix Medium Images
             var content = readContent?.Content.Replace(".medium.com/freeze/max/60/", ".medium.com/freeze/max/360/");
             if (readContent?.Content?.Length < 1) return content;
-            Lru.Put(id, content);
-            await Lru.SaveAllToCache(LruKey);
+            try
+            {
+                Lru.Put(id, content);
+                await Lru.SaveAllToCache(LruKey);
+            }
+            catch (Exception e)
+            {
+                E(e);
+            }
             return HtmlToMarkdown(content);
         }
 
@@ -281,10 +285,13 @@ namespace PocketX.Handlers
             }
         }
 
-        public string TextProviderForAudioPlayer() => HtmlToRaw(Lru.Get(CurrentPocketItem?.ID));
+        public string TextProviderForAudioPlayer() => 
+            HtmlToRaw(Lru.Get(CurrentPocketItem?.ID));
 
-        private static string HtmlToRaw(string html) => HtmlUtilities.ConvertToPlainText(html);
+        private static string HtmlToRaw(string html) => 
+            HtmlUtilities.ConvertToPlainText(html);
 
-        private static string HtmlToMarkdown(string html) => BFound.HtmlToMarkdown.MarkDownDocument.FromHtml(html);
+        private static string HtmlToMarkdown(string html) => 
+            BFound.HtmlToMarkdown.MarkDownDocument.FromHtml(html);
     }
 }

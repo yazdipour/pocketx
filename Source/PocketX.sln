@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logger", "Logger\Logger.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PocketX.UnitTest", "PocketX.UnitTest\PocketX.UnitTest.csproj", "{30FDD3F9-AADC-478E-9FF4-0D1890605A09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CacheManager", "CacheManager\CacheManager.csproj", "{00A36BBD-1B69-4449-8EC5-82D2DB0110AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CacheManager", "CacheManager\CacheManager.csproj", "{00A36BBD-1B69-4449-8EC5-82D2DB0110AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

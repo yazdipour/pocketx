@@ -21,9 +21,9 @@ namespace CacheManager
             _currentMemoryInUse = (int)_memory?.Count;
         }
 
-        public IDictionary GetAll() => _memory;
+        public Dictionary<K, Node<K, V>> GetAll() => _memory;
 
-        public V TryToGet(K key)
+        public V TryGetValue(K key)
         {
             if (!_memory.ContainsKey(key)) return default;
             var result = _memory[key];

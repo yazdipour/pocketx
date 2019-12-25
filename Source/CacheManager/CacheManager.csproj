@@ -2,10 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="akavache" Version="6.5.9" />
+    <PackageReference Include="akavache" Version="6.5.20" />
+    <PackageReference Include="akavache.sqlite3" Version="6.5.20" />
   </ItemGroup>
 
 </Project>
